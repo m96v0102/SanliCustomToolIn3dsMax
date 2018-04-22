@@ -205,7 +205,7 @@ struct stMultiClipsIn1FileWnd
 				--the elements in this items have to be same with the g_stTimeRange.aEmbedTextureType
 				label lbEmbedTexture "MediaEmbed:"				pos:[lbExportMode.pos.x, lbExportMode.pos.y + 22]
 				dropdownList ddlEmbedTextureMode ""				pos:[lbEmbedTexture.pos.x + 68, lbEmbedTexture.pos.y - 2] width:163
-																items:#("Embed Media", "CopyTexture from current folder", "Don't set any textures")
+																items:#("Embed Media", "Copy textures from current folder", "Don't set any textures")
 				
 				label lbTextureExt "Ext:"						pos:[ddlEmbedTextureMode.pos.x + ddlEmbedTextureMode.width + 5, ddlEmbedTextureMode.pos.y + 5]
 				editText edtTextureExt text:".tga " 			pos:[lbTextureExt.pos.x + 20, lbTextureExt.pos.y - 3] width:58 height:10
