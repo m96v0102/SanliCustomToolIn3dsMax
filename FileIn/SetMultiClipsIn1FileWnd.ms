@@ -136,7 +136,7 @@ struct stMultiClipsIn1FileWnd
 	roExportSetAndAniSLMethods,	--Export Settings and Anim List Save/Load Methods
 	roSeperateAnim,
 	roRecordExportPath,
-	roHeight = 700,
+	roHeight = 580,
 
 	function Constructor =
 	(

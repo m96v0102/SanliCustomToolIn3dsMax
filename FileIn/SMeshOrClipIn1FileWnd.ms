@@ -109,7 +109,7 @@ struct st1ClipInFileWnd
 	roExportSettings,
 	roRecordExportPath,
 	roCheckUndoCallBack,
-	roHeight = 590,
+	roHeight = 640,
 
 	fn Constructor =
 	(
@@ -165,9 +165,9 @@ struct st1ClipInFileWnd
 																tooltip:"Export selected max files from the list."
 				button 	btnSelExport "Export selection"			pos:[btnExportFile.pos.x + 108, btnExportFile.pos.y] width:98
 																tooltip:"Export the selection that you selected in the current max file."
-				button 	btnSaveExportPath "Save path" 			pos:[btnSelExport.pos.x + 108, btnSelExport.pos.y] width:98
+				button 	btnSaveExportPath "Save path" 			pos:[btnSelExport.pos.x + 108, btnSelExport.pos.y] width:98 --enabled:false
 																tooltip:"Save the export path above"
-			)
+			)			
 
 			--Set Thumbnail and other Multilistbox's selection
 			fn fnGetThumbnail _SourceLbx =
@@ -270,6 +270,11 @@ struct st1ClipInFileWnd
 
 				g_stLoadMaxByList.fnSetMATEmbedType ddlEmbedTextureMode.selection				
 
+			)
+			
+			on btnSaveExportPath pressed do
+			(
+				g_stPathOrProp.fnSaveXml()
 			)
 
 			on edtExportPath keyup key do

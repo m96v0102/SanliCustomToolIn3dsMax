@@ -53,10 +53,9 @@ struct stOthersWnd
 	roOtherStuff,
 	roHeight = 500,
 
-	-- Constructor function of RenameRollout struct. Called at object creation.(@return (boolean) true)
 	function Constructor =
 	(
-		rollout roInfo "Info_V1.001"
+		rollout roInfo "Info_V1.002"
 		(
 			dotNetControl lblInfo "System.Windows.Forms.Label" height:53 width:320 align:#center
 			hyperLink lbFB "GitHub" address:"https://github.com/m96v0102/SanliCustomToolIn3dsMax.git" 
@@ -249,16 +248,16 @@ struct stOthersWnd
 			
 		)
 
-		rollout roSwitchModel "SwitchModel_v1.001"
+		rollout roSwitchModel "SwitchModel_v1.002_The function will update in the future!!"
 		(
 			--the elements in this array have to be same with the aSwitchModelMode array.
 			label lbSwitchModelMode "Switch Model by : " 	align:#left
 			radioButtons rdoSwitchModelMode "" 				pos:[lbSwitchModelMode.pos.x + 90, lbSwitchModelMode.pos.y] 
 															labels:#("LOD Name Detection", "Selected Model")
 
-			button			btnSwitchPreviousModel	"previous model"	width:100 align:#left --pos:[5, dd_TargetList.pos.y + 50]
-			button			btnShowAllModels 		"show all model" 	pos:[btnSwitchPreviousModel.pos.x + 110,	btnSwitchPreviousModel.pos.y] width:100
-			button			btnSwitchNextModel 		"next model" 	 	pos:[btnShowAllModels.pos.x + 110,	btnSwitchPreviousModel.pos.y] 	width:100
+			button			btnSwitchPreviousModel	"previous model"	width:100 align:#left enabled:false--pos:[5, dd_TargetList.pos.y + 50]
+			button			btnShowAllModels 		"show all model" 	pos:[btnSwitchPreviousModel.pos.x + 110,	btnSwitchPreviousModel.pos.y] width:100 enabled:false
+			button			btnSwitchNextModel 		"next model" 	 	pos:[btnShowAllModels.pos.x + 110,	btnSwitchPreviousModel.pos.y] 	width:100 enabled:false
 			label			lbSwitchModelName		"Model Name:"	 	--pos:[btnSwitchPreviousModel.pos.x,	btnSwitchPreviousModel.pos.y+30]
 			editText		edtSwitchModelName		""					width:320 height:60 --align:#center
 																		--pos:[lbSwitchModelName.pos.x + 55, lbSwitchModelName.pos.y]
