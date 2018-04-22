@@ -20,7 +20,7 @@ struct stOthers
 	nLODCurID = 0,
 	aCurLODShowingModel = #(),
 
-	sInfoMessage1 = "SanliCustomTool is a script to manage animation¡B LOD ¡BBatch rename or export multiple objects to fbx. ",
+	sInfoMessage1 = "SanliCustomTool is a script to manage animation¡B LOD ¡BBatch rename or export multiple objects to FBX. ",
 	sInfoMessage2 = "If you have questions, please contact me. the newer version will always update in the github website. ",
 
 	fn fnInitialize = 
@@ -57,11 +57,11 @@ struct stOthersWnd
 	(
 		rollout roInfo "Info_V1.002"
 		(
-			dotNetControl lblInfo "System.Windows.Forms.Label" height:53 width:320 align:#center
+			dotNetControl lblInfo "System.Windows.Forms.Label" height:53 width:320 pos:[25,10]--align:#center
 			hyperLink lbFB "GitHub" address:"https://github.com/m96v0102/SanliCustomToolIn3dsMax.git" 
-									color:(color 200 128 50) visitedColor:(color 200 128 50) across:2
+									color:(color 200 128 50) visitedColor:(color 200 128 50) pos:[lblInfo.pos.x, lblInfo.pos.y + lblInfo.height + 10]
 			hyperLink lblLinkMail 	"email: m96v0102@gmail.com" address:"mailto:m96v0102@gmail.com" 
-									color:(color 200 128 50) visitedColor:(color 200 128 50)
+									color:(color 200 128 50) visitedColor:(color 200 128 50) pos:[200, lbFB.pos.y]
 			
 			on roInfo open do
 			(
