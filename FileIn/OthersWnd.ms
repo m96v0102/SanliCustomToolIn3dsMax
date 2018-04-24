@@ -55,9 +55,9 @@ struct stOthersWnd
 
 	function Constructor =
 	(
-		rollout roInfo "Info_V1.002"
+		rollout roInfo "Info_V1.003"
 		(
-			dotNetControl lblInfo "System.Windows.Forms.Label" height:53 width:320 pos:[25,10]--align:#center
+			dotNetControl lblInfo "System.Windows.Forms.Label" height:53 width:320 pos:[20,10]--align:#center
 			hyperLink lbFB "GitHub" address:"https://github.com/m96v0102/SanliCustomToolIn3dsMax.git" 
 									color:(color 200 128 50) visitedColor:(color 200 128 50) pos:[lblInfo.pos.x, lblInfo.pos.y + lblInfo.height + 10]
 			hyperLink lblLinkMail 	"email: m96v0102@gmail.com" address:"mailto:m96v0102@gmail.com" 

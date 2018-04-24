@@ -166,15 +166,13 @@ struct stSanliCustomTool
 								#("     MultiClips in 1 File     ", #(	roMultiClip1File.roll, roMultiClip1File.roSearch, roMultiClip1File.roExportSetAndAniSLMethods,
 																		roMultiClip1File.roSeperateAnim, roMultiClip1File.roRecordExportPath)),
 								#("  Others or Info  ", #(roOthers.roInfo, roOthers.roBatchRename, roOthers.roSwitchModel, roOthers.roOtherStuff))
-								--#("        Others       ", 	#(roOthers.roBatchRename, roOthers.roSwitchModel))
 							)
 			
 			local lastSubRollout = 1
             dotNetControl dnTabs "System.Windows.Forms.TabControl" height:20 --width:420 align:#left
 			
-			--≥o∏Ã™∫™¯ºe≠Y¶≥ßÔ°AcreateDialog roMainRollout™∫™¯ºe§]≠n§@®÷ßÔ
-			--Æ⁄æ⁄¥˙∏’°A≥o∏Ã´¸©w™∫height≥Ã¶n≠n§Òro1Clip1File.roHeight°BroMultiClip1File.roHeight¡Ÿ≠n∞™°Aotherwise we will see some interface got cut off.
-			subRollout theSubRollout width:360 height:900 align:#center	--330
+			--If you change the height or width, remember to change another width height in createDialog roMainRollout.
+			subRollout theSubRollout width:360 height:ro1Clip1File.roHeight align:#center	--330
 
             on dnTabs Selected itm do
 			(
@@ -182,7 +180,7 @@ struct stSanliCustomTool
 				removeSubRollout theSubRollout subroll
 				
 				lastSubRollout = itm.TabPageIndex+1
-				for subroll in rollArr[lastSubRollout][2] do	
+				for subroll in rollArr[lastSubRollout][2] do
 				(
 					if (subroll == ro1Clip1File.roll or subroll == roMultiClip1File.roll or subroll == roOthers.roInfo) then
 						addSubRollout theSubRollout subroll rolledUp:false
@@ -194,16 +192,19 @@ struct stSanliCustomTool
 				case nState of
 				(
 					1: 	(
-						g_SanliCustomTool.roMainRollout.height = ro1Clip1File.roHeight
+							g_SanliCustomTool.roMainRollout.height = ro1Clip1File.roHeight
+							theSubRollout.height = ro1Clip1File.roHeight
 						
-						--reload the maxfile array from the list. or the array might be changed by search field
-						g_stLoadMaxByList.fnLoadFileToList &ro1Clip1File.roll.lboxMaxFile ro1Clip1File.roll.edtSourceFolderPath.text
+							--reload the maxfile array from the list. or the array might be changed by search field
+							g_stLoadMaxByList.fnLoadFileToList &ro1Clip1File.roll.lboxMaxFile ro1Clip1File.roll.edtSourceFolderPath.text
 						)
 					2:	(
-						g_SanliCustomTool.roMainRollout.height = roMultiClip1File.roHeight
+							g_SanliCustomTool.roMainRollout.height = roMultiClip1File.roHeight
+							theSubRollout.height = roMultiClip1File.roHeight
 						)
 					3: 	(
-						g_SanliCustomTool.roMainRollout.height = roOthers.roHeight
+							g_SanliCustomTool.roMainRollout.height = roOthers.roHeight
+							theSubRollout.height = roOthers.roHeight
 						)
 				)
 			)--end tabs clicked	
@@ -251,21 +252,16 @@ struct stSanliCustomTool
 
     function Show =
 	(
-		--≥o∏Ã™∫™¯ºe≠Y¶≥ßÔ°AsubRollout theSubRollout™∫™¯ºe§]≠n§@è˛ßÔ
-		createDialog roMainRollout 370 roMainRollout.ro1Clip1File.roHeight 560 300 --style:#(#style_toolwindow,#style_sysmenu)
-		--createDialog roMainRollout 340 720 2560 400 --style:#(#style_toolwindow,#style_sysmenu)
-		roMainRollout.title = "SanliCustomTool(v1.004)"
+		--If you change the height or width, remember to change another width height in "subRollout theSubRollout".
+		createDialog roMainRollout 370 roMainRollout.ro1Clip1File.roHeight 560 300
+		roMainRollout.title = "SanliCustomTool(v1.005)"
 		
 		--copy Unity Editor files to C:\SanliCustomTool
 		sCurrentScriptFile = getThisScriptFilename()
-		--format "Sanlilog_current Script File: % \n" sCurrentScriptFile
 		sCurrentScriptPath = getFilenamePath sCurrentScriptFile
 		sUnityUIStyleFile = sCurrentScriptPath + "SanliScriptInUnityEditor\\EditorUIStyle.cs"
 		sUnityFnQuickSelFile = sCurrentScriptPath + "SanliScriptInUnityEditor\\FnQuickSelectOrRun_TA.cs"
 		sUnityQuickSelFile = sCurrentScriptPath + "SanliScriptInUnityEditor\\QuickSelectOrRun_TA.cs"
-		--format "Sanlilog_sUnityUIStyleFile: % \n" sUnityUIStyleFile
-		
-		--Copy 3 Unity Script files to the SanliCustomTool's folder
 		if (doesFileExist g_stPathOrProp.sSrcUnityUIStyleFile) == false then
 		(
 			makeDir "C:\\SanliCustomTool\\"
