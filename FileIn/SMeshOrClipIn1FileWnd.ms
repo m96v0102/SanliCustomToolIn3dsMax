@@ -744,7 +744,7 @@ struct st1ClipInFileWnd
 					if enBatchCheckMode == #CheckAndRemove then
 						sMessage1 = "The tools have removed " + (aVirusFile.count as string)  + "maxfiles that contains the virus callback:\n"
 					else
-						sMessage1 = "There are " + (aVirusFile.count as string)  + "maxfiles has contains the virus callback:\n"
+						sMessage1 = "There are " + (aVirusFile.count as string)  + " maxfiles has contains the virus callback:\n"
 
 					
 					append sMessageForShowWnd sMessage1
