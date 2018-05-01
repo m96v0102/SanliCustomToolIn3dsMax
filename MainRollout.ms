@@ -161,7 +161,8 @@ struct stSanliCustomTool
             local roMultiClip1File = stMultiClipsIn1FileWnd()
 			local roOthers = stOthersWnd()
 			local rollArr = #( 
-								#("1 Clip in File or SMesh", #(	ro1Clip1File.roll,  ro1Clip1File.roSearch, ro1Clip1File.roExportSettings, 
+								#("1 Clip in File or SMesh", #(	ro1Clip1File.roll,  ro1Clip1File.roSearch, 
+																ro1Clip1File.roImportOrMergeSettings, ro1Clip1File.roExportSettings, 
 																ro1Clip1File.roRecordExportPath, ro1Clip1File.roCheckUndoCallBack)),
 								#("     MultiClips in 1 File     ", #(	roMultiClip1File.roll, roMultiClip1File.roSearch, roMultiClip1File.roExportSetAndAniSLMethods,
 																		roMultiClip1File.roSeperateAnim, roMultiClip1File.roRecordExportPath)),
@@ -182,7 +183,8 @@ struct stSanliCustomTool
 				lastSubRollout = itm.TabPageIndex+1
 				for subroll in rollArr[lastSubRollout][2] do
 				(
-					if (subroll == ro1Clip1File.roll or subroll == roMultiClip1File.roll or subroll == roOthers.roInfo) then
+					if (subroll == ro1Clip1File.roll or subroll == ro1Clip1File.roImportOrMergeSettings or
+						subroll == roMultiClip1File.roll or subroll == roOthers.roInfo) then
 						addSubRollout theSubRollout subroll rolledUp:false
 					else
 						addSubRollout theSubRollout subroll rolledUp:true
@@ -196,7 +198,9 @@ struct stSanliCustomTool
 							theSubRollout.height = ro1Clip1File.roHeight
 						
 							--reload the maxfile array from the list. or the array might be changed by search field
-							g_stLoadMaxByList.fnLoadFileToList &ro1Clip1File.roll.lboxMaxFile ro1Clip1File.roll.edtSourceFolderPath.text
+							enLoadType =  g_stLoadMaxByList.aLoadType[ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state]
+							g_stLoadMaxByList.fnLoadFileToList 	&ro1Clip1File.roll.lboxMaxFile \
+																ro1Clip1File.roll.edtSourceFolderPath.text _enLoadType:enLoadType
 						)
 					2:	(
 							g_SanliCustomTool.roMainRollout.height = roMultiClip1File.roHeight
@@ -218,6 +222,7 @@ struct stSanliCustomTool
 				
                 addSubRollout theSubRollout ro1Clip1File.roll
 				addSubRollout theSubRollout ro1Clip1File.roSearch rolledUp:true
+				addSubRollout theSubRollout ro1Clip1File.roImportOrMergeSettings rolledUp:false
 				addSubRollout theSubRollout ro1Clip1File.roExportSettings rolledUp:true
 				addSubRollout theSubRollout ro1Clip1File.roRecordExportPath rolledUp:true
 				addSubRollout theSubRollout ro1Clip1File.roCheckUndoCallBack rolledUp:true
@@ -254,7 +259,7 @@ struct stSanliCustomTool
 	(
 		--If you change the height or width, remember to change another width height in "subRollout theSubRollout".
 		createDialog roMainRollout 370 roMainRollout.ro1Clip1File.roHeight 560 300
-		roMainRollout.title = "SanliCustomTool(v1.006)"
+		roMainRollout.title = "SanliCustomTool(v1.007)"
 		
 		--copy Unity Editor files to C:\SanliCustomTool
 		sCurrentScriptFile = getThisScriptFilename()

@@ -2,10 +2,10 @@
 
 struct stLoadMaxByList
 (
-	aMaxFile = #(),
-	aMaxFileName = #(),
-	aMaxFile_Backup = #(),
-	aMaxFileName_Backup = #(),
+	aFile = #(),
+	aFileName = #(),
+	aFile_Backup = #(),
+	aFileName_Backup = #(),
 
 	--grpTNWidth = 150,		--thumbnail group width
 	--grpEtWidth = 150,		--Export group width
@@ -16,6 +16,11 @@ struct stLoadMaxByList
 	xmlDoc = undefined,
 	ndRoot = undefined,
 
+	--the elements in this array have to be same with the rdoLoadType labels.
+	aLoadType = #(#Load, #Merge, #ImportFbx, #ImportObj),
+	nDefaultLoadType = 1,
+	bShowMIOptions = true,	--Show merge or import options
+	
 	--the elements in this array have to be same with the ddlExportMode items.
 	aExportType = #(#StaticMesh, #SkinMesh, #Animation),
 	
@@ -27,10 +32,10 @@ struct stLoadMaxByList
 
 	fn fnInitialize=
 	(
-		aMaxFile = #()
-		aMaxFileName = #()
-		aMaxFile_Backup = #()
-		aMaxFileName_Backup = #()
+		aFile = #()
+		aFileName = #()
+		aFile_Backup = #()
+		aFileName_Backup = #()
 		xmlDoc = undefined
 		ndRoot = undefined
 	),
@@ -81,21 +86,92 @@ struct stLoadMaxByList
 	),
 
 	--g_stLoadMaxByList.fnLoadFileToList &btnLoadFileFromPath edtSourceFolderPath.text
-	fn fnLoadFileToList &_lboxMaxFile _sLoadFileFromPath=
+	fn fnLoadFileToList &_lboxMaxFile _sLoadFileFromPath _enLoadType:#Load=
 	(
 		fnInitialize()
-		aMaxFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.max" )
-		aMaxFile_Backup = deepCopy aMaxFile
-		
-		for xx in aMaxFile do
-			append aMaxFileName (getFileNameFile xx )
+		aFile = #()
 
-		aMaxFileName_Backup = deepCopy aMaxFileName
+		case _enLoadType of
+		(
+			#Load:
+			(
+				aFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.max" )
+				if g_SanliCustomTool != undefined do
+				(
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnExportFile.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnSelExport.enabled = true
+				)
+			)
+			#Merge:
+			(
+				aFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.max" )
+				if g_SanliCustomTool != undefined do
+				(
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnExportFile.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnSelExport.enabled = false
+				)
+				
+			)
+			#ImportFbx:
+			(
+				aFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.fbx" )
+				if g_SanliCustomTool != undefined do
+				(
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnExportFile.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnSelExport.enabled = false
+				)
+			)
+			#ImportObj:
+			(
+				aFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.obj" )
+				if g_SanliCustomTool != undefined do
+				(
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnExportFile.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnSelExport.enabled = false
+				)
+			)
+		)
 		
-		_lboxMaxFile.items = aMaxFileName
-		_lboxMaxFile.selection = 1
+		aFile_Backup = deepCopy aFile
+		
+		for xx in aFile do
+			append aFileName (getFileNameFile xx )
+
+		aFileName_Backup = deepCopy aFileName
+		
+		_lboxMaxFile.items = aFileName
+		_lboxMaxFile.selection = 1				
+	),
+	
+	--Example: g_stLoadMaxByList.fnLoadMergeOrImport enLoadType sel
+	fn fnLoadMergeOrImport _enLoadType _sel=
+	(
+		case _enLoadType of
+		(
+			#Load:
+				loadMaxFile aFile[_sel] quiet:on useFileUnits:on
+			#Merge:
+			(
+				if bShowMIOptions == true then	mergeMAXFile aFile[_sel]
+				else  							mergeMAXFile aFile[_sel] #renameMtlDups #AutoRenameDups #useSceneMtlDups
+				
+			)
+			#ImportFbx:
+			(
+				if bShowMIOptions == true then 	importFile aFile[_sel]
+				else				 			importFile aFile[_sel] #noPrompt
+			)
+			#ImportObj:
+			(
+				if bShowMIOptions == true then	importFile aFile[_sel]
+				else				  			importFile aFile[_sel] #noPrompt
+			)
+		)	
 	)
-
 )
 g_stLoadMaxByList = stLoadMaxByList()
 global g_stPathOrProp		--if might occur an error if I comment this line when we open the rollout in the first time.
@@ -106,6 +182,7 @@ struct st1ClipInFileWnd
 (
 	public roll,	
 	roSearch,
+	roImportOrMergeSettings,
 	roExportSettings,
 	roRecordExportPath,
 	roCheckUndoCallBack,
@@ -127,7 +204,7 @@ struct st1ClipInFileWnd
 																--tooltip:"Save the path that you typed in the left field, it will change automatically while you open the tools next time"
 
 				Multilistbox  lboxMaxFile width:193 height:9	pos:[edtSourceFolderPath.pos.x, edtSourceFolderPath.pos.y + edtSourceFolderPath.height + 18] 
-																items:g_stLoadMaxByList.aMaxFileName				
+																items:g_stLoadMaxByList.aFileName				
 
 				bitmap bmp1 bitmap:(bitmap g_stLoadMaxByList.TNWidth g_stLoadMaxByList.TNHeight color:(color 155 155 155))
 																pos:[lboxMaxFile.pos.x + lboxMaxFile.width + 5, lboxMaxFile.pos.y]
@@ -178,8 +255,8 @@ struct st1ClipInFileWnd
 					if aSelection.count == 1 do
 					(
 						nSelIDInList = aSelection[1]
-						sMaxFilePath = getFileNamePath g_stLoadMaxByList.aMaxFile[nSelIDInList]
-						sMaxFileName = g_stLoadMaxByList.aMaxFileName[nSelIDInList]
+						sMaxFilePath = getFileNamePath g_stLoadMaxByList.aFile[nSelIDInList]
+						sMaxFileName = g_stLoadMaxByList.aFileName[nSelIDInList]
 						bmpfile = (sMaxFilePath + "\\Thumbnails\\@" +  (getfilenamefile sMaxFileName) + ".jpg")
 						if (doesFileExist bmpfile) == true then 
 							bmp1.filename = bmpfile
@@ -442,12 +519,12 @@ struct st1ClipInFileWnd
 				
 				
 				aExpMaxFile = #()
-				for iter = 1 to g_stLoadMaxByList.aMaxFile.count do 
+				for iter = 1 to g_stLoadMaxByList.aFile.count do 
 				(
 					if lboxMaxFile.selection[iter] == true then
 					(
-						format "Sanlilog_Export file: % \n" g_stLoadMaxByList.aMaxFile[iter]
-						append aExpMaxFile g_stLoadMaxByList.aMaxFile[iter]
+						format "Sanlilog_Export file: % \n" g_stLoadMaxByList.aFile[iter]
+						append aExpMaxFile g_stLoadMaxByList.aFile[iter]
 					)
 				)
 
@@ -511,14 +588,19 @@ struct st1ClipInFileWnd
 				if g_stPathOrProp.sLoadFileFromPath != undefined do
 					edtSourceFolderPath.text = g_stPathOrProp.sLoadFileFromPath
 
-				g_stLoadMaxByList.fnLoadFileToList &lboxMaxFile edtSourceFolderPath.text
+				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
+				g_stLoadMaxByList.fnLoadFileToList &lboxMaxFile edtSourceFolderPath.text _enLoadType:enLoadType
 			)
 			
 			on btnLoadFileFromPath pressed do
 			(
 				--clear the roSearch.edtSearch.text
 				g_SanliCustomTool.roMainRollout.ro1Clip1File.roSearch.edtSearch.text = ""
-				g_stLoadMaxByList.fnLoadFileToList &lboxMaxFile edtSourceFolderPath.text
+				
+				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
+				g_stLoadMaxByList.fnLoadFileToList &lboxMaxFile edtSourceFolderPath.text _enLoadType:enLoadType
 			)
 
 			on lboxMaxFile selected index do
@@ -528,8 +610,11 @@ struct st1ClipInFileWnd
 			
 			on lboxMaxFile doubleClicked sel do
 			(
-				format "Sanlilog_SelectionFile: % \n" g_stLoadMaxByList.aMaxFile[sel]
-				loadMaxFile g_stLoadMaxByList.aMaxFile[sel] quiet:on useFileUnits:on
+				format "Sanlilog_SelectionFile: % \n" g_stLoadMaxByList.aFile[sel]
+				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
+				g_stLoadMaxByList.fnLoadMergeOrImport enLoadType sel
+				--loadMaxFile g_stLoadMaxByList.aFile[sel] quiet:on useFileUnits:on
 
 				--¥´¶}¨ÃÀË¬dStartup¸ê®Æ§¨¸ÌªºÀÉ®×¦³µL°ÝÃD¡A­Y¦³°ÝÃD´N¹Á¸Õ­×´_StartupÀÉ©MmaxÀÉ
 				g_stFixCallBack.fnCheckFixStartupFileAndScene()
@@ -569,27 +654,27 @@ struct st1ClipInFileWnd
 			(
 				tempMaxFile = #()
 
-				g_stLoadMaxByList.aMaxFileName = deepCopy g_stLoadMaxByList.aMaxFileName_Backup
-				g_stLoadMaxByList.aMaxFileName = fnSearchFilter g_stLoadMaxByList.aMaxFileName edtSearch.text 
-				g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile.items = g_stLoadMaxByList.aMaxFileName
+				g_stLoadMaxByList.aFileName = deepCopy g_stLoadMaxByList.aFileName_Backup
+				g_stLoadMaxByList.aFileName = fnSearchFilter g_stLoadMaxByList.aFileName edtSearch.text 
+				g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile.items = g_stLoadMaxByList.aFileName
 				g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile.selection = 
-					findItem g_stLoadMaxByList.aMaxFileName g_stLoadMaxByList.aMaxFileName[1]
+					findItem g_stLoadMaxByList.aFileName g_stLoadMaxByList.aFileName[1]
 
 
 				--¦]¬°MultiListBox¤¤¦s©ñªºmaxÀÉ¦W¶¶§Ç§ïÅÜ¡A©Ò¥HnBRCMaxFile¤]­n¸òµÛ§ï
 				--¨C¦¸m¥ý±Nmaxfile³Æ¥÷ªº­ì©l¸ê®Æ¦s¤@¥÷¦^¨Ó¡A¦]¬°¤§«á·|³Q¹LÂo«áªº¨ú¥N
-				g_stLoadMaxByList.aMaxFile =  deepCopy g_stLoadMaxByList.aMaxFile_Backup
-				for i = 1 to g_stLoadMaxByList.aMaxFileName.count do 
+				g_stLoadMaxByList.aFile =  deepCopy g_stLoadMaxByList.aFile_Backup
+				for i = 1 to g_stLoadMaxByList.aFileName.count do 
 				(
-					for j = 1 to g_stLoadMaxByList.aMaxFile.count do 
+					for j = 1 to g_stLoadMaxByList.aFile.count do 
 					(
-						str = filterString g_stLoadMaxByList.aMaxFile[j] "\\"	
+						str = filterString g_stLoadMaxByList.aFile[j] "\\"	
 						str = str[str.count]
-						str2 = g_stLoadMaxByList.aMaxFileName[i] + ".max"
+						str2 = g_stLoadMaxByList.aFileName[i] + ".max"
 						--§ä¨ì»P¹LÂo«á¦r¦ê¬Û¦PªºmaxÀÉ®×¸ô®|¦s¨ì®e¾¹¤º
 						if str == str2 do (
-							append tempMaxFile g_stLoadMaxByList.aMaxFile[j]
-							deleteItem g_stLoadMaxByList.aMaxFile j
+							append tempMaxFile g_stLoadMaxByList.aFile[j]
+							deleteItem g_stLoadMaxByList.aFile j
 							exit
 						)
 					)
@@ -597,8 +682,56 @@ struct st1ClipInFileWnd
 
 						--±N¦s©ñmaxÀÉ®×ªº¸ô®|¨ú¥N
 				if tempMaxFile.count != 0 do
-					g_stLoadMaxByList.aMaxFile = tempMaxFile
+					g_stLoadMaxByList.aFile = tempMaxFile
 
+			)
+
+		)
+
+		rollout roImportOrMergeSettings "Load¡Bmerge or import_v1.001"
+		(
+
+			label lbLoadType "Load or import : " 	pos:[15, 6]
+			radioButtons rdoLoadType "" 	 		pos:[lbLoadType.pos.x + 90, lbLoadType.pos.y] columns:2
+													default:g_stLoadMaxByList.nDefaultLoadType
+													labels:#("Load max file", "Merge max file", "Import Fbx file", "Import Obj file")
+
+			--show merge or import options													
+			checkbox ckShowMIOptions				"Show Options" checked:g_stLoadMaxByList.bShowMIOptions tooltip:"Show merge Or import options"
+													pos:[lbLoadType.pos.x + 48, lbLoadType.pos.y + 40]
+			button btnMergeOrImportFile				"Merge or import multiple files" enabled:false 
+													pos:[ckShowMIOptions.pos.x + 90, ckShowMIOptions.pos.y - 3]
+
+			on rdoLoadType changed state do
+			(
+				g_stLoadMaxByList.nDefaultLoadType = state
+				enLoadType =  g_stLoadMaxByList.aLoadType[g_stLoadMaxByList.nDefaultLoadType]
+				g_stLoadMaxByList.fnLoadFileToList 	&g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile \
+													g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.edtSourceFolderPath.text \
+													_enLoadType:enLoadType
+			)
+			on ckShowMIOptions changed bChecked do
+			(
+				g_stLoadMaxByList.bShowMIOptions = bChecked
+			)
+
+			on btnMergeOrImportFile pressed do
+			(
+				aSelection = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile.selection as array
+				if aSelection.count > 0 do
+				(
+					nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+					enLoadType =  g_stLoadMaxByList.aLoadType[nState]
+					
+					--this function don't need to work on LoadMaxMode
+					if enLoadType == #Load do
+					( return 0)
+
+					for i = 1 to aSelection.count do
+					(
+						g_stLoadMaxByList.fnLoadMergeOrImport enLoadType aSelection[i]
+					)
+				)
 			)
 
 		)
@@ -688,10 +821,10 @@ struct st1ClipInFileWnd
 
 				--collect selected max file in multilistbox
 				aCheckMaxCallbackFile = #()
-				for iter = 1 to g_stLoadMaxByList.aMaxFile.count do 
+				for iter = 1 to g_stLoadMaxByList.aFile.count do 
 				(
 					if g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile.selection[iter] == true then
-						append aCheckMaxCallbackFile g_stLoadMaxByList.aMaxFile[iter]
+						append aCheckMaxCallbackFile g_stLoadMaxByList.aFile[iter]
 				)
 
 				--check the maxfile callback
