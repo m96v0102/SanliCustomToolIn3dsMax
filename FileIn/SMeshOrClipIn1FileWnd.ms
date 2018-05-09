@@ -190,7 +190,7 @@ struct st1ClipInFileWnd
 
 	fn Constructor =
 	(
-		rollout roll "1 clip in 1 file or static mesh_v1.001"
+		rollout roll "1 clip in 1 file or static mesh_v1.002"
 		(
 			group "1 clip in file (or static mesh)"
 			(				
@@ -244,7 +244,35 @@ struct st1ClipInFileWnd
 																tooltip:"Export the selection that you selected in the current max file."
 				button 	btnSaveExportPath "Save path" 			pos:[btnSelExport.pos.x + 108, btnSelExport.pos.y] width:98 --enabled:false
 																tooltip:"Save the export path above"
-			)			
+			)
+			
+			-- some maxfiles is copied from Other Projects, and have some Thumbnail with it, but the preview rules are different.
+			-- so use the Project thumbnail rules to load and copy it for this tool.
+			fn fnCopyBitmapFromProjThumbNail _sImageFileForUJProj _sMaxFilePath _sFileNameWithoutExt=
+			(
+				--Load the image frome file
+				bitMapProj = openBitMap _sImageFileForUJProj
+
+				nWidth = g_stLoadMaxByList.TNWidth
+				nHeight = g_stLoadMaxByList.TNHeight
+
+				--pasteBox = (box2 0 0 g_stLoadMaxByList.TNWidth g_stLoadMaxByList.TNHeight)
+				--pasteBox = (box2 ((bitMapProj.width - nWidth)/ 2) ((bitMapProj.height - nHeight)/ 2) nWidth nHeight)
+				pasteBox = (box2 ((bitMapProj.width - nWidth)/ 2) 0 nWidth nHeight)							
+				
+				newdst = bitmap nWidth nHeight color:(color 0 0 0 0)
+				pos = [0,0]
+				pasteBitmap bitMapProj newdst pasteBox pos
+				--display newdst
+
+				sDirPath = _sMaxFilePath + "\\Thumbnails\\@"
+				if doesFileExist sDirPath == false do
+					makeDir sDirPath
+
+				newdst.filename = (sDirPath +  _sFileNameWithoutExt + ".jpg")
+				save newdst
+				bmp1.filename = newdst.filename
+			)
 
 			--Set Thumbnail and other Multilistbox's selection
 			fn fnGetThumbnail _SourceLbx =
@@ -257,9 +285,18 @@ struct st1ClipInFileWnd
 						nSelIDInList = aSelection[1]
 						sMaxFilePath = getFileNamePath g_stLoadMaxByList.aFile[nSelIDInList]
 						sMaxFileName = g_stLoadMaxByList.aFileName[nSelIDInList]
-						bmpfile = (sMaxFilePath + "\\Thumbnails\\@" +  (getfilenamefile sMaxFileName) + ".jpg")
-						if (doesFileExist bmpfile) == true then 
-							bmp1.filename = bmpfile
+						sFileNameWithoutExt = getfilenamefile sMaxFileName
+						sBmpFile = (sMaxFilePath + "\\Thumbnails\\@" +  sFileNameWithoutExt + ".jpg")
+						sJpgFileForUJProj = (sMaxFilePath + "\\@" +  sFileNameWithoutExt + ".jpg")
+						sBmpFileForUJProj = (sMaxFilePath + "\\@" +  sFileNameWithoutExt + ".Bmp")
+						if (doesFileExist sBmpFile) == true then
+						(
+							bmp1.filename = sBmpFile
+						)
+						else if (doesFileExist sJpgFileForUJProj) == true then
+							fnCopyBitmapFromProjThumbNail sJpgFileForUJProj sMaxFilePath sFileNameWithoutExt
+						else if (doesFileExist sBmpFileForUJProj) == true then
+							fnCopyBitmapFromProjThumbNail sBmpFileForUJProj sMaxFilePath sFileNameWithoutExt
 						else 
 							bmp1.bitmap = bitmap g_stLoadMaxByList.TNWidth g_stLoadMaxByList.TNHeight color:(color 155 155 155)
 					)
@@ -378,18 +415,18 @@ struct st1ClipInFileWnd
 				if aSelection.count == 1 then
 				(
 					hidebyCategory.bones = on
-					sWidth = g_stLoadMaxByList.TNWidth
-					sHeight = g_stLoadMaxByList.TNHeight
+					nWidth = g_stLoadMaxByList.TNWidth
+					nHeight = g_stLoadMaxByList.TNHeight
 
 					--Set grab_bmp1
 					grab_tempbmp1 = gw.getViewportDib()
 					range = grab_tempbmp1.width / grab_tempbmp1.height as Float
-					grab_bmp1 = bitmap (sWidth * range) sHeight color:white
+					grab_bmp1 = bitmap (nWidth * range) nHeight color:white
 					copy grab_tempbmp1 grab_bmp1
 					
 					--Set grab_bmp2
-					grab_bmp2 = bitmap sWidth sHeight color:white
-					pasteBitmap grab_bmp1 grab_bmp2 (box2 ((grab_bmp1.width - sWidth)/ 2) 0 sWidth sHeight) [0,0] 					
+					grab_bmp2 = bitmap nWidth nHeight color:white
+					pasteBitmap grab_bmp1 grab_bmp2 (box2 ((grab_bmp1.width - nWidth)/ 2) 0 nWidth nHeight) [0,0] 					
 					
 					--nClipIDInList = aSelection[1]
 					--sClipName = g_stTimeRange.arrAnimName[nClipIDInList]
@@ -601,6 +638,8 @@ struct st1ClipInFileWnd
 				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
 				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
 				g_stLoadMaxByList.fnLoadFileToList &lboxMaxFile edtSourceFolderPath.text _enLoadType:enLoadType
+
+				fnGetThumbnail lboxMaxFile
 			)
 
 			on lboxMaxFile selected index do

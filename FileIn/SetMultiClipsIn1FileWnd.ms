@@ -274,10 +274,10 @@ struct stMultiClipsIn1FileWnd
 					(
 						nClipIDInList = aSelection[1]
 						sClipName = g_stTimeRange.arrAnimName[nClipIDInList]
-						bmpfile = (maxfilepath + "\\Thumbnails\\@" +  (getfilenamefile maxfilename) + "_" + sClipName + ".jpg")
+						sBmpFile = (maxfilepath + "\\Thumbnails\\@" +  (getfilenamefile maxfilename) + "_" + sClipName + ".jpg")
 
-						if (doesFileExist bmpfile) == true then
-							bmp1.filename = bmpfile
+						if (doesFileExist sBmpFile) == true then
+							bmp1.filename = sBmpFile
 						else	
 							bmp1.bitmap = 
 							(bitmap g_stTimeRange.TNWidth g_stTimeRange.TNHeight color:(color 150 150 150))
@@ -447,18 +447,18 @@ struct stMultiClipsIn1FileWnd
 				if aSelection.count == 1 then
 				(
 					hidebyCategory.bones = on
-					sWidth = g_stTimeRange.TNWidth
-					sHeight = g_stTimeRange.TNHeight
+					nWidth = g_stTimeRange.TNWidth
+					nHeight = g_stTimeRange.TNHeight
 
 					--Set grab_bmp1
 					grab_tempbmp1 = gw.getViewportDib()
 					range = grab_tempbmp1.width / grab_tempbmp1.height as Float
-					grab_bmp1 = bitmap (sWidth * range) sHeight color:white
+					grab_bmp1 = bitmap (nWidth * range) nHeight color:white
 					copy grab_tempbmp1 grab_bmp1
 					
 					--Set grab_bmp2
-					grab_bmp2 = bitmap sWidth sHeight color:white
-					pasteBitmap grab_bmp1 grab_bmp2 (box2 ((grab_bmp1.width - sWidth)/ 2) 0 sWidth sHeight) [0,0] 					
+					grab_bmp2 = bitmap nWidth nHeight color:white
+					pasteBitmap grab_bmp1 grab_bmp2 (box2 ((grab_bmp1.width - nWidth)/ 2) 0 nWidth nHeight) [0,0] 					
 					
 					nClipIDInList = aSelection[1]
 					sClipName = g_stTimeRange.arrAnimName[nClipIDInList]

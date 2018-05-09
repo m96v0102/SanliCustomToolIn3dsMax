@@ -103,7 +103,9 @@ struct stSomeSavedPathOrProperties
 	),
 
 	fn fnSaveXml=
-	(	
+	(
+		sLoadFileFromPath = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.edtSourceFolderPath.text
+
 		nTabIndex = g_SanliCustomTool.roMainRollout.dnTabs.SelectedIndex + 1
 		case nTabIndex of
 		(
@@ -119,7 +121,7 @@ struct stSomeSavedPathOrProperties
 
 		if (doesFileExist sXmlRecordFile) == true then
 		(
-			fnLoadXmlAndRoot()					
+			fnLoadXmlAndRoot()
 			fnCreateOrReviseNodeUnderRoot "ExportPath" sExportPath	--revise sExportPath for xml node
 			fnCreateOrReviseNodeUnderRoot "LoadMaxfileFromPath" sLoadFileFromPath
 			fnCreateOrReviseNodeUnderRoot "ExportRecordPath" sExportRecordPath
@@ -201,6 +203,10 @@ struct stSanliCustomTool
 							enLoadType =  g_stLoadMaxByList.aLoadType[ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state]
 							g_stLoadMaxByList.fnLoadFileToList 	&ro1Clip1File.roll.lboxMaxFile \
 																ro1Clip1File.roll.edtSourceFolderPath.text _enLoadType:enLoadType
+
+
+							ro1Clip1File.roll.fnGetThumbnail ro1Clip1File.roll.lboxMaxFile
+
 						)
 					2:	(
 							g_SanliCustomTool.roMainRollout.height = roMultiClip1File.roHeight
@@ -259,7 +265,7 @@ struct stSanliCustomTool
 	(
 		--If you change the height or width, remember to change another width height in "subRollout theSubRollout".
 		createDialog roMainRollout 370 roMainRollout.ro1Clip1File.roHeight 560 300
-		roMainRollout.title = "SanliCustomTool(v1.007)"
+		roMainRollout.title = "SanliCustomTool(v1.008)"
 		
 		--copy Unity Editor files to C:\SanliCustomTool
 		sCurrentScriptFile = getThisScriptFilename()
@@ -279,7 +285,10 @@ struct stSanliCustomTool
     init = Constructor()
 )
 
-if g_SanliCustomTool != undefined and g_SanliCustomTool.roMainRollout != undefined do destroydialog g_SanliCustomTool.roMainRollout
+if g_SanliCustomTool != undefined and g_SanliCustomTool.roMainRollout != undefined do
+(
+	destroydialog g_SanliCustomTool.roMainRollout
+) 
 g_SanliCustomTool = stSanliCustomTool()
 -- if roMainRolloutFloater != undefined do closeRolloutFloater roMainRolloutFloater
 -- roMainRolloutFloater = newRolloutFloater "SanliCustomTool v1.001" 410 425	-- •i•H™¯ºe°B¶Ï∏mêm´¸©w
