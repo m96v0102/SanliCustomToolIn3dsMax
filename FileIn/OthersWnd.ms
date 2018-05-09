@@ -25,9 +25,9 @@ struct stOthers
 
 	sSwitchLODHint1 = "Show the current LOD model, and hide the others\n ",
 	sSwitchLODHint2 = "The end of the model's name should be like: LOD0¡BLOD1¡BLOD2",	
-	sSwitchLODHint3 = "You can preveiew at the Models at Total + Selection statistics:",
-	sSwitchLODHint4 = "Views/viewport Configuration/Stastistics/Setup",
-	sSwitchLODHint5 = "press J if you don't want to see the selection brackets.",
+	sSwitchLODHint3 = "1. You can preveiew the Models at Total + Selection statistics:",
+	sSwitchLODHint4 = "UpperMenu-->Views/viewport Configuration/Stastistics/Setup",
+	sSwitchLODHint5 = "2. press J if you don't want to see the selection brackets.",
 
 	fn fnInitialize = 
 	(
@@ -61,7 +61,7 @@ struct stOthersWnd
 
 	function Constructor =
 	(
-		rollout roInfo "Info_V1.003"
+		rollout roInfo "Info_V1.004"
 		(
 			dotNetControl lblInfo "System.Windows.Forms.Label" height:53 width:320 pos:[20,10]--align:#center
 			hyperLink lbFB "GitHub" address:"https://github.com/m96v0102/SanliCustomToolIn3dsMax.git" 
