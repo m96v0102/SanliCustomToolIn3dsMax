@@ -23,6 +23,12 @@ struct stOthers
 	sInfoMessage1 = "SanliCustomTool is a script to manage animation、 LOD 、Batch rename or export multiple objects to FBX. ",
 	sInfoMessage2 = "If you have questions, please contact me. the newer version will always update in the github website. ",
 
+	sSwitchLODHint1 = "Show the current LOD model, and hide the others\n ",
+	sSwitchLODHint2 = "The end of the model's name should be like: LOD0、LOD1、LOD2",	
+	sSwitchLODHint3 = "You can preveiew at the Models at Total + Selection statistics:",
+	sSwitchLODHint4 = "Views/viewport Configuration/Stastistics/Setup",
+	sSwitchLODHint5 = "press J if you don't want to see the selection brackets.",
+
 	fn fnInitialize = 
 	(
 		--純預覽相關
@@ -162,65 +168,17 @@ struct stOthersWnd
 				)
 				else
 					messageBox "Please Select 'one' name to delete!!"
-
-				--old code
-				/*if lbxOldName.items.count >= 1 and lbxNewName.items.count >= 1 and lbxOldName.selection != 0 do
-				(
-					lbxOldName.items = deleteitem lbxOldName.items lbxOldName.selection
-					lbxNewName.items = deleteitem lbxNewName.items lbxNewName.selection
-				)*/
 			)
 			
 			on btnRenameSelect pressed do
 			(
 				fnRenameFormList()
-				/*aSelInOldNameLst = (lbxOldName.selection as array)
-				aSelInNewNameLst = (lbxNewName.selection as array)
-
-				if aSelInOldNameLst.count >= 1 then
-				(
-					for i = 1 to aSelInOldNameLst.count do
-					(
-						nOldNameLstSelID = aSelInOldNameLst[i]
-						nNewNameLstSelID = aSelInNewNameLst[i]
-						fnRenameObj lbxOldName.items[nOldNameLstSelID] lbxNewName.items[nNewNameLstSelID]
-					)
-				)
-				else
-					messageBox "Please at least select one name from the list above"*/
-
-				
-				
-
-				--old code
-				--fnRenameObj lbxOldName.items[lbxOldName.selection] lbxNewName.items[lbxNewName.selection]
 			)
 			
 			on btnRenameAll pressed do
 			(
 				max select all
 				fnRenameFormList()
-
-				/*aSelInOldNameLst = (lbxOldName.selection as array)
-				aSelInNewNameLst = (lbxNewName.selection as array)
-
-				if aSelInOldNameLst.count >= 1 then
-				(
-					max select all
-					for i = 1 to aSelInOldNameLst.count do
-					(
-						nOldNameLstSelID = aSelInOldNameLst[i]
-						nNewNameLstSelID = aSelInNewNameLst[i]
-						fnRenameObj lbxOldName.items[nOldNameLstSelID] lbxNewName.items[nNewNameLstSelID]
-					)
-				)
-				else
-					messageBox "Please at least select one name from the list above"*/
-
-				-- old code
-				/*max select all
-				for i = 1 to lbxNewName.items.count do
-					fnRenameObj lbxOldName.items[i] lbxNewName.items[i]*/
 			)
 			
 			on btnBatchRename pressed do
@@ -233,10 +191,6 @@ struct stOthersWnd
 						loadMaxFile aMaxFiles[f] quiet:true
 						max select all
 						fnRenameFormList()
-
-						--oldcode
-						--for i = 1 to lbxNewName.items.count do
-							--fnRenameObj lbxOldName.items[i] lbxNewName.items[i]
 						
 						saveMaxFile aMaxFiles[f] quiet:true
 					)
@@ -248,8 +202,15 @@ struct stOthersWnd
 			
 		)
 
-		rollout roSwitchModel "SwitchModel_v1.002_The function will update in the future!!"
+		rollout roSwitchModel "SwitchModel_v1.003"
 		(
+			group "Switch LOD Model"
+			(
+				label lbSwitchLODModel1 ""
+				label lbSwitchLODModel2 ""
+			)
+			
+
 			--the elements in this array have to be same with the aSwitchModelMode array.
 			label lbSwitchModelMode "Switch Model by : " 	align:#left
 			radioButtons rdoSwitchModelMode "" 				pos:[lbSwitchModelMode.pos.x + 90, lbSwitchModelMode.pos.y] 
@@ -261,6 +222,13 @@ struct stOthersWnd
 			label			lbSwitchModelName		"Model Name:"	 	--pos:[btnSwitchPreviousModel.pos.x,	btnSwitchPreviousModel.pos.y+30]
 			editText		edtSwitchModelName		""					width:320 height:60 --align:#center
 																		--pos:[lbSwitchModelName.pos.x + 55, lbSwitchModelName.pos.y]
+
+			group "Other Hint"															
+			(
+				label lbSwitchLODModel3 ""
+				label lbSwitchLODModel4 ""
+				label lbSwitchLODModel5 ""
+			)
 																				
 			--預覽或檢查模型的相關函式
 			fn fnShowNextPrevModel _ModelSelBefore _edtModelname _num=
@@ -346,7 +314,24 @@ struct stOthersWnd
 					(
 						sNewLODName = replace g_stOthers.aCurLODShowingModel[i].Name g_stOthers.aCurLODShowingModel[i].Name.count 1 sNewLODKeyword
 						mdNewLOD = getNodeByName sNewLODName
-						append aNewLODModels mdNewLOD
+						if mdNewLOD != undefined then
+							append aNewLODModels mdNewLOD
+						else
+						(
+							--if the LOD number is less than 2 (means it's only have LOD0 and LOD1),
+							--then change the number.
+							--detect what button that the user pressed(show next model or show previous model)							
+							if _nNum > 0 then nLODNewKeyword = 0
+							else nLODNewKeyword = nLODNewKeyword - 1
+							sNewLODKeyword = (nLODNewKeyword as string)
+
+							-- Get the current LODModel again
+							sNewLODName = replace g_stOthers.aCurLODShowingModel[i].Name g_stOthers.aCurLODShowingModel[i].Name.count 1 sNewLODKeyword
+							mdNewLOD = getNodeByName sNewLODName
+							if mdNewLOD != undefined then
+								append aNewLODModels mdNewLOD
+
+						)							
 					)
 					if aNewLODModels.count > 0 do g_stOthers.aCurLODShowingModel = deepCopy aNewLODModels
 
@@ -359,6 +344,7 @@ struct stOthersWnd
 						else unhide g_stOthers.aLODModels[i]
 					)
 
+					--select the models, so the statics will show the selection PolyCounts、MeshCounts or Vertcounts
 					select g_stOthers.aCurLODShowingModel
 				)
 
@@ -384,6 +370,15 @@ struct stOthersWnd
 				)
 				
 				fnShowNextPrevModel g_stOthers.ModelSelBefore _edtModelname _num
+			)
+
+			on roSwitchModel open do
+			(
+				lbSwitchLODModel1.text = g_stOthers.sSwitchLODHint1
+				lbSwitchLODModel2.text = g_stOthers.sSwitchLODHint2
+				lbSwitchLODModel3.text = g_stOthers.sSwitchLODHint3
+				lbSwitchLODModel4.text = g_stOthers.sSwitchLODHint4
+				lbSwitchLODModel5.text = g_stOthers.sSwitchLODHint5
 			)
 
 			on roSwitchModel pressed do

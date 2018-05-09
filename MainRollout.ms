@@ -2,6 +2,11 @@ fileIn "FileIn\\XML.ms" --if this function doesn't run at the first line, it wil
 
 --some saving pathes or properties
 global g_SanliCustomTool
+
+--This will be undefined if we run at the first time, so it will initialize later.
+--and it won't be undefined again when we run at the second time while we reopen the SanliCustomTool
+global g_stPathOrProp
+
 struct stSomeSavedPathOrProperties
 (
 	sLoadFileFromPath = "",
@@ -104,8 +109,6 @@ struct stSomeSavedPathOrProperties
 
 	fn fnSaveXml=
 	(
-		sLoadFileFromPath = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.edtSourceFolderPath.text
-
 		nTabIndex = g_SanliCustomTool.roMainRollout.dnTabs.SelectedIndex + 1
 		case nTabIndex of
 		(
@@ -137,13 +140,20 @@ struct stSomeSavedPathOrProperties
 		)
 	)
 )
-global g_stPathOrProp = stSomeSavedPathOrProperties()
+
+--Every time I reopen the Sanlicustomtool without closeing the toolwindow,
+--g_stPathOrProp always initialized all of the members, 
+--so I always get sLoadFileFromPath to "" (the Loading Path is gone)
+--The solution is add an "if" statement to detect the varialbes need or no need to be initialized.
+if g_stPathOrProp == undefined do
+(
+	 g_stPathOrProp = stSomeSavedPathOrProperties()
+)
 
 fileIn "FileIn\\SetMultiClipsIn1FileWnd.ms"  	--Multiple clips in 1 file Window
 fileIn "FileIn\\SMeshOrClipIn1FileWnd.ms"		--1 clip in 1 file Window
 fileIn "FileIn\\OthersWnd.ms"					--Others Window
 fileIn "FileIn\\fnFixCallBack.ms"				--check and fix callbacks virus
-
 
 global g_stFixCallBack = o_stFixCallBack()		--fileIn fnFixCallBack時會用到的結構
 
@@ -204,7 +214,6 @@ struct stSanliCustomTool
 							g_stLoadMaxByList.fnLoadFileToList 	&ro1Clip1File.roll.lboxMaxFile \
 																ro1Clip1File.roll.edtSourceFolderPath.text _enLoadType:enLoadType
 
-
 							ro1Clip1File.roll.fnGetThumbnail ro1Clip1File.roll.lboxMaxFile
 
 						)
@@ -248,8 +257,6 @@ struct stSanliCustomTool
 					ro1Clip1File.roll.edtExportPath.text = g_stPathOrProp.sExportPath
 					ro1Clip1File.roRecordExportPath.edtExportPathRecord.text = g_stPathOrProp.sExportRecordPath
 				)
-				
-				
 			)-- end roll open
 
 			on roMainRollout close do
@@ -265,7 +272,7 @@ struct stSanliCustomTool
 	(
 		--If you change the height or width, remember to change another width height in "subRollout theSubRollout".
 		createDialog roMainRollout 370 roMainRollout.ro1Clip1File.roHeight 560 300
-		roMainRollout.title = "SanliCustomTool(v1.008)"
+		roMainRollout.title = "SanliCustomTool(v1.009)"
 		
 		--copy Unity Editor files to C:\SanliCustomTool
 		sCurrentScriptFile = getThisScriptFilename()

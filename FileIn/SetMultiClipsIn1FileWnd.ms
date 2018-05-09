@@ -211,9 +211,7 @@ struct stMultiClipsIn1FileWnd
 				editText edtTextureExt text:".tga " 			pos:[lbTextureExt.pos.x + 20, lbTextureExt.pos.y - 3] width:58 height:10
 				
 				button 	btnExportFile "Export FBX"				pos:[lbEmbedTexture.pos.x, lbEmbedTexture.pos.y + 28] width:315
-																tooltip:"Export selected max files from the list."
-				--button 	btnSelExport "Export selection"			pos:[btnExportFile.pos.x + 95, btnExportFile.pos.y] width:100
-																--tooltip:"Export the selection that you selected in the current max file."
+																tooltip:"Export selected max files from the list."				
 			)
 			
 			fn fnSetlistItemToArray =
@@ -632,7 +630,7 @@ struct stMultiClipsIn1FileWnd
 								ndEndFrame = ndAnimName[i].mfGetChildrenNodesByName "EndFrame"
 								sStartFrame = ndStartFrame[1].mfGetText()
 								sEndFrame = ndEndFrame[1].mfGetText()
-								--format "¤T¥ßlog_Name %  StartFrame: % EndFrame: % \n" sAnimationName sStartFrame sEndFrame
+								--format "Sanlilog_Name %  StartFrame: % EndFrame: % \n" sAnimationName sStartFrame sEndFrame
 
 								append g_stTimeRange.arrAnimName sAnimationName
 								append g_stTimeRange.arrAnimStartFrame sStartFrame
