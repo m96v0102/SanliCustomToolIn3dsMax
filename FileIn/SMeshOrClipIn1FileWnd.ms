@@ -829,7 +829,7 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roCheckUndoCallBack "Check or delete undoMax callbackScript_v1.002"
+		rollout roCheckUndoCallBack "Check or delete undoMax callbackScript_v1.003"
 		(
 			button	btnRemoveCallBackCF				"Remove callback from current file"	  width:330 --align:#left
 													-- height:18 pos:[btnExportHint.pos.x + 105,btnExportHint.pos.y ] 
@@ -845,8 +845,7 @@ struct st1ClipInFileWnd
 
 				button 		btnBatchRemoveCallBack		"Batch check" width:320
 														pos:[lbBatchCheckMode.pos.x, lbBatchCheckMode.pos.y + 24]
-			)
-			
+			)			
 
 			--修改Startup被改的檔案和max檔裡的Callback
 			on btnRemoveCallBackCF pressed do

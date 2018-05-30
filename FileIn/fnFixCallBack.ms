@@ -200,6 +200,8 @@ struct o_stFixCallBack
 	(
 		fnRemoveCallBacks()
 		
+		sMessage = "No Virus Detect"
+
 		sStartupScript = fnGetStartupFile()
 		if sStartupScript == undefined do
 			return 0				
