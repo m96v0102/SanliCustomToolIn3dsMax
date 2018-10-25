@@ -213,8 +213,7 @@ struct st1ClipInFileWnd
 
 				button btn_RenderTools "CreateThumbnail" 		width:g_stLoadMaxByList.btnRnWidth height:18	--height:58
 																pos:[bmp1.pos.x, btnOpenFile.pos.y]
-																tooltip:"create current max file thumbnail" 																
-
+																tooltip:"create current max file thumbnail"
 			)
 			
 			group "Export"
@@ -845,7 +844,7 @@ struct st1ClipInFileWnd
 
 				button 		btnBatchRemoveCallBack		"Batch check" width:320
 														pos:[lbBatchCheckMode.pos.x, lbBatchCheckMode.pos.y + 24]
-			)			
+			)
 
 			--修改Startup被改的檔案和max檔裡的Callback
 			on btnRemoveCallBackCF pressed do

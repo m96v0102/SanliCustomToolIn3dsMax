@@ -74,10 +74,10 @@ struct o_stFixCallBack
 	--顯示常駐程式處理後的訊息
 	fn fnGetMessage _sStartupScript _bSaveMax=
 	(
-		sClearCallBackMSG = "1. 檔案釋放出來的常駐程式已經刪除。\n"
-		sMessage = sClearCallBackMSG + "2. 被改寫的路徑: " + _sStartupScript + " 已經刪除"
+		sClearCallBackMSG = "1. Virus delete completed。\n"
+		sMessage = sClearCallBackMSG + "2. The path : " + _sStartupScript + " was repaired"
 		if _bSaveMax == true do
-			sMessage = sMessage + "\n3. 藏在Max檔裡的常駐程式已經刪除"
+			sMessage = sMessage + "\n3. The Virus in the MaxFile has been deleted."
 		return sMessage
 	),
 
@@ -131,11 +131,11 @@ struct o_stFixCallBack
 		(
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
 			--yesNoCancelBox <message_string> [title:<window_title_string>] [beep:<boolean>] 
-			sMessage = "發現Startup資料夾的" + sStartupScriptName + "有病毒，是否要立即處理: \n"
-			sResultYes = "yes = 嘗試清除病毒(清除後，記得手動存max檔)\n"
-			sResultCancel = "No or Cancel = 不做任何事情\n"
+			sMessage = "Startup\\" + sStartupScriptName + "Has detected the virus: \n"
+			sResultYes = "yes = Clean the virus(remember to save the file)\n"
+			sResultCancel = "No or Cancel = Don't do anything\n"
 			sMessage  = sMessage + sResultYes + sResultCancel
-			result = yesNoCancelBox sMessage title:"發現不明檔案"	-- [beep:<boolean>] 
+			result = yesNoCancelBox sMessage title:"Virus detected"	-- [beep:<boolean>] 
 			
 			if result == #yes then
 			(
@@ -146,7 +146,7 @@ struct o_stFixCallBack
 				sMessage = fnGetMessage sStartupScript true	--最後的true代表函式裡的第三段字串也顯示			
 			)
 			else
-				sMessage = "修復常駐程式的作業取消"
+				sMessage = "Cancel the Virus repair."	--修復常駐程式的作業取消
 			messagebox sMessage
 		)
 	),
@@ -160,12 +160,12 @@ struct o_stFixCallBack
 		if result != undefined do
 		(
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
-			sMessage = "發現Startup資料夾的" + sStartupScriptName + "有病毒，是否要立即處理: \n"
-			sResultYes = "yes = 嘗試清除病毒、並且儲存這個max檔\n"
-			sResultNo = "No = 只嘗試清除病毒，但不存max檔\n"
-			sResultCancel = "Cancel = 不做任何事情\n"
+			sMessage = "Startup\\" + sStartupScriptName + "Has detected the virus: \n"
+			sResultYes = "yes = Clean the virus and save the file \n"
+			sResultNo = "No = Clean the virus without saving the file \n"
+			sResultCancel = "Cancel = Do nothing\n"
 			sMessage  = sMessage + sResultYes + sResultNo + sResultCancel
-			result = yesNoCancelBox sMessage title:"發現不明檔案"	-- [beep:<boolean>] 
+			result = yesNoCancelBox sMessage title:"Virus detected"	-- [beep:<boolean>] 
 			
 			if result == #yes then
 			(
@@ -182,7 +182,7 @@ struct o_stFixCallBack
 				sMessage = fnGetMessage sStartupScript false	--最後的false代表函式裡的第三段字串不用顯示
 			)
 			else
-				sMessage = "修復常駐程式的作業取消"
+				sMessage = "Cancel the Virus repair."	--修復常駐程式的作業取消
 			
 			messagebox sMessage
 		)
@@ -191,7 +191,8 @@ struct o_stFixCallBack
 		local result = fnCheckMaxCallbackScript()
 		if result != undefined do
 		(
-			messagebox "偵測到max檔有病毒，請執行【刪除潛伏病毒】後，再存檔"
+			messagebox "Max virus detected, \nPlease visit the Check or delete undoMax subrollout."
+			--messagebox "偵測到max檔有病毒，請執行【刪除潛伏病毒】後，再存檔"
 		)
 	),
 
@@ -200,8 +201,6 @@ struct o_stFixCallBack
 	(
 		fnRemoveCallBacks()
 		
-		sMessage = "No Virus Detect"
-
 		sStartupScript = fnGetStartupFile()
 		if sStartupScript == undefined do
 			return 0				
