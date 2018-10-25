@@ -43,8 +43,20 @@ struct o_stFixCallBack
 		(
 			startupfileHandle = openfile _sFile
 			
-			--檢查有沒有可疑的字串(CRP_這個字串很可疑)
+			--檢查有沒有CPR_這個可疑字串(若搜尋到CRP_、result就會得到true，反之取得undefined)
 			local result = skipToString startupfileHandle "CRP_" --"CRP_WriteBScript"
+
+			--如果偵測到的是原廠寫的防毒callback(CRP_SecurityTool)，就避掉
+			if result != undefined then
+			(
+				sChar = undefined
+				try(sChar = readChars startupfileHandle 12)catch()
+
+				format "Sanlilog_Char: % \n" sChar
+				if sChar == "SecurityTool" then
+					result = undefined
+			)
+
 			close startupfileHandle
 			return result
 		)
