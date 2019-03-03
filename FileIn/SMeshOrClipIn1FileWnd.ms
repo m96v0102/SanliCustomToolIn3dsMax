@@ -98,7 +98,7 @@ struct stLoadMaxByList
 				aFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.max" )
 				if g_SanliCustomTool != undefined do
 				(
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnExportFile.enabled = true
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnSelExport.enabled = true
 				)
@@ -726,7 +726,7 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roImportOrMergeSettings "Load¡Bmerge or import_v1.001"
+		rollout roImportOrMergeSettings "Load¡Bmerge or import_v1.002"
 		(
 
 			label lbLoadType "Load or import : " 	pos:[15, 6]
@@ -737,7 +737,7 @@ struct st1ClipInFileWnd
 			--show merge or import options													
 			checkbox ckShowMIOptions				"Show Options" checked:g_stLoadMaxByList.bShowMIOptions tooltip:"Show merge Or import options"
 													pos:[lbLoadType.pos.x + 48, lbLoadType.pos.y + 40]
-			button btnMergeOrImportFile				"Merge or import multiple files" enabled:false 
+			button btnMergeOrImportFile				"Merge or import multiple files" --enabled:false 
 													pos:[ckShowMIOptions.pos.x + 90, ckShowMIOptions.pos.y - 3]
 
 			on rdoLoadType changed state do
@@ -758,13 +758,14 @@ struct st1ClipInFileWnd
 				aSelection = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile.selection as array
 				if aSelection.count > 0 do
 				(
-					nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
-					enLoadType =  g_stLoadMaxByList.aLoadType[nState]
+					--nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+					--enLoadType =  g_stLoadMaxByList.aLoadType[nState]
 					
 					--this function don't need to work on LoadMaxMode
-					if enLoadType == #Load do
-					( return 0)
+					--if enLoadType == #Load do
+					--( return 0)
 
+					enLoadType = #Merge
 					for i = 1 to aSelection.count do
 					(
 						g_stLoadMaxByList.fnLoadMergeOrImport enLoadType aSelection[i]
