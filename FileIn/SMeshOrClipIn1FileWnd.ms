@@ -190,7 +190,7 @@ struct st1ClipInFileWnd
 
 	fn Constructor =
 	(
-		rollout roll "1 clip in 1 file or static mesh_v1.002"
+		rollout roll "1 clip in 1 file or static mesh_v1.003"
 		(
 			group "1 clip in file (or static mesh)"
 			(				
@@ -236,8 +236,11 @@ struct st1ClipInFileWnd
 				
 				label lbTextureExt "Ext:"						pos:[ddlEmbedTextureMode.pos.x + ddlEmbedTextureMode.width + 3, ddlEmbedTextureMode.pos.y + 5]
 				editText edtTextureExt text:".tga " 			pos:[lbTextureExt.pos.x + 20, lbTextureExt.pos.y - 3] width:58 height:10
+
+				label lbExportAniHint1 "If you only want to export the animation,"	pos:[lbEmbedTexture.pos.x + 60, lbEmbedTexture.pos.y + 22]
+				label lbExportAniHint2 "remember to hide(or freeze) the models in those animation maxfiles."
 				
-				button 	btnExportFile "Export FBX"				pos:[lbEmbedTexture.pos.x, lbEmbedTexture.pos.y + 28] width:98
+				button 	btnExportFile "Export FBX"				pos:[lbEmbedTexture.pos.x, lbExportAniHint2.pos.y + 24] width:98
 																tooltip:"Export selected max files from the list."
 				button 	btnSelExport "Export selection"			pos:[btnExportFile.pos.x + 108, btnExportFile.pos.y] width:98
 																tooltip:"Export the selection that you selected in the current max file."
