@@ -12,6 +12,7 @@ struct stLoadMaxByList
 	TNWidth = 118,			--ThumbnailWidth
 	TNHeight = 118,			--ThumbnailHeight
 	btnRnWidth = 118,		--button of render tool's width
+	btnWidth1 = 102,
 
 	xmlDoc = undefined,
 	ndRoot = undefined,
@@ -190,7 +191,7 @@ struct st1ClipInFileWnd
 
 	fn Constructor =
 	(
-		rollout roll "1 clip in 1 file or static mesh_v1.003"
+		rollout roll "1 clip in 1 file or static mesh_v1.004"
 		(
 			group "1 clip in file (or static mesh)"
 			(				
@@ -208,17 +209,21 @@ struct st1ClipInFileWnd
 
 				bitmap bmp1 bitmap:(bitmap g_stLoadMaxByList.TNWidth g_stLoadMaxByList.TNHeight color:(color 155 155 155))
 																pos:[lboxMaxFile.pos.x + lboxMaxFile.width + 5, lboxMaxFile.pos.y]
-				button btnOpenFile "Open current max folder"	width:lboxMaxFile.width height:18
-																pos:[lboxMaxFile.pos.x, lboxMaxFile.pos.y + lboxMaxFile.height + 5]
 
-				button btn_RenderTools "CreateThumbnail" 		width:g_stLoadMaxByList.btnRnWidth height:18	--height:58
-																pos:[bmp1.pos.x, btnOpenFile.pos.y]
+				button btnOpenSelFile "Open item folder"		width:g_stLoadMaxByList.btnWidth1 height:18
+																pos:[15, lboxMaxFile.pos.y + lboxMaxFile.height + 5]
+																tooltip:"Open folder from selected item."
+				button btnOpenCurrFile "Open max folder"		width:g_stLoadMaxByList.btnWidth1 height:18
+																pos:[btnOpenSelFile.pos.x + g_stLoadMaxByList.btnWidth1 + 5, btnOpenSelFile.pos.y]
+																tooltip:"Open folder from current maxfile."
+				button btn_RenderTools "CreateThumbnail" 		width:g_stLoadMaxByList.btnWidth1 height:18
+																pos:[btnOpenCurrFile.pos.x + g_stLoadMaxByList.btnWidth1 + 5, btnOpenSelFile.pos.y]
 																tooltip:"create current max file thumbnail"
 			)
 			
 			group "Export"
 			(
-				dotNetControl edtExportPath						"TextBox" height:17 width:315 --pos:[20, btnOpenFile.pos.y + 53]
+				dotNetControl edtExportPath						"TextBox" height:17 width:315 --pos:[20, btnOpenSelFile.pos.y + 53]
 				
 				--the elements in this items have to be same with the g_stLoadMaxByList.aExportType
 				label lbExportMode "ExportMode:"				pos:[edtExportPath.pos.x, edtExportPath.pos.y + 28]
@@ -404,9 +409,20 @@ struct st1ClipInFileWnd
 				
 			)
 
-			on btnOpenFile pressed do
+			on btnOpenSelFile pressed do
 			(
-				format "顯示該檔案的路徑 % \n" maxfilepath
+				aSelection = (lboxMaxFile.selection as array)
+				for i = 1 to aSelection.count do
+				(
+					nSelectID = aSelection[i]
+					sExpression = "explorer /select, " + g_stLoadMaxByList.aFile[nSelectID]
+					DOSCommand sExpression
+				)
+			)
+
+			on btnOpenCurrFile pressed do
+			(
+				format "Sanlilog_Show current file: % \n" maxfilepath
 				shelllaunch maxfilepath ""
 			)
 
@@ -729,7 +745,7 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roImportOrMergeSettings "Load、merge or import_v1.002"
+		rollout roImportOrMergeSettings "Load, merge or import_v1.002"
 		(
 
 			label lbLoadType "Load or import : " 	pos:[15, 6]
