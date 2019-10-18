@@ -11,7 +11,7 @@ if roSanliCustomToolBar != undefined then
 
 	if (roSanliCustomToolBar != undefined) then
 	(
-		format "Sanlilog_roSanliCustomToolBar有東西，我準備重新移除 \n"
+		format "Sanlilog_Reset roSanliCustomToolBar \n"
 		roSanliCustomToolBar = undefined
 	)
 )

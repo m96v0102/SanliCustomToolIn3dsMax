@@ -19,9 +19,8 @@ struct o_stMsgWnd
 
 				rollout roMsgInMainWnd _sMessageInfo width:530
 				(
-					--label lbFinish		"注意事項"
 					edittext edtInfoData "" width: 500	height:120
-					button btnFinish 	"關閉視窗"
+					button btnFinish 	"Close"
 					on btnFinish pressed do
 						try(DestroyDialog roMsgInMainWnd) catch()
 				)

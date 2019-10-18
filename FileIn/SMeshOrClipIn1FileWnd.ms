@@ -1,4 +1,3 @@
---´ÀScript·s¼WCallBackÀË¬d¥\¯à(Sanli)
 
 struct stLoadMaxByList
 (
@@ -67,7 +66,7 @@ struct stLoadMaxByList
 		)
 	),
 
-	--¨ú±o¸ê®Æ§¨(¥]§t²Ä¤@¼h¸ê®Æ§¨»P¤l¶¥¼h¸ê®Æ§¨)¸Ìªº©Ò¦³ÀÉ®×
+	--ï¿½ï¿½ï¿½oï¿½ï¿½Æ§ï¿½(ï¿½]ï¿½tï¿½Ä¤@ï¿½hï¿½ï¿½Æ§ï¿½ï¿½Pï¿½lï¿½ï¿½ï¿½hï¿½ï¿½Æ§ï¿½)ï¿½Ìªï¿½ï¿½Ò¦ï¿½ï¿½É®ï¿½
 	fn fnGetFilesRecursiveByLoadingPath root pattern =
 	(
 		dir_array = sort (GetDirectories (root+"*"))
@@ -176,7 +175,7 @@ struct stLoadMaxByList
 )
 g_stLoadMaxByList = stLoadMaxByList()
 global g_stPathOrProp		--if might occur an error if I comment this line when we open the rollout in the first time.
-global g_SanliCustomTool	--³o¦æ­Yµù¸Ñ±¼ªº¸Ü¡A²Ä¤@¦¸°õ¦æexport selection¥i¯à·|¦³error
+global g_SanliCustomTool	--ï¿½oï¿½ï¿½Yï¿½ï¿½ï¿½Ñ±ï¿½ï¿½ï¿½ï¿½Ü¡Aï¿½Ä¤@ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½export selectionï¿½iï¿½ï¿½|ï¿½ï¿½error
 global g_stFixCallBack		--there might will have an error in the first run if I comment this line
 
 struct st1ClipInFileWnd
@@ -367,7 +366,7 @@ struct st1ClipInFileWnd
 					for mt in aTextures do
 					(
 						mapname =getFilenameFile mt
-						sOutputTexturePath = _sOutputpath + "Materials\\"	--¶K¹Ï­n©ñ¨ìMaterials¸ê®Æ§¨¤º
+						sOutputTexturePath = _sOutputpath + "Materials\\"	--ï¿½Kï¿½Ï­nï¿½ï¿½ï¿½Materialsï¿½ï¿½Æ§ï¿½ï¿½ï¿½
 						makeDir sOutputTexturePath
 						sOutputTextureFile = sOutputTexturePath + mapname + _sExtName
 						format "Sanlilog_ExportTexture: % \n" sOutputTextureFile
@@ -379,13 +378,13 @@ struct st1ClipInFileWnd
 			
 			on roll open do
 			(
-				edtSourceFolderPath.Multiline = true	--¨S¦³³o¦æªº¸Ü¡AdotNectControl\TextBoxªº°ª«×´NµLªk³Q­×§ï
+				edtSourceFolderPath.Multiline = true	--ï¿½Sï¿½ï¿½ï¿½oï¿½æªºï¿½Ü¡AdotNectControl\TextBoxï¿½ï¿½ï¿½ï¿½ï¿½×´Nï¿½Lï¿½kï¿½Qï¿½×§ï¿½
 				dcColor = dotnetclass "system.drawing.color"
 				edtSourceFolderPath.backColor = dcColor.darkgray
 				--edtSourceFolderPath.TextAlign= (dotNetClass "System.Windows.Forms.HorizontalAlignment").Center
 				edtSourceFolderPath.text = g_stPathOrProp.sLoadFileFromPath				
 
-				edtExportPath.Multiline = true	--¨S¦³³o¦æªº¸Ü¡AdotNectControl\TextBoxªº°ª«×´NµLªk³Q­×§ï
+				edtExportPath.Multiline = true	--ï¿½Sï¿½ï¿½ï¿½oï¿½æªºï¿½Ü¡AdotNectControl\TextBoxï¿½ï¿½ï¿½ï¿½ï¿½×´Nï¿½Lï¿½kï¿½Qï¿½×§ï¿½
 				edtExportPath.backColor = dcColor.darkgray
 				edtExportPath.text = g_stPathOrProp.sExportPath				
 
@@ -673,7 +672,7 @@ struct st1ClipInFileWnd
 				g_stLoadMaxByList.fnLoadMergeOrImport enLoadType sel
 				--loadMaxFile g_stLoadMaxByList.aFile[sel] quiet:on useFileUnits:on
 
-				--¥´¶}¨ÃÀË¬dStartup¸ê®Æ§¨¸ÌªºÀÉ®×¦³µL°İÃD¡A­Y¦³°İÃD´N¹Á¸Õ­×´_StartupÀÉ©MmaxÀÉ
+				--ï¿½ï¿½ï¿½}ï¿½ï¿½ï¿½Ë¬dStartupï¿½ï¿½Æ§ï¿½ï¿½Ìªï¿½ï¿½É®×¦ï¿½ï¿½Lï¿½ï¿½ï¿½Dï¿½Aï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½Dï¿½Nï¿½ï¿½ï¿½Õ­×´_Startupï¿½É©Mmaxï¿½ï¿½
 				g_stFixCallBack.fnCheckFixStartupFileAndScene()
 			)
 		)
@@ -701,7 +700,7 @@ struct st1ClipInFileWnd
 
 			on roSearch open do
 			(
-				edtSearch.Multiline = true	--¨S¦³³o¦æªº¸Ü¡AdotNectControl\TextBoxªº°ª«×´NµLªk³Q­×§ï
+				edtSearch.Multiline = true	--ï¿½Sï¿½ï¿½ï¿½oï¿½æªºï¿½Ü¡AdotNectControl\TextBoxï¿½ï¿½ï¿½ï¿½ï¿½×´Nï¿½Lï¿½kï¿½Qï¿½×§ï¿½
 				dcColor = dotnetclass "system.drawing.color"
 				edtSearch.backColor = dcColor.darkgray
 
@@ -718,8 +717,8 @@ struct st1ClipInFileWnd
 					findItem g_stLoadMaxByList.aFileName g_stLoadMaxByList.aFileName[1]
 
 
-				--¦]¬°MultiListBox¤¤¦s©ñªºmaxÀÉ¦W¶¶§Ç§ïÅÜ¡A©Ò¥HnBRCMaxFile¤]­n¸òµÛ§ï
-				--¨C¦¸m¥ı±Nmaxfile³Æ¥÷ªº­ì©l¸ê®Æ¦s¤@¥÷¦^¨Ó¡A¦]¬°¤§«á·|³Q¹LÂo«áªº¨ú¥N
+				--ï¿½]ï¿½ï¿½MultiListBoxï¿½ï¿½ï¿½sï¿½ï¿½maxï¿½É¦Wï¿½ï¿½ï¿½Ç§ï¿½ï¿½Ü¡Aï¿½Ò¥HnBRCMaxFileï¿½]ï¿½nï¿½ï¿½Û§ï¿½
+				--ï¿½Cï¿½ï¿½ï¿½mï¿½ï¿½ï¿½Nmaxfileï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½lï¿½ï¿½Æ¦sï¿½@ï¿½ï¿½ï¿½^ï¿½Ó¡Aï¿½]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½Qï¿½Lï¿½oï¿½áªºï¿½ï¿½ï¿½N
 				g_stLoadMaxByList.aFile =  deepCopy g_stLoadMaxByList.aFile_Backup
 				for i = 1 to g_stLoadMaxByList.aFileName.count do 
 				(
@@ -728,7 +727,7 @@ struct st1ClipInFileWnd
 						str = filterString g_stLoadMaxByList.aFile[j] "\\"	
 						str = str[str.count]
 						str2 = g_stLoadMaxByList.aFileName[i] + ".max"
-						--§ä¨ì»P¹LÂo«á¦r¦ê¬Û¦PªºmaxÀÉ®×¸ô®|¦s¨ì®e¾¹¤º
+						--ï¿½ï¿½ï¿½Pï¿½Lï¿½oï¿½ï¿½rï¿½ï¿½Û¦Pï¿½ï¿½maxï¿½É®×¸ï¿½ï¿½|ï¿½sï¿½ï¿½eï¿½ï¿½ï¿½ï¿½
 						if str == str2 do (
 							append tempMaxFile g_stLoadMaxByList.aFile[j]
 							deleteItem g_stLoadMaxByList.aFile j
@@ -737,7 +736,7 @@ struct st1ClipInFileWnd
 					)
 				)
 
-						--±N¦s©ñmaxÀÉ®×ªº¸ô®|¨ú¥N
+						--ï¿½Nï¿½sï¿½ï¿½maxï¿½É®×ªï¿½ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½N
 				if tempMaxFile.count != 0 do
 					g_stLoadMaxByList.aFile = tempMaxFile
 
@@ -841,7 +840,7 @@ struct st1ClipInFileWnd
 
 			on btnResetPath pressed do
 			(
-				--±NAssets¥H«áªº¦r¦ê®³±¼¡AµM«á§ï¦¨\\Editor\\Sanli\\ExrpotRecordPath.xml
+				--ï¿½NAssetsï¿½Hï¿½áªºï¿½rï¿½ê®³ï¿½ï¿½ï¿½Aï¿½Mï¿½ï¿½ï¦¨\\Editor\\Sanli\\ExrpotRecordPath.xml
 				sExportPathText = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.edtExportPath.text
 				edtExportPathRecord.text = g_stPathOrProp.fnResetUaAndEpRcPath sExportPathText &g_stPathOrProp.sUnityAssetPath
 			)
@@ -866,7 +865,7 @@ struct st1ClipInFileWnd
 														pos:[lbBatchCheckMode.pos.x, lbBatchCheckMode.pos.y + 24]
 			)
 
-			--­×§ïStartup³Q§ïªºÀÉ®×©MmaxÀÉ¸ÌªºCallback
+			--ï¿½×§ï¿½Startupï¿½Qï¿½ïªºï¿½É®×©Mmaxï¿½É¸Ìªï¿½Callback
 			on btnRemoveCallBackCF pressed do
 			(
 				g_stFixCallBack.fnRevertFileAndCallBack()
@@ -899,7 +898,7 @@ struct st1ClipInFileWnd
 					
 					loadMaxFile aCheckMaxCallbackFile[i] quiet:on useFileUnits:on
 
-					--¬d¬İmaxfile¸Ìªºcallbackscript¬O§_²§±`(ÀË¬d¦³µL°İÃD¡B¦ıÁÙ¨S³B²z¡A¥u¬O¥ı¦L°T®§)
+					--ï¿½dï¿½ï¿½maxfileï¿½Ìªï¿½callbackscriptï¿½Oï¿½_ï¿½ï¿½ï¿½`(ï¿½Ë¬dï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½Dï¿½Bï¿½ï¿½ï¿½Ù¨Sï¿½Bï¿½zï¿½Aï¿½uï¿½Oï¿½ï¿½ï¿½Lï¿½Tï¿½ï¿½)
 					local result = g_stFixCallBack.fnCheckMaxCallbackScript()
 					if result != undefined do
 					(

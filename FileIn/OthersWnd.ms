@@ -1,4 +1,4 @@
---BatchRename¡BSwitchModel
+--BatchRename' SwitchModel
 
 struct stOthers
 (
@@ -20,18 +20,18 @@ struct stOthers
 	nLODCurID = 0,
 	aCurLODShowingModel = #(),
 
-	sInfoMessage1 = "SanliCustomTool is a script to manage animation¡B LOD ¡BBatch rename or export multiple objects to FBX. ",
+	sInfoMessage1 = "SanliCustomTool is a script to manage animation, LOD, Batch rename or export multiple objects to FBX. ",
 	sInfoMessage2 = "If you have questions, please contact me. the newer version will always update in the github website. ",
 
 	sSwitchLODHint1 = "Show the current LOD model, and hide the others\n ",
-	sSwitchLODHint2 = "The end of the model's name should be like: LOD0¡BLOD1¡BLOD2",	
+	sSwitchLODHint2 = "The end of the model's name should be like: LOD0, LOD1, LOD2",	
 	sSwitchLODHint3 = "1. You can preveiew the Models at Total + Selection statistics:",
 	sSwitchLODHint4 = "UpperMenu-->Views/viewport Configuration/Stastistics/Setup",
 	sSwitchLODHint5 = "2. press J if you don't want to see the selection brackets.",
 
 	fn fnInitialize = 
 	(
-		--¯Â¹wÄı¬ÛÃö
+		--Switch LOD Model
 		arrAllModel 				= #()
 		ModelSelNow 				= #()
 		ModelSelBefore 				= #()
@@ -41,11 +41,8 @@ struct stOthers
 )
 g_stOthers = stOthers()
 
---CallBack·|¥Î¨ìªºFunction
 fn fnResetSwitchModelArray = 
 (
-	--print "Sanlilog_Reset the LODArray"
-	--­Y¦³¶}±Ò¦¹µøµ¡, ´N¸ß°İ¬ö¿ı¬O§_­nÂĞ»\
 	g_stOthers.fnInitialize()
 )
 
@@ -61,7 +58,7 @@ struct stOthersWnd
 
 	function Constructor =
 	(
-		rollout roInfo "Info_V1.004"
+		rollout roInfo "Info_V1.005"
 		(
 			dotNetControl lblInfo "System.Windows.Forms.Label" height:53 width:320 pos:[20,10]--align:#center
 			hyperLink lbFB "GitHub" address:"https://github.com/m96v0102/SanliCustomToolIn3dsMax.git" 
@@ -79,7 +76,8 @@ struct stOthersWnd
 
 		rollout roBatchRename "BatchRename_V1.001"
 		(
-			--dotNetControl lblInfo 		"System.Windows.Forms.Label" height:200 width:250 align:#center (§Ú¾Ş¡A³o¦æµù¸Ñ®³±¼ªº¸Ü¡Aedittext´NµLªk¿é¤J(Sanli))
+			--(Sanli: â†“ If you uncomment the line above, the edit text input will be disabled, this is weird to me...)
+			--dotNetControl lblInfo 		"System.Windows.Forms.Label" height:200 width:250 align:#center
  			label lbOLdName 	"Original name"			pos:[51, 8]
  			label lbNewName 	"New name"				pos:[250, lbOLdName.pos.y]			
 			
@@ -103,7 +101,7 @@ struct stOthersWnd
 			button btnBatchRename	"batch rename all files"	pos:[btnRenameSelect.pos.x, btnRenameAll.pos.y + 26] --height:17 --width: 330 
 																width:g_stOthers.nBatchRN1BtnWidth tooltip:"Rename all files in the current folder"
 			
-			--­×§ïª«¥ó¦WºÙ
+			--Rename Object's
 			fn fnRenameObj _sOldName _sNewName=
 			(
 				for x in selection do 
@@ -202,7 +200,7 @@ struct stOthersWnd
 			
 		)
 
-		rollout roSwitchModel "SwitchModel_v1.003"
+		rollout roSwitchModel "SwitchModel_v1.004"
 		(
 			group "Switch LOD Model"
 			(
@@ -230,12 +228,11 @@ struct stOthersWnd
 				label lbSwitchLODModel5 ""
 			)
 																				
-			--¹wÄı©ÎÀË¬d¼Ò«¬ªº¬ÛÃö¨ç¦¡
+			--Switch LOD model
 			fn fnShowNextPrevModel _ModelSelBefore _edtModelname _num=
 			(
 				local countTmp = 0
 				
-				--ÀË¬d¨q¦b³õ´º¤Wªº¼Ò«¬¬O§_¥u¦³¤@­Ó, ­Y¶W¹L¨â­Ó¨­Åé¼Ò«¬, ©Î¬O¨S¦³¥ô¦ó¨­Åé¼Ò«¬, ´N³q³qÁôÂÃş¨Ó,µM«á¨q¥X²Ä¤@­Ó¼Ò«¬
 				local Models = for m in _ModelSelBefore where (m.ishidden == false) collect m
 				if(Models.count > 1)then
 				(
@@ -243,9 +240,8 @@ struct stOthersWnd
 					unhide _ModelSelBefore[1]
 					_edtModelname.text = _ModelSelBefore[1].name
 				)
-				else if (Models.count == 1)then --¥u¦³¤@­Ó¼Ò«¬ªº¸Ü´NÁôÂÃş¨Ó,µM«áÅã¥Ü¤W(¤U)¤@­Ó¼Ò«¬
+				else if (Models.count == 1)then
 				(
-					--°»´ú¬O­ş¤@­Ó¼Ò«¬
 					for i = 1 to _ModelSelBefore.count do
 					(
 						if(_ModelSelBefore[i].ishidden == false)do
@@ -259,7 +255,6 @@ struct stOthersWnd
 					(
 						hide _ModelSelBefore[countTmp]
 						
-						--­Y¶Ç¶i¨Óªº°Ñ¼Æ¬O­t¼Æ´NÅã¥Ü¤W¤@­Ó¼Ò«¬,­Y¬O¥¿¼Æ´NÅã¥Ü¤U¤@­Ó¼Ò«¬
 						if(_num < 0)then
 						(
 							countTmp = countTmp - 1
@@ -344,7 +339,7 @@ struct stOthersWnd
 						else unhide g_stOthers.aLODModels[i]
 					)
 
-					--select the models, so the statics will show the selection PolyCounts¡BMeshCounts or Vertcounts
+					--select the models, so the statics will show the selection PolyCountsï¿½BMeshCounts or Vertcounts
 					select g_stOthers.aCurLODShowingModel
 				)
 
@@ -358,10 +353,8 @@ struct stOthersWnd
 
 			)
 
-			--¹wÄı¼Ò«¬:SnapÁÙ¥¼¶i¦æ´N¿ï¾Ü³o­Ó¨ç¦¡°õ¦æ
 			fn fnPreviewSelectedModel _edtModelname _num=
 			(
-				--¿ï¾Üªº¼Ò«¬¼Æ¶q
 				g_stOthers.ModelSelNow = for m in selection where (m.ishidden == false) collect m
 				if g_stOthers.ModelSelNow.count >= 1 do
 				(
@@ -386,7 +379,6 @@ struct stOthersWnd
 				g_stOthers.fnInitialize()
 			)
 
-			--¹wÄı©ÎÀË¬d«e¤@­Ó¼Ò«¬
 			on btnSwitchPreviousModel pressed do	
 			(
 				enumSwitchModelMode = g_stOthers.aSwitchModelMode[rdoSwitchModelMode.state]
@@ -404,7 +396,6 @@ struct stOthersWnd
 				)				
 			)
 
-			--¹wÄı©ÎÀË¬d¤U¤@­Ó¼Ò«¬
 			on btnSwitchNextModel pressed do	
 			(
 				enumSwitchModelMode = g_stOthers.aSwitchModelMode[rdoSwitchModelMode.state]
@@ -423,7 +414,6 @@ struct stOthersWnd
 				
 			)		
 			
-			--Åã¥Ü©Ò¦³¼Ò«¬
 			on btnShowAllModels pressed do
 			(
 				enumSwitchModelMode = g_stOthers.aSwitchModelMode[rdoSwitchModelMode.state]
@@ -444,10 +434,9 @@ struct stOthersWnd
 					)
 					#DetectBySelection:
 					(
-						--½T»{ª¬ºAÄİ©ó¼Ò«¬¹wÄıÁÙ¬O¼Ò«¬ÀË¬d
 						local arrShowAllModel = #()
-						if(g_stOthers.arrAllModel.count > 0) then			arrShowAllModel = g_stOthers.arrAllModel	--¼Ò«¬¹wÄı
-						else if(g_stOthers.ModelSelBefore.count > 0)then	arrShowAllModel = g_stOthers.ModelSelBefore	--¼Ò«¬ÀË¬d
+						if(g_stOthers.arrAllModel.count > 0) then			arrShowAllModel = g_stOthers.arrAllModel	--ï¿½Ò«ï¿½ï¿½wï¿½ï¿½
+						else if(g_stOthers.ModelSelBefore.count > 0)then	arrShowAllModel = g_stOthers.ModelSelBefore	--ï¿½Ò«ï¿½ï¿½Ë¬d
 						
 						if(arrShowAllModel.count > 0)do
 						(
@@ -536,7 +525,7 @@ struct stOthersWnd
 )
 
 
---ºÊÅ¥ResetFile' OpenFile  ©MNewFile µ{¦¡
+--ï¿½ï¿½Å¥ResetFile' OpenFile  ï¿½MNewFile ï¿½{ï¿½ï¿½
 callbacks.addscript #systemPreReset "fnResetSwitchModelArray()" id:#SanliCustomTools
 callbacks.addscript #filePreOpen 	"fnResetSwitchModelArray()" id:#SanliCustomTools
 callbacks.addscript #systemPreNew 	"fnResetSwitchModelArray()" id:#SanliCustomTools
