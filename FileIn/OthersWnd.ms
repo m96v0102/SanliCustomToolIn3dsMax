@@ -76,7 +76,7 @@ struct stOthersWnd
 
 		rollout roBatchRename "BatchRename_V1.001"
 		(
-			--(Sanli: ↓ If you uncomment the line above, the edit text input will be disabled, this is weird to me...)
+			--(Sanli:If you uncomment the line below, the edit text input will be disabled, this is weird to me...)
 			--dotNetControl lblInfo 		"System.Windows.Forms.Label" height:200 width:250 align:#center
  			label lbOLdName 	"Original name"			pos:[51, 8]
  			label lbNewName 	"New name"				pos:[250, lbOLdName.pos.y]			
