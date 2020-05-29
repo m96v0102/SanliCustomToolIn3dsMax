@@ -3,7 +3,7 @@
 
 fileIn "MsgWnd.ms"			--Show Dialog Messagebox
 
-global g_SanliCustomTool	--≥o¶Ê≠Yµ˘∏—±º°B©Œ±ﬂ§@¬I§~∞ı¶Ê™∫∏‹°A≤ƒ§@¶∏∞ı¶Êexport selection•iØ‡∑|¶≥error
+global g_SanliCustomTool	--If you comment this line or executed later, it miguth cause an error in the first export.
 
 struct stTimeRange
 (
@@ -39,7 +39,7 @@ struct stTimeRange
 	
 	fn fnSetAnimRange _sStartFrame _sEndFrame=
 	(
-		stopAnimation()--¶p™G∞ ß@¶≥¶bºΩ©Ò°A•˝∞±§U®”°A≥oºÀ§ltimeslider§~§Ò∏˚§£∑|∂√±º
+		stopAnimation()	--If the animation is playing, stop it first, or the timeslider will be out of order
 		nAnimStartFrame = _sStartFrame as integer
 		nAnimEndFrame = _sEndFrame as integer
 		animationRange = interval nAnimStartFrame nAnimEndFrame
@@ -71,8 +71,7 @@ struct stTimeRange
 				aAnimStringInFileProp = filterstring sAnimStringInFileProp ","
 				sAnimNameInFileProp = fileproperties.getpropertyname #custom i
 				
-				--format "√˛ßO§¡¥´ :%  % \n" aFileClassArray[nCgySelect] nCgySelect
-				format "Sanlilog_FilePropƒ›© : % % % \n" sAnimNameInFileProp aAnimStringInFileProp[1] aAnimStringInFileProp[2]
+				format "Sanlilog_FilePropÔøΩ›©ÔøΩ: % % % \n" sAnimNameInFileProp aAnimStringInFileProp[1] aAnimStringInFileProp[2]
 				
 				append arrAnimName sAnimNameInFileProp
 				append arrAnimStartFrame aAnimStringInFileProp[1]
@@ -172,20 +171,14 @@ struct stMultiClipsIn1FileWnd
 				
 				
 				button btnLoadAnim					"LoadAnim" 			pos:[lbxAniRangeName.pos.x - 1, lbxAniRangeName.pos.y + lbxAniRangeName.height + 6] width:62 height:18
-																	tooltip:"Open Animation list by Xml or FileProperties"
+																		tooltip:"Open Animation list by Xml or FileProperties"
 				button btnSaveAnim					"SaveAnim" 			pos:[btnLoadAnim.pos.x + 68, btnLoadAnim.pos.y] width:62 height:18
-																	tooltip:"Save Animation list to Xml or FileProperties"
+																		tooltip:"Save Animation list to Xml or FileProperties"
 				button btnDelOneAnimRange			"DeleteAni"			pos:[btnSaveAnim.pos.x + 68, btnLoadAnim.pos.y]
-																	width:62 height:18 tooltip:"Delete Selected animation"																		
+																		width:62 height:18 tooltip:"Delete Selected animation"
 				button btn_RenderTools 				"CreateThumbnail" 	width:g_stTimeRange.btnRnWidth height:18	--height:58
 																		pos:[bmp1.pos.x, btnLoadAnim.pos.y] 
 																		tooltip:"create current max file thumbnail"
-				--button btnLoadAniRangeByXml			"LoadXml" 				pos:[btnDelOneAnimRange.pos.x, btnLoadAnim.pos.y + 20] width:90 height:18
-																			--tooltip:"Open Animation list by Xml"
-				--button btnSaveToXml					"SaveXml" 				pos:[btnDelAllAnimRange.pos.x, btnLoadAniRangeByXml.pos.y] width:90 height:18
-																			--tooltip:"Save Animation list to Xml"
-
-				
 			)
 
 			group "Export"
@@ -401,7 +394,7 @@ struct stMultiClipsIn1FileWnd
 					for mt in aTextures do
 					(
 						mapname =getFilenameFile mt
-						sOutputTexturePath = _sOutputpath + "Materials\\"	--∂Kπœ≠n©Ò®ÏMaterials∏ÍÆ∆ß®§∫
+						sOutputTexturePath = _sOutputpath + "Materials\\"	--Put the textures into the materials folder.
 						makeDir sOutputTexturePath
 						sOutputTextureFile = sOutputTexturePath + mapname + _sExtName
 						format "Sanlilog_ExportTexture: % \n" sOutputTextureFile
@@ -413,7 +406,7 @@ struct stMultiClipsIn1FileWnd
 			
 			on roll open do
 			(
-				edtStartFrame.Multiline = true	--®S¶≥≥o¶Ê™∫∏‹°AdotNectControl\TextBox™∫∞™´◊¥NµL™k≥Q≠◊ßÔ
+				edtStartFrame.Multiline = true	--If you comment this line, dotNectControl\TextBox height won't be able to modify
 				edtEndFrame.Multiline = true
 				edtAniName.Multiline = true
 				dcColor = dotnetclass "system.drawing.color"
@@ -423,7 +416,7 @@ struct stMultiClipsIn1FileWnd
 				edtStartFrame.text = "5"
 				edtEndFrame.text = "10"
 
-				edtExportPath.Multiline = true	--®S¶≥≥o¶Ê™∫∏‹°AdotNectControl\TextBox™∫∞™´◊¥NµL™k≥Q≠◊ßÔ
+				edtExportPath.Multiline = true	--If you comment this line, dotNectControl\TextBox height won't be able to modify
 				edtExportPath.backColor = dcColor.darkgray
 				edtExportPath.text = g_stPathOrProp.sExportPath
 
@@ -621,7 +614,7 @@ struct stMultiClipsIn1FileWnd
 							--sAnimLstFile = maxfilepath + sAnimLstFileName
 							g_stTimeRange.xmlDoc.mfLoadXML  sAnimLstFile
 							chunkRoot = g_stTimeRange.xmlDoc.mfGetRootNode()
-							ndAnimName = chunkRoot.mfGetChildren()		--®˙±o<attack_1> °B <idle_1>°Betc
+							ndAnimName = chunkRoot.mfGetChildren()
 
 							for i = 1 to ndAnimName.count do
 							(
@@ -659,7 +652,7 @@ struct stMultiClipsIn1FileWnd
 			
 			on btnSaveAnim pressed do
 			(
-				stMsgWnd = o_stMsgWnd()						--fileIn o_stMsgWndÆ…∑|•Œ®Ï™∫µ≤∫c
+				stMsgWnd = o_stMsgWnd()
 				fnSetlistItemToArray()
 
 				--aSaveLoadAnimMethods = #(#Xml, #FileProperties),
@@ -831,7 +824,7 @@ struct stMultiClipsIn1FileWnd
 
 			on roSearch open do
 			(
-				edtSearch.Multiline = true	--®S¶≥≥o¶Ê™∫∏‹°AdotNectControl\TextBox™∫∞™´◊¥NµL™k≥Q≠◊ßÔ
+				edtSearch.Multiline = true	--I can't modify the dotNetControl\TextBox if I comment this line.
 				dcColor = dotnetclass "system.drawing.color"
 				edtSearch.backColor = dcColor.darkgray
 
@@ -840,7 +833,7 @@ struct stMultiClipsIn1FileWnd
 			on edtSearch keyup do
 			(
 				--disable 4 buttons or these buttons will disturb this function
-				--Create new clip°Breset current clip' saveanim' deleteani
+				--Create new clip, reset current clip' saveanim' delete ani
 				if edtSearch.text.count >= 1 then
 				(
 					g_SanliCustomTool.roMainRollout.roMultiClip1File.roll.btnCreateNewClip.enabled = false
@@ -903,14 +896,14 @@ struct stMultiClipsIn1FileWnd
 
 			on btnOpenFile pressed do
 			(
-				format "≈„•‹∏”¿…Æ◊™∫∏ÙÆ| % \n" maxfilepath
+				format "maxfilepath % \n" maxfilepath
 				shelllaunch maxfilepath ""
 			)
 		)
 
 		rollout roSeperateAnim "Seperate Animation"
 		(
-			button 	btnAnimSplit 	"§¿≥Œ∞ ß@"		width:330  tooltip:"±N∏”∏ÍÆ∆ß®©“¶≥™∫∞ ß@êm©Ó¶®§@≠”≠”™∫3ds max¿…" 
+			button 	btnAnimSplit 	"Seperate animation"		width:330  tooltip:"Split every ani clips to individual max file." 
 
 			on btnAnimSplit pressed do
 			(
@@ -926,7 +919,7 @@ struct stMultiClipsIn1FileWnd
 						--GetStartFrame
 						startnum = g_stTimeRange.arrAnimStartFrame[i] as integer
 						
-						--®˙±oµ≤ßÙºvÆÊ
+						--GetEndFrame
 						endnum = g_stTimeRange.arrAnimEndFrame[i] as integer
 
 						animationRange = interval startnum endnum
@@ -963,7 +956,7 @@ struct stMultiClipsIn1FileWnd
 
 			on btnResetPath pressed do
 			(
-				--±NAssets•H´·™∫¶r¶ÍÆ≥±º°AµM´·ßÔ¶®\\Editor\\Sanli\\ExrpotRecordPath.xml
+				--Remove the string after 'Asssets', and replace it to "\\Editor\\Sanli\\ExrpotRecordPath.xml"
 				sExportPathText = g_SanliCustomTool.roMainRollout.roMultiClip1File.roll.edtExportPath.text
 				edtExportPathRecord.text = g_stPathOrProp.fnResetUaAndEpRcPath sExportPathText &g_stPathOrProp.sUnityAssetPath
 
