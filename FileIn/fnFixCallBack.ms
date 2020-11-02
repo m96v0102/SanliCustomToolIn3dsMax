@@ -16,6 +16,17 @@ struct o_stFixCallBack
 		callbacks.removeScripts id:#ID_CRP_postImport
 	),
 
+	--刪除檔案裡不乾淨的ADSL callback
+	fn fnRemoveADSLCallBacks = 
+	(
+		callbacks.removeScripts id:#ID_ADSL_viewportChangeP
+		callbacks.removeScripts id:#ID_ADSL_filePostOpen
+		callbacks.removeScripts id:#ID_ADSL_filePostOpenP
+		callbacks.removeScripts id:#ID_ADSL_filePostMerge
+		callbacks.removeScripts id:#ID_ADSL_preRenderP
+		callbacks.removeScripts id:#ID_ADSL_postImport
+	),
+
 	--先確認startup資料的日期，載入max檔後再確認有無被改寫
 	fn fnGetStartupFile =
 	(
@@ -62,6 +73,32 @@ struct o_stFixCallBack
 		)
 	),
 
+	--查看記事本裡面有無ADSL這類的字眼(有的話應該就是病毒)
+	fn fnCheckADSLContent _sFile=
+	(
+		if _sFile != undefined do
+		(
+			startupfileHandle = openfile _sFile
+			
+			--檢查有沒有CPR_這個可疑字串(若搜尋到CRP_、result就會得到true，反之取得undefined)
+			local result = skipToString startupfileHandle "ADSL_"
+
+			--如果偵測到的是原廠寫的防毒callback(CRP_SecurityTool)，就避掉
+			if result != undefined then
+			(
+				sChar = undefined
+				try(sChar = readChars startupfileHandle 12)catch()
+
+				format "Sanlilog_Char: % \n" sChar
+				if sChar == "SecurityTool" then
+					result = undefined
+			)
+
+			close startupfileHandle
+			return result
+		)
+	),
+
 	--查看Max檔的callback(max檔要先開好)
 	fn fnCheckMaxCallbackScript=
 	(
@@ -72,6 +109,9 @@ struct o_stFixCallBack
 		--sCallBackLog =  "d:\\MaxScriptCallback_Sanli.log"
 		fnSaveCallbacksToHDD sCallBackLog
 		local result = fnCheckCRPContent sCallBackLog
+		if result == undefined then
+			result = fnCheckADSLContent sCallBackLog
+
 		return result
 	),
 	
@@ -80,6 +120,8 @@ struct o_stFixCallBack
 	(
 		sStartupScript = fnGetStartupFile()
 		local result = fnCheckCRPContent sStartupScript
+		if result == undefined then
+			result = fnCheckADSLContent sStartupScript
 		return result
 	),
 	
@@ -133,6 +175,43 @@ struct o_stFixCallBack
 		--closeLog() -- close the log
 	),
 
+	fn fnReviseADSLStartupScript _sStartupScript=
+	(
+		--read the whole content in the virus ms file, and save it to the sContent
+		--逐行讀取(最後一行是eof)
+		--http://forums.cgsociety.org/archive/index.php?t-69988.html
+		posFile = openFile _sStartupScript
+		sContent = ""
+		while not eof posFile do
+		(
+			nNum = filePos posFile
+			--format "Sanlilog_filePos % \n" nNum
+			new_line = readLine posFile
+
+			--seek posFile 0
+			if (findstring new_line "ADSL_") == undefined then
+			(
+				--the first line don't need to add "\n"
+				if nNum == 0 then
+					sContent += new_line
+				else 
+					sContent += ("\n" + new_line)
+			)
+			else
+			(
+				format "the last word: % \n" sContent[sContent.count]
+				exit
+			)
+		)
+		close posFile
+
+		nMyoutputstream  = openfile _sStartupScript mode:"w"
+
+		format "%" sContent to:nMyoutputstream
+		--flushLog() -- flush the log
+		--closeLog() -- close the log
+	),
+
 	--打開並檢查Startup資料夾裡的檔案有無問題，若有問題就嘗試修復(通常專案工具一打開就會呼叫這個函式)
 	fn fnCheckAndFixStartupFile =
 	(
@@ -152,7 +231,9 @@ struct o_stFixCallBack
 			if result == #yes then
 			(
 				fnReviseStartupScript sStartupScript
+				fnReviseADSLStartupScript sStartupScript
 				fnRemoveCallBacks()
+				fnRemoveADSLCallBacks()
 
 				savemaxfile (maxfilepath + maxfilename) quiet:true
 				sMessage = fnGetMessage sStartupScript true	--最後的true代表函式裡的第三段字串也顯示			
@@ -182,7 +263,9 @@ struct o_stFixCallBack
 			if result == #yes then
 			(
 				fnReviseStartupScript sStartupScript
+				fnReviseADSLStartupScript sStartupScript
 				fnRemoveCallBacks()
+				fnRemoveADSLCallBacks()
 
 				savemaxfile (maxfilepath + maxfilename) quiet:true
 				sMessage = fnGetMessage sStartupScript true	--最後的true代表函式裡的第三段字串也顯示
@@ -190,7 +273,9 @@ struct o_stFixCallBack
 			else if result == #no then
 			(
 				fnReviseStartupScript sStartupScript
+				fnReviseADSLStartupScript sStartupScript
 				fnRemoveCallBacks()
+				fnRemoveADSLCallBacks()
 				sMessage = fnGetMessage sStartupScript false	--最後的false代表函式裡的第三段字串不用顯示
 			)
 			else
@@ -222,6 +307,7 @@ struct o_stFixCallBack
 		if result != undefined then
 		(
 			fnReviseStartupScript sStartupScript
+			fnReviseADSLStartupScript sStartupScript
 			sMessage = "fixing complete"
 		)
 		

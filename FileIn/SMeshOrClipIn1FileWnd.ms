@@ -887,6 +887,7 @@ struct st1ClipInFileWnd
 					--clear the callback first, otherwise the log file probablly have note the virus,  but the maxfile doesn't have this virus.
 					--this might report the wrong information
 					g_stFixCallBack.fnRemoveCallBacks()
+					g_stFixCallBack.fnRemoveADSLCallBacks()
 
 					if (i-1 >= 1) and enBatchCheckMode == #CheckAndRemove then
 					(
@@ -906,6 +907,7 @@ struct st1ClipInFileWnd
 					if i == aCheckMaxCallbackFile.count and enBatchCheckMode == #CheckAndRemove then
 					(
 						g_stFixCallBack.fnRemoveCallBacks()
+						g_stFixCallBack.fnRemoveADSLCallBacks()
 						saveMaxFile aCheckMaxCallbackFile[i] quiet:on
 					)
 				)
@@ -915,7 +917,9 @@ struct st1ClipInFileWnd
 				if result != undefined do
 				(
 					g_stFixCallBack.fnReviseStartupScript g_stFixCallBack.sStartupScript
+					g_stFixCallBack.fnReviseADSLStartupScript g_stFixCallBack.sStartupScript
 					g_stFixCallBack.fnRemoveCallBacks()
+					g_stFixCallBack.fnRemoveADSLCallBacks()
 				)
 
 				--ShowCustomMessageBox
