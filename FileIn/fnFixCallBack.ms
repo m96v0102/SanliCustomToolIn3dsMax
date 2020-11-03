@@ -297,6 +297,7 @@ struct o_stFixCallBack
 	fn fnRevertFileAndCallBack =
 	(
 		fnRemoveCallBacks()
+		fnRemoveADSLCallBacks()
 		
 		sStartupScript = fnGetStartupFile()
 		if sStartupScript == undefined do
