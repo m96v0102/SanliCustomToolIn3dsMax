@@ -845,7 +845,7 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roCheckUndoCallBack "Check or delete undoMax callbackScript_v1.004"
+		rollout roCheckUndoCallBack "Check or delete undoMax callbackScript_v1.005"
 		(
 			button	btnRemoveCallBackCF				"Remove callback from current file"	  width:330 --align:#left
 													-- height:18 pos:[btnExportHint.pos.x + 105,btnExportHint.pos.y ] 

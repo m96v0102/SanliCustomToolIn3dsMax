@@ -298,6 +298,8 @@ struct o_stFixCallBack
 	(
 		fnRemoveCallBacks()
 		fnRemoveADSLCallBacks()
+
+		sMessage = "Max file fixing complete, please remember to save the maxfile"
 		
 		sStartupScript = fnGetStartupFile()
 		if sStartupScript == undefined do
@@ -309,10 +311,11 @@ struct o_stFixCallBack
 		(
 			fnReviseStartupScript sStartupScript
 			fnReviseADSLStartupScript sStartupScript
-			sMessage = "fixing complete"
+			sMessage = "Maxfile and startup file was fixed, please remember to save the maxfile"
 		)
 		
-		messagebox sMessage
+		if sMessage != undefined do
+			messagebox sMessage
 	)
 )
 
