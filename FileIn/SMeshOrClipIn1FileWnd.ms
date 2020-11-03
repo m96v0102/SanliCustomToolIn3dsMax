@@ -819,32 +819,6 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roRecordExportPath "Record Export Path_v1.001"
-		(
-			label 		lbExportPathRecord "Export Path Record file:"
-			editText 	edtExportPathRecord "" --text: g_stPathOrProp.sExportRecordPath
-						tooltip: "record every files when we export, all of the export path will save in this XML file "
-			button 		btnResetPath "Reset the record path" width:edtExportPathRecord.width			--tooltip:"reset the record path"
-
-			on roRecordExportPath open do
-			(
-				edtExportPathRecord.text = g_stPathOrProp.sExportRecordPath
-			)
-
-			on edtExportPathRecord changed sValue do
-			(
-				g_stPathOrProp.sExportRecordPath = sValue
-			)
-
-			on btnResetPath pressed do
-			(
-				--Remove the string after 'Asssets', and replace it to "\\Editor\\Sanli\\ExrpotRecordPath.xml"
-				sExportPathText = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.edtExportPath.text
-				edtExportPathRecord.text = g_stPathOrProp.fnResetUaAndEpRcPath sExportPathText &g_stPathOrProp.sUnityAssetPath
-			)
-
-		)
-
 		rollout roCheckUndoCallBack "Check or delete undoMax callbackScript_v1.005"
 		(
 			button	btnRemoveCallBackCF				"Remove callback from current file"	  width:330 --align:#left
@@ -944,6 +918,32 @@ struct st1ClipInFileWnd
 				)
 
 				stMsgWnd.fnMainMsgDialog "sMsgFinishVirusCheck" "Max File Callback virus checking complete" _sMessage:sMessageForShowWnd
+			)
+
+		)
+
+		rollout roRecordExportPath "Record Export Path_v1.001"
+		(
+			label 		lbExportPathRecord "Export Path Record file:"
+			editText 	edtExportPathRecord "" --text: g_stPathOrProp.sExportRecordPath
+						tooltip: "record every files when we export, all of the export path will save in this XML file "
+			button 		btnResetPath "Reset the record path" width:edtExportPathRecord.width			--tooltip:"reset the record path"
+
+			on roRecordExportPath open do
+			(
+				edtExportPathRecord.text = g_stPathOrProp.sExportRecordPath
+			)
+
+			on edtExportPathRecord changed sValue do
+			(
+				g_stPathOrProp.sExportRecordPath = sValue
+			)
+
+			on btnResetPath pressed do
+			(
+				--Remove the string after 'Asssets', and replace it to "\\Editor\\Sanli\\ExrpotRecordPath.xml"
+				sExportPathText = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.edtExportPath.text
+				edtExportPathRecord.text = g_stPathOrProp.fnResetUaAndEpRcPath sExportPathText &g_stPathOrProp.sUnityAssetPath
 			)
 
 		)

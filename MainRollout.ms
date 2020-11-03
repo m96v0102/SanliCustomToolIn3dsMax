@@ -175,7 +175,7 @@ struct stSanliCustomTool
 			local rollArr = #( 
 								#("1 Clip in File or SMesh", #(	ro1Clip1File.roll,  ro1Clip1File.roSearch, 
 																ro1Clip1File.roImportOrMergeSettings, ro1Clip1File.roExportSettings, 
-																ro1Clip1File.roRecordExportPath, ro1Clip1File.roCheckUndoCallBack)),
+																ro1Clip1File.roCheckUndoCallBack, ro1Clip1File.roRecordExportPath)),
 								#("     MultiClips in 1 File     ", #(	roMultiClip1File.roll, roMultiClip1File.roSearch, roMultiClip1File.roExportSetAndAniSLMethods,
 																		roMultiClip1File.roSeperateAnim, roMultiClip1File.roRecordExportPath)),
 								#("  Others or Info  ", #(roOthers.roInfo, roOthers.roBatchRename, roOthers.roSwitchModel, roOthers.roOtherStuff))
@@ -239,8 +239,8 @@ struct stSanliCustomTool
 				addSubRollout theSubRollout ro1Clip1File.roSearch rolledUp:true
 				addSubRollout theSubRollout ro1Clip1File.roImportOrMergeSettings rolledUp:false
 				addSubRollout theSubRollout ro1Clip1File.roExportSettings rolledUp:true
-				addSubRollout theSubRollout ro1Clip1File.roRecordExportPath rolledUp:true
 				addSubRollout theSubRollout ro1Clip1File.roCheckUndoCallBack rolledUp:true
+				addSubRollout theSubRollout ro1Clip1File.roRecordExportPath rolledUp:true
 				
 				--open and check the Startup file, if there has a callback virus in it, then try to fix it.
 				g_stFixCallBack.fnCheckAndFixStartupFile()
