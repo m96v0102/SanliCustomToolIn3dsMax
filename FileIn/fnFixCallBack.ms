@@ -223,7 +223,7 @@ struct o_stFixCallBack
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
 			--yesNoCancelBox <message_string> [title:<window_title_string>] [beep:<boolean>] 
 			sMessage = "Startup\\" + sStartupScriptName + "Has detected the virus: \n"
-			sResultYes = "yes = Clean the virus(remember to save the file)\n"
+			sResultYes = "yes = Clean the virus and autosave the maxfile\n"
 			sResultCancel = "No or Cancel = Don't do anything\n"
 			sMessage  = sMessage + sResultYes + sResultCancel
 			result = yesNoCancelBox sMessage title:"Virus detected"	-- [beep:<boolean>] 
@@ -253,7 +253,7 @@ struct o_stFixCallBack
 		if result != undefined do
 		(
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
-			sMessage = "Startup\\" + sStartupScriptName + "Has detected the virus: \n"
+			sMessage = "Startup\\" + sStartupScriptName + " Has detected the virus: \n"
 			sResultYes = "yes = Clean the virus and save the file \n"
 			sResultNo = "No = Clean the virus without saving the file \n"
 			sResultCancel = "Cancel = Do nothing\n"

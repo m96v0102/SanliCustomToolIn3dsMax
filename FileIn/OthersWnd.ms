@@ -525,7 +525,7 @@ struct stOthersWnd
 )
 
 
---��ťResetFile' OpenFile  �MNewFile �{��
+--call 'ResetSwitchModelArray' function when other maxfile open.
 callbacks.addscript #systemPreReset "fnResetSwitchModelArray()" id:#SanliCustomTools
 callbacks.addscript #filePreOpen 	"fnResetSwitchModelArray()" id:#SanliCustomTools
 callbacks.addscript #systemPreNew 	"fnResetSwitchModelArray()" id:#SanliCustomTools
