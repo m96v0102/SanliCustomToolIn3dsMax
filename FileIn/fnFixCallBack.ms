@@ -4,9 +4,10 @@
 struct o_stFixCallBack
 (
 	sStartupScript = "",
+	aDirtyGlobalVars = #(#CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript),
 	
 	--刪除檔案裡不乾淨的callback
-	fn fnRemoveCallBacks = 
+	fn fnRemoveCRPCallBacks = 
 	(
 		callbacks.removeScripts id:#ID_CRP_viewportChangeP
 		callbacks.removeScripts id:#ID_CRP_filePostOpen
@@ -25,6 +26,16 @@ struct o_stFixCallBack
 		callbacks.removeScripts id:#ID_ADSL_filePostMerge
 		callbacks.removeScripts id:#ID_ADSL_preRenderP
 		callbacks.removeScripts id:#ID_ADSL_postImport
+	),
+	
+	fn fnRemoveDirtyVariables =
+	(
+		for var in aDirtyGlobalVars do 
+		(
+			if (persistents.isPersistent var) do
+				persistents.remove var
+			globalVars.remove var
+		)	
 	),
 
 	--先確認startup資料的日期，載入max檔後再確認有無被改寫
@@ -100,6 +111,7 @@ struct o_stFixCallBack
 	),
 
 	--查看Max檔的callback(max檔要先開好)
+	--EX: local result = fnCheckMaxCallbackScript()
 	fn fnCheckMaxCallbackScript=
 	(
 		sCallBackLog = "C:\\SanliCustomTool\\MaxScriptCallback_Sanli.log" 
@@ -123,6 +135,25 @@ struct o_stFixCallBack
 		if result == undefined then
 			result = fnCheckADSLContent sStartupScript
 		return result
+	),
+
+	--EX:local bDirtyGlobalVarFound = fnCheckDirtyGlobalVariables()
+	fn fnCheckDirtyGlobalVariables=
+	(
+		--bCRPGlobalFound = bADSLGlobalFound = false
+		bDirtyGlobalFound = false
+		local varDirtyGlobalVar = undefined
+		for var in aDirtyGlobalVars do
+		(
+			bDirtyGlobalFound = globalVars.isGlobal var
+			if bDirtyGlobalFound == true do
+			(
+				varDirtyGlobalVar = var
+				exit
+			)
+		)
+
+		return varDirtyGlobalVar
 	),
 	
 	--顯示常駐程式處理後的訊息
@@ -232,7 +263,7 @@ struct o_stFixCallBack
 			(
 				fnReviseStartupScript sStartupScript
 				fnReviseADSLStartupScript sStartupScript
-				fnRemoveCallBacks()
+				fnRemoveCRPCallBacks()
 				fnRemoveADSLCallBacks()
 
 				savemaxfile (maxfilepath + maxfilename) quiet:true
@@ -264,7 +295,7 @@ struct o_stFixCallBack
 			(
 				fnReviseStartupScript sStartupScript
 				fnReviseADSLStartupScript sStartupScript
-				fnRemoveCallBacks()
+				fnRemoveCRPCallBacks()
 				fnRemoveADSLCallBacks()
 
 				savemaxfile (maxfilepath + maxfilename) quiet:true
@@ -274,7 +305,7 @@ struct o_stFixCallBack
 			(
 				fnReviseStartupScript sStartupScript
 				fnReviseADSLStartupScript sStartupScript
-				fnRemoveCallBacks()
+				fnRemoveCRPCallBacks()
 				fnRemoveADSLCallBacks()
 				sMessage = fnGetMessage sStartupScript false	--最後的false代表函式裡的第三段字串不用顯示
 			)
@@ -284,20 +315,32 @@ struct o_stFixCallBack
 			messagebox sMessage
 		)
 
-		--查看maxfile裡的callbackscript是否異常
+		--Check callbacks and global variables from the maxfile.
 		local result = fnCheckMaxCallbackScript()
-		if result != undefined do
+		if result != undefined then
 		(
 			messagebox "Max virus detected, \nPlease visit the Check or delete undoMax subrollout."
 			--messagebox "偵測到max檔有病毒，請執行【刪除潛伏病毒】後，再存檔"
 		)
+		else
+		(
+			--Check some dirty global variables
+			local varDirtyGlobalVar = fnCheckDirtyGlobalVariables()
+			if varDirtyGlobalVar != undefined do
+			(
+				sMessage = "Dirty variables (" + (varDirtyGlobalVar as string) + ") detected, \nPlease visit the Check or delete undoMax subrollout."
+				messagebox sMessage
+			)
+		)
+
 	),
 
 	--還原Startup被改的檔案和檔案裡的Callback
 	fn fnRevertFileAndCallBack =
 	(
-		fnRemoveCallBacks()
+		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
+		fnRemoveDirtyVariables()
 
 		sMessage = "Max file fixing complete, please remember to save the maxfile"
 		
