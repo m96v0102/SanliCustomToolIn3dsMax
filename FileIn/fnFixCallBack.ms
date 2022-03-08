@@ -69,6 +69,18 @@ struct o_stFixCallBack
 		found -- return value
 	),
 	
+	fn fnCheckPhysPlug=
+	(
+		local m_problem_found_count = 0
+		local num_PhysXPluginMfx2_instance = PhysXPluginMfx2_count_instances()
+		local found_PhysXPluginMfx2_def = PhysXPluginMfx2_find_def()
+		local process_corruption_found = (num_PhysXPluginMfx2_instance != 0) or found_PhysXPluginMfx2_def
+		format "SanliTestLog_3_1: ProblemCount: % \n" m_problem_found_count
+		format "SanliTestLog_3_2: ProblemCount: % \n" num_PhysXPluginMfx2_instance
+		m_problem_found_count += (num_PhysXPluginMfx2_instance + (if found_PhysXPluginMfx2_def then 1 else 0))
+		format "SanliTestLog_3_3: ProblemCount: % \n" m_problem_found_count
+	),
+	
 	-- function to remove PhysXPluginMfx2 Anim Tracks instances
 	-- Called from test_for_PhysXPluginMfx2_process_corruption, dialogs displayed from there
 	fn PhysXPluginMfx2_clean_instances = 
@@ -85,11 +97,6 @@ struct o_stFixCallBack
 				--m_problem_fixed_count += 1
 			)
 		)
-		/*
-		if m_debug_mode_on do
-			format "PhysXPluginMfx2_clean_instances numCleaned:% \n" numCleaned 
-		numCleaned -- return value
-		*/
 	),
 	
 	-- function to test PhysXPluginMfx2 Anim Tracks source to see if original source, and if so tweak the source to cause instances to be deleted
@@ -106,11 +113,6 @@ struct o_stFixCallBack
 			)
 			exit;
 		)
-		/*
-		if m_debug_mode_on do
-			format "PhysXPluginMfx2_clean_defs numCleaned:% \n" numCleaned 
-		numCleaned -- return value
-		*/
 	),
 
 	--先確認startup資料的日期，載入max檔後再確認有無被改寫
@@ -408,14 +410,7 @@ struct o_stFixCallBack
 			)
 		)
 
-		local m_problem_found_count = 0
-		local num_PhysXPluginMfx2_instance = PhysXPluginMfx2_count_instances()
-		local found_PhysXPluginMfx2_def = PhysXPluginMfx2_find_def()
-		local process_corruption_found = (num_PhysXPluginMfx2_instance != 0) or found_PhysXPluginMfx2_def
-		format "SanliTestLog_3_1: ProblemCount: % \n" m_problem_found_count
-		format "SanliTestLog_3_2: ProblemCount: % \n" num_PhysXPluginMfx2_instance
-		m_problem_found_count += (num_PhysXPluginMfx2_instance + (if found_PhysXPluginMfx2_def then 1 else 0))
-		format "SanliTestLog_3_3: ProblemCount: % \n" m_problem_found_count
+		fnCheckPhysPlug()
 
 	),
 
