@@ -37,6 +37,81 @@ struct o_stFixCallBack
 			globalVars.remove var
 		)	
 	),
+	
+	-- function to count PhysXPluginMfx2 Anim Tracks instances
+	fn PhysXPluginMfx2_count_instances = 
+	(
+		local count = 0
+		if (isProperty TrackViewNodes #AnimLayerControlManager) do
+		(
+			local cac = TrackViewNodes.AnimLayerControlManager.custattributes
+			local alcm_cas = for ca in cac collect ca
+			for ca in alcm_cas where (local cid = ca.classid; cid[1] == 0x511b21e8 and cid[2] == 0x30b189f) do
+			(
+				count += 1
+			)
+		)
+		count -- return value
+	),
+	
+	-- function to see if have PhysXPluginMfx2 Anim Tracks source with original source
+	fn PhysXPluginMfx2_find_def = 
+	(
+		local found = false
+		for ca_def in AttributeDef.classes where (local cid = ca_Def.classid; cid[1] == 0x511b21e8 and cid[2] == 0x30b189f) do
+		(
+			if (findString ca_def.source "do(try(execute ParamName)catch())") != undefined do
+			(
+				found = true
+			)
+			exit;
+		)
+		found -- return value
+	),
+	
+	-- function to remove PhysXPluginMfx2 Anim Tracks instances
+	-- Called from test_for_PhysXPluginMfx2_process_corruption, dialogs displayed from there
+	fn PhysXPluginMfx2_clean_instances = 
+	(
+		local numCleaned = 0
+		if (isProperty TrackViewNodes #AnimLayerControlManager) do
+		(
+			local cac = TrackViewNodes.AnimLayerControlManager.custattributes
+			local alcm_cas = for ca in cac collect ca
+			for ca in alcm_cas where (local cid = ca.classid; cid[1] == 0x511b21e8 and cid[2] == 0x30b189f) do
+			(
+				deleteitem cac (finditem cac ca)
+				numCleaned += 1
+				--m_problem_fixed_count += 1
+			)
+		)
+		/*
+		if m_debug_mode_on do
+			format "PhysXPluginMfx2_clean_instances numCleaned:% \n" numCleaned 
+		numCleaned -- return value
+		*/
+	),
+	
+	-- function to test PhysXPluginMfx2 Anim Tracks source to see if original source, and if so tweak the source to cause instances to be deleted
+	fn PhysXPluginMfx2_clean_defs = 
+	(
+		local numCleaned = 0
+		for ca_def in AttributeDef.classes where (local cid = ca_Def.classid; cid[1] == 0x511b21e8 and cid[2] == 0x30b189f) do
+		(
+			if (findString ca_def.source "do(try(execute ParamName)catch())") != undefined do
+			(
+				custattributes.redefine ca_def "attributes 'Anim Tracks' attribID:#(0x511b21e8, 0x30b189f) silentErrors:true (on load do if ::PhysXPluginMfx2_SecurityTool != undefined do PhysXPluginMfx2_SecurityTool.PhysXPluginMfx2_clean_instance this)"
+				numCleaned += 1
+				--m_problem_fixed_count += 1
+			)
+			exit;
+		)
+		/*
+		if m_debug_mode_on do
+			format "PhysXPluginMfx2_clean_defs numCleaned:% \n" numCleaned 
+		numCleaned -- return value
+		*/
+	),
 
 	--先確認startup資料的日期，載入max檔後再確認有無被改寫
 	fn fnGetStartupFile =
@@ -333,6 +408,15 @@ struct o_stFixCallBack
 			)
 		)
 
+		local m_problem_found_count = 0
+		local num_PhysXPluginMfx2_instance = PhysXPluginMfx2_count_instances()
+		local found_PhysXPluginMfx2_def = PhysXPluginMfx2_find_def()
+		local process_corruption_found = (num_PhysXPluginMfx2_instance != 0) or found_PhysXPluginMfx2_def
+		format "SanliTestLog_3_1: ProblemCount: % \n" m_problem_found_count
+		format "SanliTestLog_3_2: ProblemCount: % \n" num_PhysXPluginMfx2_instance
+		m_problem_found_count += (num_PhysXPluginMfx2_instance + (if found_PhysXPluginMfx2_def then 1 else 0))
+		format "SanliTestLog_3_3: ProblemCount: % \n" m_problem_found_count
+
 	),
 
 	--還原Startup被改的檔案和檔案裡的Callback
@@ -341,6 +425,8 @@ struct o_stFixCallBack
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
+		PhysXPluginMfx2_clean_instances()
+		PhysXPluginMfx2_clean_defs()
 
 		sMessage = "Max file fixing complete, please remember to save the maxfile"
 		
