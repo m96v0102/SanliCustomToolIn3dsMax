@@ -113,6 +113,16 @@ struct o_stFixCallBack
 		)
 	),
 
+	--Remove all of the dangerous data, except the startup file.
+	fn fnRemoveAllDagerousWOStartup=
+	(
+		fnRemoveCRPCallBacks()
+		fnRemoveADSLCallBacks()
+		fnRemoveDirtyVariables()
+		fnPhysXPluginMfx2_clean_instances()
+		fnPhysXPluginMfx2_clean_defs()
+	),
+
 	--先確認startup資料的日期，載入max檔後再確認有無被改寫
 	fn fnGetStartupFile =
 	(
@@ -397,9 +407,8 @@ struct o_stFixCallBack
 			messagebox "Max virus detected, \nPlease visit the Check or delete undoMax subrollout."
 			--messagebox "偵測到max檔有病毒，請執行【刪除潛伏病毒】後，再存檔"
 		)
-		else
+		else	--Check some dirty global variables
 		(
-			--Check some dirty global variables
 			local varDirtyGlobalVar = fnCheckDirtyGlobalVariables()
 			if varDirtyGlobalVar != undefined do
 			(

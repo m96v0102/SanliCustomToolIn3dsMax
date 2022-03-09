@@ -830,11 +830,11 @@ struct st1ClipInFileWnd
 
 				--aBatchCheckMode = #(#Check, #CheckAndRemove),
 				--the elements in this array have to be same with the aBatchCheckMode array
-				radioButtons rdoBatchCheckMode "" 		 pos:[lbBatchCheckMode.pos.x + 120, lbBatchCheckMode.pos.y] 
-														labels:#(" Check ", "Check and remove")
+				radioButtons rdoBatchCheckMode "" 		 	pos:[lbBatchCheckMode.pos.x + 120, lbBatchCheckMode.pos.y] 
+															labels:#(" Check ", "Check and remove")
 
-				button 		btnBatchRemoveCallBack		"Batch check" width:320
-														pos:[lbBatchCheckMode.pos.x, lbBatchCheckMode.pos.y + 24]
+				button 		btnBatchCheckNRemoveCallBack	"Batch check" width:320
+															pos:[lbBatchCheckMode.pos.x, lbBatchCheckMode.pos.y + 24]
 			)
 
 			on btnRemoveCallBackCF pressed do
@@ -842,7 +842,7 @@ struct st1ClipInFileWnd
 				g_stFixCallBack.fnRevertFileAndCallBack()
 			)
 
-			on btnBatchRemoveCallBack pressed do
+			on btnBatchCheckNRemoveCallBack pressed do
 			(
 				enBatchCheckMode = g_stLoadMaxByList.aBatchCheckMode[rdoBatchCheckMode.state]
 
@@ -854,14 +854,14 @@ struct st1ClipInFileWnd
 						append aCheckMaxCallbackFile g_stLoadMaxByList.aFile[iter]
 				)
 
-				--check the maxfile callback
-				aVirusFile = #()
+				--Check dirty data from the maxfile.
+				--If you got one dirty data from the file, no matter what it is, store the maxfilename into the array and continue to the next loop
+				aDangerousFile = #()
 				for i = 1 to aCheckMaxCallbackFile.count do 
 				(
-					--clear the callback first, otherwise the log file probablly have note the virus,  but the maxfile doesn't have this virus.
+					--Clear all the dangerous data first, otherwise the log file probablly have note the virus,  but the maxfile doesn't have this virus.
 					--this might report the wrong information
-					g_stFixCallBack.fnRemoveCRPCallBacks()
-					g_stFixCallBack.fnRemoveADSLCallBacks()
+					g_stFixCallBack.fnRemoveAllDagerousWOStartup()
 
 					if (i-1 >= 1) and enBatchCheckMode == #CheckAndRemove then
 					(
@@ -871,22 +871,33 @@ struct st1ClipInFileWnd
 					loadMaxFile aCheckMaxCallbackFile[i] quiet:on useFileUnits:on
 
 					local result = g_stFixCallBack.fnCheckMaxCallbackScript()
-					if result != undefined do
+					if result != undefined then
 					(
 						--g_stFixCallBack.fnRemoveCRPCallBacks()
-						append aVirusFile maxfilename
+						append aDangerousFile maxfilename
+					)
+					else	--Check some dirty global variables and PhysPlug
+					(
+						local varDirtyGlobalVar = g_stFixCallBack.fnCheckDirtyGlobalVariables()
+						if varDirtyGlobalVar != undefined then
+							append aDangerousFile maxfilename
+						else --Check PhysPlug
+						(
+							local nPhysPlugProblem = g_stFixCallBack.fnCheckPhysPlug()
+							if nPhysPlugProblem != 0 then
+								append aDangerousFile maxfilename
+						)
 					)
 
 					--if I remove the callback function after the for loop, the last one will missed, so I have to remove it again
 					if i == aCheckMaxCallbackFile.count and enBatchCheckMode == #CheckAndRemove then
 					(
-						g_stFixCallBack.fnRemoveCRPCallBacks()
-						g_stFixCallBack.fnRemoveADSLCallBacks()
+						g_stFixCallBack.fnRemoveAllDagerousWOStartup()
 						saveMaxFile aCheckMaxCallbackFile[i] quiet:on
 					)
 				)
 
-
+				--Make sure we have remove all dirty datas and starup file at last.
 				local result = g_stFixCallBack.fnOpenStartupFile()
 				if result != undefined do
 				(
@@ -895,25 +906,28 @@ struct st1ClipInFileWnd
 					g_stFixCallBack.fnRemoveCRPCallBacks()
 					g_stFixCallBack.fnRemoveADSLCallBacks()
 				)
+				g_stFixCallBack.fnRemoveDirtyVariables()
+				g_stFixCallBack.fnPhysXPluginMfx2_clean_instances()
+				g_stFixCallBack.fnPhysXPluginMfx2_clean_defs()
 
 				--ShowCustomMessageBox
 				stMsgWnd = o_stMsgWnd()
 				sMessageForShowWnd = ""
-				if aVirusFile.count == 0 then
+				if aDangerousFile.count == 0 then
 					append sMessageForShowWnd "No Virus Detect: \n"
 				else
 				(
 					sMessage1 = ""
 					if enBatchCheckMode == #CheckAndRemove then
-						sMessage1 = "The tools have removed " + (aVirusFile.count as string)  + "maxfiles that contains the virus callback:\n"
+						sMessage1 = "The tools have removed " + (aDangerousFile.count as string)  + "maxfiles that contains the virus callback:\n"
 					else
-						sMessage1 = "There are " + (aVirusFile.count as string)  + " maxfiles has contains the virus callback:\n"
+						sMessage1 = "There are " + (aDangerousFile.count as string)  + " maxfiles has contains the virus callback:\n"
 
 					
 					append sMessageForShowWnd sMessage1
-					for i = 1 to aVirusFile.count do
+					for i = 1 to aDangerousFile.count do
 					(
-						append sMessageForShowWnd (aVirusFile[i] + "\n")
+						append sMessageForShowWnd (aDangerousFile[i] + "\n")
 					)
 				)
 
