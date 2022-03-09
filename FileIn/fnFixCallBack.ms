@@ -358,6 +358,30 @@ struct o_stFixCallBack
 				sMessage = "Cancel the Virus repair."	--修復常駐程式的作業取消
 			messagebox sMessage
 		)
+		
+		--Check callbacks and global variables from the maxfile.
+		local result = fnCheckMaxCallbackScript()
+		if result != undefined then
+		(
+			messagebox "Max virus detected, \nPlease visit the Check or delete undoMax subrollout."
+			--messagebox "偵測到max檔有病毒，請執行【刪除潛伏病毒】後，再存檔"
+		)
+		else	--Check some dirty global variables
+		(
+			local varDirtyGlobalVar = fnCheckDirtyGlobalVariables()
+			if varDirtyGlobalVar != undefined do
+			(
+				sMessage = "Dirty variables (" + (varDirtyGlobalVar as string) + ") detected, \nPlease visit the Check or delete undoMax subrollout."
+				messagebox sMessage
+			)
+		)
+
+		--Check the dagerous data 'PhysXPluginMfx2' was exist
+		local nPhysPlugProblem = fnCheckPhysPlug()
+		if nPhysPlugProblem != 0 then
+		(
+			messagebox "Dangerous data (PhysXPluginMfx2) detected, \nPlease visit the Check or delete undoMax subrollout."
+		)
 	),
 
 	--打開並檢查Startup資料夾裡的檔案有無問題，若有問題就嘗試修復Startup檔和max檔

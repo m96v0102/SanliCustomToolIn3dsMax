@@ -914,14 +914,14 @@ struct st1ClipInFileWnd
 				stMsgWnd = o_stMsgWnd()
 				sMessageForShowWnd = ""
 				if aDangerousFile.count == 0 then
-					append sMessageForShowWnd "No Virus Detect: \n"
+					append sMessageForShowWnd "No dangerous data Detected: \n"
 				else
 				(
 					sMessage1 = ""
 					if enBatchCheckMode == #CheckAndRemove then
 						sMessage1 = "The tools have removed " + (aDangerousFile.count as string)  + "maxfiles that contains the virus callback:\n"
 					else
-						sMessage1 = "There are " + (aDangerousFile.count as string)  + " maxfiles has contains the virus callback:\n"
+						sMessage1 = "There are " + (aDangerousFile.count as string)  + " maxfiles has contains some dangerous data:\n"
 
 					
 					append sMessageForShowWnd sMessage1
