@@ -195,7 +195,7 @@ struct stSanliCustomTool
 				lastSubRollout = itm.TabPageIndex+1
 				for subroll in rollArr[lastSubRollout][2] do
 				(
-					if (subroll == ro1Clip1File.roll or subroll == ro1Clip1File.roImportOrMergeSettings or
+					if (subroll == ro1Clip1File.roll or subroll == ro1Clip1File.roCheckUndoCallBack or
 						subroll == roMultiClip1File.roll or subroll == roOthers.roInfo) then
 						addSubRollout theSubRollout subroll rolledUp:false
 					else
@@ -237,9 +237,9 @@ struct stSanliCustomTool
 				
                 addSubRollout theSubRollout ro1Clip1File.roll
 				addSubRollout theSubRollout ro1Clip1File.roSearch rolledUp:true
-				addSubRollout theSubRollout ro1Clip1File.roImportOrMergeSettings rolledUp:false
+				addSubRollout theSubRollout ro1Clip1File.roImportOrMergeSettings rolledUp:true
 				addSubRollout theSubRollout ro1Clip1File.roExportSettings rolledUp:true
-				addSubRollout theSubRollout ro1Clip1File.roCheckUndoCallBack rolledUp:true
+				addSubRollout theSubRollout ro1Clip1File.roCheckUndoCallBack rolledUp:false
 				addSubRollout theSubRollout ro1Clip1File.roRecordExportPath rolledUp:true
 				
 				--open and check the Startup file, if there has a callback virus in it, then try to fix it.
@@ -272,7 +272,7 @@ struct stSanliCustomTool
 	(
 		--If you change the height or width, remember to change another width height in "subRollout theSubRollout".
 		createDialog roMainRollout 370 roMainRollout.ro1Clip1File.roHeight 560 300
-		roMainRollout.title = "SanliCustomTool(v1.017)"
+		roMainRollout.title = "SanliCustomTool(v1.018)"
 		
 		--copy Unity Editor files to C:\SanliCustomTool
 		sCurrentScriptFile = getThisScriptFilename()
@@ -298,6 +298,7 @@ if g_SanliCustomTool != undefined and g_SanliCustomTool.roMainRollout != undefin
 ) 
 g_SanliCustomTool = stSanliCustomTool()
 -- if roMainRolloutFloater != undefined do closeRolloutFloater roMainRolloutFloater
--- roMainRolloutFloater = newRolloutFloater "SanliCustomTool v1.001" 410 425	-- •i•H™¯ºe°B¶Ï∏mêm´¸©w
+-- The expression below can change the heigth, width, and position
+-- roMainRolloutFloater = newRolloutFloater "SanliCustomTool v1.001" 410 425
 -- addRollout g_SanliCustomTool.roMainRollout roMainRolloutFloater
 g_SanliCustomTool.Show()

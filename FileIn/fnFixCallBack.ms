@@ -39,7 +39,7 @@ struct o_stFixCallBack
 	),
 	
 	-- function to count PhysXPluginMfx2 Anim Tracks instances
-	fn PhysXPluginMfx2_count_instances = 
+	fn fnPhysXPluginMfx2_count_instances = 
 	(
 		local count = 0
 		if (isProperty TrackViewNodes #AnimLayerControlManager) do
@@ -55,7 +55,7 @@ struct o_stFixCallBack
 	),
 	
 	-- function to see if have PhysXPluginMfx2 Anim Tracks source with original source
-	fn PhysXPluginMfx2_find_def = 
+	fn fnPhysXPluginMfx2_find_def = 
 	(
 		local found = false
 		for ca_def in AttributeDef.classes where (local cid = ca_Def.classid; cid[1] == 0x511b21e8 and cid[2] == 0x30b189f) do
@@ -72,18 +72,16 @@ struct o_stFixCallBack
 	fn fnCheckPhysPlug=
 	(
 		local m_problem_found_count = 0
-		local num_PhysXPluginMfx2_instance = PhysXPluginMfx2_count_instances()
-		local found_PhysXPluginMfx2_def = PhysXPluginMfx2_find_def()
+		local num_PhysXPluginMfx2_instance = fnPhysXPluginMfx2_count_instances()
+		local found_PhysXPluginMfx2_def = fnPhysXPluginMfx2_find_def()
 		local process_corruption_found = (num_PhysXPluginMfx2_instance != 0) or found_PhysXPluginMfx2_def
-		format "SanliTestLog_3_1: ProblemCount: % \n" m_problem_found_count
-		format "SanliTestLog_3_2: ProblemCount: % \n" num_PhysXPluginMfx2_instance
 		m_problem_found_count += (num_PhysXPluginMfx2_instance + (if found_PhysXPluginMfx2_def then 1 else 0))
-		format "SanliTestLog_3_3: ProblemCount: % \n" m_problem_found_count
+		return m_problem_found_count
 	),
 	
 	-- function to remove PhysXPluginMfx2 Anim Tracks instances
 	-- Called from test_for_PhysXPluginMfx2_process_corruption, dialogs displayed from there
-	fn PhysXPluginMfx2_clean_instances = 
+	fn fnPhysXPluginMfx2_clean_instances = 
 	(
 		local numCleaned = 0
 		if (isProperty TrackViewNodes #AnimLayerControlManager) do
@@ -100,7 +98,7 @@ struct o_stFixCallBack
 	),
 	
 	-- function to test PhysXPluginMfx2 Anim Tracks source to see if original source, and if so tweak the source to cause instances to be deleted
-	fn PhysXPluginMfx2_clean_defs = 
+	fn fnPhysXPluginMfx2_clean_defs = 
 	(
 		local numCleaned = 0
 		for ca_def in AttributeDef.classes where (local cid = ca_Def.classid; cid[1] == 0x511b21e8 and cid[2] == 0x30b189f) do
@@ -410,7 +408,12 @@ struct o_stFixCallBack
 			)
 		)
 
-		fnCheckPhysPlug()
+		--Check the dagerous data 'PhysXPluginMfx2' was exist
+		local nPhysPlugProblem = fnCheckPhysPlug()
+		if nPhysPlugProblem != 0 then
+		(
+			messagebox "Dangerous data (PhysXPluginMfx2) detected, \nPlease visit the Check or delete undoMax subrollout."
+		)
 
 	),
 
@@ -420,8 +423,8 @@ struct o_stFixCallBack
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
-		PhysXPluginMfx2_clean_instances()
-		PhysXPluginMfx2_clean_defs()
+		fnPhysXPluginMfx2_clean_instances()
+		fnPhysXPluginMfx2_clean_defs()
 
 		sMessage = "Max file fixing complete, please remember to save the maxfile"
 		
