@@ -76,7 +76,7 @@ struct stSomeSavedPathOrProperties
 	),
 	
 	--g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.edtExportPath.text
-	--edtExportPathRecord.text = fnResetUaAndEpRcPath edtExportPath.text g_stPathOrProp.sUnityAssetPath	
+	--edtRecordExportPath.text = fnResetUaAndEpRcPath edtExportPath.text g_stPathOrProp.sUnityAssetPath	
 	fn fnResetUaAndEpRcPath _sExportPath &sUnityAssetPath=	--Reset Unity Asset and Export Record Path
 	(
 		--take of the string after Assets, and add the string in the right:  "\\Editor\\Sanli\\ExrpotRecordPath.xml"
@@ -113,11 +113,11 @@ struct stSomeSavedPathOrProperties
 		case nTabIndex of
 		(
 			1: 	(
-				sExportRecordPath = g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtExportPathRecord.text
-				sExportPath = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.edtExportPath.text
+				sExportRecordPath = g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtRecordExportPath.text
+				sExportPath = g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.edtExportPath.text
 				)
 			2:  (
-				sExportRecordPath = g_SanliCustomTool.roMainRollout.roMultiClip1File.roRecordExportPath.edtExportPathRecord.text
+				sExportRecordPath = g_SanliCustomTool.roMainRollout.roMultiClip1File.roRecordExportPath.edtRecordExportPath.text
 				sExportPath = g_SanliCustomTool.roMainRollout.roMultiClip1File.roll.edtExportPath.text	
 				)
 		)		
@@ -155,7 +155,7 @@ fileIn "FileIn\\SMeshOrClipIn1FileWnd.ms"		--1 clip in 1 file Window
 fileIn "FileIn\\OthersWnd.ms"					--Others Window
 fileIn "FileIn\\fnFixCallBack.ms"				--check and fix callbacks virus
 
-global g_stFixCallBack = o_stFixCallBack()		--fileIn fnFixCallBack時會用到的結構
+global g_stFixCallBack = o_stFixCallBack()		--fileIn fnFixCallBack嚙褕會嚙諄到的嚙踝蕭嚙箱
 
 global g_stLoadMaxByList
 
@@ -236,6 +236,7 @@ struct stSanliCustomTool
 					dnTabs.TabPages.add aTab[1]
 				
                 addSubRollout theSubRollout ro1Clip1File.roll
+				addSubRollout theSubRollout ro1Clip1File.roExportFn rolledUp:true
 				addSubRollout theSubRollout ro1Clip1File.roSearch rolledUp:true
 				addSubRollout theSubRollout ro1Clip1File.roImportOrMergeSettings rolledUp:true
 				addSubRollout theSubRollout ro1Clip1File.roExportSettings rolledUp:true
@@ -254,8 +255,8 @@ struct stSanliCustomTool
 					g_stPathOrProp.sExportRecordPath = g_stPathOrProp.fnGetNodeText "ExportRecordPath"
 					g_stPathOrProp.xmlDoc.mfReleaseXML()
 					ro1Clip1File.roll.edtSourceFolderPath.text = g_stPathOrProp.sLoadFileFromPath
-					ro1Clip1File.roll.edtExportPath.text = g_stPathOrProp.sExportPath
-					ro1Clip1File.roRecordExportPath.edtExportPathRecord.text = g_stPathOrProp.sExportRecordPath
+					ro1Clip1File.roExportFn.edtExportPath.text = g_stPathOrProp.sExportPath
+					ro1Clip1File.roRecordExportPath.edtRecordExportPath.text = g_stPathOrProp.sExportRecordPath
 				)
 			)-- end roll open
 
