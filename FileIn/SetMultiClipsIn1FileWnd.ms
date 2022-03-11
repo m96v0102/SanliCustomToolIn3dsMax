@@ -279,7 +279,7 @@ struct stMultiClipsIn1FileWnd
 			fn fnCreateXmlAndSetNdRoot =
 			(
 				g_stTimeRange.xmlDoc = tXMLDocument()
-				sRecordExportFile = g_SanliCustomTool.roMainRollout.roMultiClip1File.roRecordExportPath.edtExportPathRecord.text
+				sRecordExportFile = g_SanliCustomTool.roMainRollout.roMultiClip1File.roRecordExportPath.edtRecordExportPath.text
 				if (doesFileExist sRecordExportFile) == true do deleteFile sRecordExportFile
 				sRecordExportPath = pathConfig.removePathLeaf sRecordExportFile
 				makeDir sRecordExportPath
@@ -465,7 +465,7 @@ struct stMultiClipsIn1FileWnd
 
 			on btnExportFile pressed do
 			(
-				g_SanliCustomTool.roMainRollout.roMultiClip1File.roRecordExportPath.edtExportPathRecord.text =
+				g_SanliCustomTool.roMainRollout.roMultiClip1File.roRecordExportPath.edtRecordExportPath.text =
 				 		g_stPathOrProp.fnResetUaAndEpRcPath edtExportPath.text &g_stPathOrProp.sUnityAssetPath
 
 				--save ExportPath to xml
@@ -939,17 +939,17 @@ struct stMultiClipsIn1FileWnd
 		rollout roRecordExportPath "Record Export Path_v1.001"
 		(
 			label 		lbExportPathRecord "Export Path Record file:"
-			editText 	edtExportPathRecord "" --text: g_stPathOrProp.sExportRecordPath
+			editText 	edtRecordExportPath "" --text: g_stPathOrProp.sExportRecordPath
 						tooltip: "record every files when we export, all of the export path will save in this XML file "
-			button 		btnResetPath "Reset the record path" width:edtExportPathRecord.width			--tooltip:"reset the record path"
+			button 		btnResetPath "Reset the record path" width:edtRecordExportPath.width			--tooltip:"reset the record path"
 
 			on roRecordExportPath open do
 			(
-				edtExportPathRecord.text = g_stPathOrProp.sExportRecordPath
+				edtRecordExportPath.text = g_stPathOrProp.sExportRecordPath
 			)
 			
-			--on edtExportPathRecord keyup key do
-			on edtExportPathRecord changed sValue do
+			--on edtRecordExportPath keyup key do
+			on edtRecordExportPath changed sValue do
 			(
 				g_stPathOrProp.sExportRecordPath = sValue
 			)
@@ -958,7 +958,7 @@ struct stMultiClipsIn1FileWnd
 			(
 				--Remove the string after 'Asssets', and replace it to "\\Editor\\Sanli\\ExrpotRecordPath.xml"
 				sExportPathText = g_SanliCustomTool.roMainRollout.roMultiClip1File.roll.edtExportPath.text
-				edtExportPathRecord.text = g_stPathOrProp.fnResetUaAndEpRcPath sExportPathText &g_stPathOrProp.sUnityAssetPath
+				edtRecordExportPath.text = g_stPathOrProp.fnResetUaAndEpRcPath sExportPathText &g_stPathOrProp.sUnityAssetPath
 
 				sRecordExportXmlPath = ""
 				aFilterRecordExportXmlPath = filterString g_SanliCustomTool.roMainRollout.roMultiClip1File.roll.edtExportPath.text "\\"
@@ -968,7 +968,7 @@ struct stMultiClipsIn1FileWnd
 					if aFilterRecordExportXmlPath[i] == "Assets" do exit
 				)
 
-				edtExportPathRecord.text = 	sRecordExportXmlPath + "Editor\\Sanli\\ExrpotRecordPath.xml"
+				edtRecordExportPath.text = 	sRecordExportXmlPath + "Editor\\Sanli\\ExrpotRecordPath.xml"
 			)
 
 		)

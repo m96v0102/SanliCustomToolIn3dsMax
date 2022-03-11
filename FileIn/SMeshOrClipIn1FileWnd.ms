@@ -99,8 +99,8 @@ struct stLoadMaxByList
 				if g_SanliCustomTool != undefined do
 				(
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnExportFile.enabled = true
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnSelExport.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnExportFile.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnSelExport.enabled = true
 				)
 			)
 			#Merge:
@@ -109,8 +109,8 @@ struct stLoadMaxByList
 				if g_SanliCustomTool != undefined do
 				(
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnExportFile.enabled = false
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnSelExport.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnExportFile.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnSelExport.enabled = false
 				)
 				
 			)
@@ -120,8 +120,8 @@ struct stLoadMaxByList
 				if g_SanliCustomTool != undefined do
 				(
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnExportFile.enabled = false
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnSelExport.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnExportFile.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnSelExport.enabled = false
 				)
 			)
 			#ImportObj:
@@ -130,8 +130,8 @@ struct stLoadMaxByList
 				if g_SanliCustomTool != undefined do
 				(
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnExportFile.enabled = false
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.btnSelExport.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnExportFile.enabled = false
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnSelExport.enabled = false
 				)
 			)
 		)
@@ -153,12 +153,15 @@ struct stLoadMaxByList
 		case _enLoadType of
 		(
 			#Load:
-				loadMaxFile aFile[_sel] quiet:on useFileUnits:on
+			(
+				local result = loadMaxFile aFile[_sel] quiet:on useFileUnits:on
+				if result == false do
+					MessageBox("LoadMax failed - Please recheck the file version and the current max version!!")
+			)
 			#Merge:
 			(
 				if bShowMIOptions == true then	mergeMAXFile aFile[_sel]
-				else  							mergeMAXFile aFile[_sel] #renameMtlDups #AutoRenameDups #useSceneMtlDups
-				
+				else  							mergeMAXFile aFile[_sel] #renameMtlDups #AutoRenameDups #useSceneMtlDups		
 			)
 			#ImportFbx:
 			(
@@ -180,7 +183,8 @@ global g_stFixCallBack		--there might cause  an error in the first run(Open roll
 
 struct st1ClipInFileWnd
 (
-	public roll,	
+	public roll,
+	roExportFn,
 	roSearch,
 	roImportOrMergeSettings,
 	roExportSettings,
@@ -220,38 +224,6 @@ struct st1ClipInFileWnd
 																tooltip:"create current max file thumbnail"
 			)
 			
-			group "Export"
-			(
-				dotNetControl edtExportPath						"TextBox" height:17 width:315 --pos:[20, btnOpenSelFile.pos.y + 53]
-				
-				--the elements in this items have to be same with the g_stLoadMaxByList.aExportType
-				label lbExportMode "ExportMode:"				pos:[edtExportPath.pos.x, edtExportPath.pos.y + 28]
-				dropdownList ddlExportMode ""					pos:[lbExportMode.pos.x + 68, lbExportMode.pos.y - 2] width:163
-																items:#("Static Mesh", "Skinned Mesh", "Animation")
-																
-				--label lbCreateFolder "CreateFolder"				pos:[ddlExportMode.pos.x + 160, ddlExportMode.pos.y + 5]
-				checkbox ckCreatefolder "CreateFolder" 			pos:[ddlExportMode.pos.x + ddlExportMode.width + 4, ddlExportMode.pos.y + 5]
-																tooltip:"Create the folder by 3dsMax's filename."
-				
-				--the elements in this items have to be same with the g_stLoadMaxByList.aEmbedTextureType
-				label lbEmbedTexture "MediaEmbed:"				pos:[lbExportMode.pos.x, lbExportMode.pos.y + 22]
-				dropdownList ddlEmbedTextureMode ""				pos:[lbEmbedTexture.pos.x + 68, lbEmbedTexture.pos.y - 2] width:163
-																items:#("Embed Media", "Copy textures from current folder", "Don't set any textures")
-				
-				label lbTextureExt "Ext:"						pos:[ddlEmbedTextureMode.pos.x + ddlEmbedTextureMode.width + 3, ddlEmbedTextureMode.pos.y + 5]
-				editText edtTextureExt text:".tga " 			pos:[lbTextureExt.pos.x + 20, lbTextureExt.pos.y - 3] width:58 height:10
-
-				label lbExportAniHint1 "If you only want to export the animation,"	pos:[lbEmbedTexture.pos.x + 60, lbEmbedTexture.pos.y + 22]
-				label lbExportAniHint2 "remember to hide(or freeze) the models in those animation maxfiles."
-				
-				button 	btnExportFile "Export FBX"				pos:[lbEmbedTexture.pos.x, lbExportAniHint2.pos.y + 24] width:98
-																tooltip:"Export selected max files from the list."
-				button 	btnSelExport "Export selection"			pos:[btnExportFile.pos.x + 108, btnExportFile.pos.y] width:98
-																tooltip:"Export the selection that you selected in the current max file."
-				button 	btnSaveExportPath "Save path" 			pos:[btnSelExport.pos.x + 108, btnSelExport.pos.y] width:98 --enabled:false
-																tooltip:"Save the export path above"
-			)
-			
 			-- some maxfiles is copied from Other Projects, and have some Thumbnail with it, but the preview rules are different.
 			-- so use the Project thumbnail rules to load and copy it for this tool.
 			fn fnCopyBitmapFromProjThumbNail _sImageFileForUJProj _sMaxFilePath _sFileNameWithoutExt=
@@ -279,7 +251,6 @@ struct st1ClipInFileWnd
 				save newdst
 				bmp1.filename = newdst.filename
 			)
-
 			--Set Thumbnail and other Multilistbox's selection
 			fn fnGetThumbnail _SourceLbx =
 			(
@@ -322,17 +293,16 @@ struct st1ClipInFileWnd
 			(
 				g_stLoadMaxByList.xmlDoc = tXMLDocument()
 
-				g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtExportPathRecord.text =
-				 	g_stPathOrProp.fnResetUaAndEpRcPath edtExportPath.text &g_stPathOrProp.sUnityAssetPath
+				g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtRecordExportPath.text =
+				 	g_stPathOrProp.fnResetUaAndEpRcPath g_SanliCustomTool.roMainRollout.ro1Clip1File.edtExportPath.text &g_stPathOrProp.sUnityAssetPath
 
-				sRecordExportFile = g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtExportPathRecord.text
+				sRecordExportFile = g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtRecordExportPath.text
 				if (doesFileExist sRecordExportFile) == true do deleteFile sRecordExportFile
 				sRecordExportPath = pathConfig.removePathLeaf sRecordExportFile
 				makeDir sRecordExportPath
 				g_stLoadMaxByList.xmlDoc.mfCreateXML rXmlFilePath:sRecordExportFile
 				g_stLoadMaxByList.ndRoot = g_stLoadMaxByList.xmlDoc.mfCreateRootNode "RecordPathRoot"
 			)
-
 			--EX: fnAppendChildNodeToXml sExportFile aSelection[i].name
 			fn fnAppendChildNodeToXml _sExportFile _sName =
 			(
@@ -356,25 +326,6 @@ struct st1ClipInFileWnd
 				g_stLoadMaxByList.xmlDoc.mfSaveXML()
 				g_stLoadMaxByList.xmlDoc.mfReleaseXML()
 			)
-
-			--fnCopyTexture edtTextureExt.text sOutputpath
-			fn fnCopyTexture _sExtName _sOutputpath= 
-			(
-				aTextures = getFiles (maxfilepath + "\\*" + _sExtName)
-				if aTextures.count != 0 then
-				(
-					for mt in aTextures do
-					(
-						mapname =getFilenameFile mt
-						sOutputTexturePath = _sOutputpath + "Materials\\"	--Put textures into the Materials folder.
-						makeDir sOutputTexturePath
-						sOutputTextureFile = sOutputTexturePath + mapname + _sExtName
-						format "Sanlilog_ExportTexture: % \n" sOutputTextureFile
-						deleteFile sOutputTextureFile
-						copyFile mt sOutputTextureFile
-					)
-				)
-			)			
 			
 			on roll open do
 			(
@@ -382,24 +333,7 @@ struct st1ClipInFileWnd
 				dcColor = dotnetclass "system.drawing.color"
 				edtSourceFolderPath.backColor = dcColor.darkgray
 				--edtSourceFolderPath.TextAlign= (dotNetClass "System.Windows.Forms.HorizontalAlignment").Center
-				edtSourceFolderPath.text = g_stPathOrProp.sLoadFileFromPath				
-
-				edtExportPath.Multiline = true	--I can't modify the dotNetControl\TextBox if I comment this line.
-				edtExportPath.backColor = dcColor.darkgray
-				edtExportPath.text = g_stPathOrProp.sExportPath				
-
-				g_stLoadMaxByList.fnSetMATEmbedType ddlEmbedTextureMode.selection				
-
-			)
-			
-			on btnSaveExportPath pressed do
-			(
-				g_stPathOrProp.fnSaveXml()
-			)
-
-			on edtExportPath keyup key do
-			(
-				g_stPathOrProp.sExportPath = edtExportPath.text
+				edtSourceFolderPath.text = g_stPathOrProp.sLoadFileFromPath
 			)
 
 			on edtSourceFolderPath KeyUp key do
@@ -457,6 +391,107 @@ struct st1ClipInFileWnd
 				else messageBox "Please Select 'one' file to Create thumbnail!!"				
 			)
 
+			on btnBrowseFileFromPath pressed do
+			(
+				--clear the roSearch.edtSearch.text
+				g_SanliCustomTool.roMainRollout.ro1Clip1File.roSearch.edtSearch.text = ""
+
+				g_stPathOrProp.sLoadFileFromPath = getSavePath ()
+				if g_stPathOrProp.sLoadFileFromPath != undefined do
+					edtSourceFolderPath.text = g_stPathOrProp.sLoadFileFromPath
+
+				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
+				g_stLoadMaxByList.fnLoadFileToList &lboxMaxFile edtSourceFolderPath.text _enLoadType:enLoadType
+			)
+			
+			on btnLoadFileFromPath pressed do
+			(
+				--clear the roSearch.edtSearch.text
+				g_SanliCustomTool.roMainRollout.ro1Clip1File.roSearch.edtSearch.text = ""
+				
+				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
+				g_stLoadMaxByList.fnLoadFileToList &lboxMaxFile edtSourceFolderPath.text _enLoadType:enLoadType
+
+				fnGetThumbnail lboxMaxFile
+			)
+
+			on lboxMaxFile selected index do
+			(
+				fnGetThumbnail lboxMaxFile
+			)
+			
+			on lboxMaxFile doubleClicked sel do
+			(
+				format "Sanlilog_SelectionFile: % \n" g_stLoadMaxByList.aFile[sel]
+				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
+				g_stLoadMaxByList.fnLoadMergeOrImport enLoadType sel
+				--loadMaxFile g_stLoadMaxByList.aFile[sel] quiet:on useFileUnits:on
+
+				--Open Startup folder and check the virus
+				g_stFixCallBack.fnCheckFixStartupFileAndScene()
+			)
+		)
+
+		rollout roExportFn "Export"
+		(
+			dotNetControl edtExportPath						"TextBox" height:17 width:315 --pos:[20, btnOpenSelFile.pos.y + 53]
+				
+			--the elements in this items have to be same with the g_stLoadMaxByList.aExportType
+			label lbExportMode "ExportMode:"				pos:[edtExportPath.pos.x, edtExportPath.pos.y + 28]
+			dropdownList ddlExportMode ""					pos:[lbExportMode.pos.x + 68, lbExportMode.pos.y - 2] width:163 \
+															items:#("Static Mesh", "Skinned Mesh", "Animation")
+															
+			checkbox ckCreatefolder "CreateFolder" 			pos:[ddlExportMode.pos.x + ddlExportMode.width + 4, ddlExportMode.pos.y + 5] \
+															tooltip:"Create the folder by 3dsMax's filename."
+			
+			--the elements in this items have to be same with the g_stLoadMaxByList.aEmbedTextureType
+			label lbEmbedTexture "MediaEmbed:"				pos:[lbExportMode.pos.x, lbExportMode.pos.y + 22]
+			dropdownList ddlEmbedTextureMode ""				pos:[lbEmbedTexture.pos.x + 68, lbEmbedTexture.pos.y - 2] width:163 \
+															items:#("Embed Media", "Copy textures from current folder", "Don't set any textures")
+			
+			label lbTextureExt "Ext:"						pos:[ddlEmbedTextureMode.pos.x + ddlEmbedTextureMode.width + 3, ddlEmbedTextureMode.pos.y + 5]
+			editText edtTextureExt text:".tga " 			pos:[lbTextureExt.pos.x + 20, lbTextureExt.pos.y - 3] width:58 height:10
+
+			label lbExportAniHint1 "If you only want to export the animation,"	pos:[lbEmbedTexture.pos.x + 60, lbEmbedTexture.pos.y + 22]
+			label lbExportAniHint2 "remember to hide(or freeze) the models in those animation maxfiles."
+			
+			button 	btnExportFile "Export FBX"				pos:[lbEmbedTexture.pos.x, lbExportAniHint2.pos.y + 24] width:98 \
+															tooltip:"Export selected max files from the list."
+			button 	btnSelExport "Export selection"			pos:[btnExportFile.pos.x + 108, btnExportFile.pos.y] width:98 \
+															tooltip:"Export the selection that you selected in the current max file."
+			button 	btnSaveExportPath "Save path" 			pos:[btnSelExport.pos.x + 108, btnSelExport.pos.y] width:98 \ --enabled:false
+															tooltip:"Save the export path above"
+
+			--fnCopyTexture edtTextureExt.text sOutputpath
+			fn fnCopyTexture _sExtName _sOutputpath=
+			(
+				aTextures = getFiles (maxfilepath + "\\*" + _sExtName)
+				if aTextures.count != 0 then
+				(
+					for mt in aTextures do
+					(
+						mapname =getFilenameFile mt
+						sOutputTexturePath = _sOutputpath + "Materials\\"	--Put textures into the Materials folder.
+						makeDir sOutputTexturePath
+						sOutputTextureFile = sOutputTexturePath + mapname + _sExtName
+						format "Sanlilog_ExportTexture: % \n" sOutputTextureFile
+						deleteFile sOutputTextureFile
+						copyFile mt sOutputTextureFile
+					)
+				)
+			)
+			
+			on roExportFn open do
+			(
+				dcColor = dotnetclass "system.drawing.color"
+				edtExportPath.Multiline = true	--I can't modify the dotNetControl\TextBox if I comment this line.
+				edtExportPath.backColor = dcColor.darkgray
+				edtExportPath.text = g_stPathOrProp.sExportPath
+			)
+
 			on ddlExportMode selected state do
 			(
 				EnumExportType = g_stLoadMaxByList.aExportType[state]
@@ -488,42 +523,9 @@ struct st1ClipInFileWnd
 				g_stLoadMaxByList.fnSetMATEmbedType state
 			)
 
-			on btnSelExport pressed do
+			on edtExportPath keyup key do
 			(
-				--Set output path
-				sFilename = getFileNameFile maxfilename
-				sOutputpath =  edtExportPath.text + "\\"
-
-				if ckCreatefolder.checked then sOutputpath =  edtExportPath.text + "\\" + sFilename + "\\" 
-				
-				if selection.count > 0 then
-				(
-					aSelection = selection as array
-					fnSetFBXParameter()
-					fnCreateXmlAndRootAndGetUnityPath()
-
-					for i = 1 to aSelection.count do
-					(
-						--Export Model						
-						select aSelection[i]
-						sExportFile = fnMakeDirAndExportFile sOutputpath aSelection[i].name
-
-						fnAppendChildNodeToXml sExportFile aSelection[i].name
-					)
-
-					fnSaveXmlAndRelease()
-
-					--Copy Texture
-					if g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckCopyTexture.checked == true then
-					(
-						fnCopyTexture edtTextureExt.text sOutputpath
-					)
-
-					--Copy Unity script into the unity folder if there doesn't have the script to quick select the maxfile.
-					g_stPathOrProp.fnCopyCSToUFolder()
-
-				)
-				else messageBox "No selected objects found."
+				g_stPathOrProp.sExportPath = edtExportPath.text
 			)
 
 			on btnExportFile pressed do
@@ -568,9 +570,6 @@ struct st1ClipInFileWnd
 
 					g_stPathOrProp.fnSaveXmlAndRelease()
 				)
-				
-				
-				
 				
 				aExpMaxFile = #()
 				for iter = 1 to g_stLoadMaxByList.aFile.count do 
@@ -633,48 +632,51 @@ struct st1ClipInFileWnd
 
 			)
 
-			on btnBrowseFileFromPath pressed do
+			on btnSelExport pressed do
 			(
-				--clear the roSearch.edtSearch.text
-				g_SanliCustomTool.roMainRollout.ro1Clip1File.roSearch.edtSearch.text = ""
+				--Set output path
+				sFilename = getFileNameFile maxfilename
+				sOutputpath =  g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.edtExportPath.text + "\\"
 
-				g_stPathOrProp.sLoadFileFromPath = getSavePath ()
-				if g_stPathOrProp.sLoadFileFromPath != undefined do
-					edtSourceFolderPath.text = g_stPathOrProp.sLoadFileFromPath
-
-				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
-				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
-				g_stLoadMaxByList.fnLoadFileToList &lboxMaxFile edtSourceFolderPath.text _enLoadType:enLoadType
-			)
-			
-			on btnLoadFileFromPath pressed do
-			(
-				--clear the roSearch.edtSearch.text
-				g_SanliCustomTool.roMainRollout.ro1Clip1File.roSearch.edtSearch.text = ""
+				if ckCreatefolder.checked then sOutputpath =  
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.edtExportPath.text + "\\" + sFilename + "\\" 
 				
-				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
-				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
-				g_stLoadMaxByList.fnLoadFileToList &lboxMaxFile edtSourceFolderPath.text _enLoadType:enLoadType
+				if selection.count > 0 then
+				(
+					aSelection = selection as array
+					fnSetFBXParameter()
+					fnCreateXmlAndRootAndGetUnityPath()
 
-				fnGetThumbnail lboxMaxFile
+					for i = 1 to aSelection.count do
+					(
+						--Export Model						
+						select aSelection[i]
+						sExportFile = fnMakeDirAndExportFile sOutputpath aSelection[i].name
+
+						fnAppendChildNodeToXml sExportFile aSelection[i].name
+					)
+
+					fnSaveXmlAndRelease()
+
+					--Copy Texture
+					if g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckCopyTexture.checked == true then
+					(
+						fnCopyTexture edtTextureExt.text sOutputpath
+					)
+
+					--Copy Unity script into the unity folder if there doesn't have the script to quick select the maxfile.
+					g_stPathOrProp.fnCopyCSToUFolder()
+
+				)
+				else messageBox "No selected objects found."
 			)
 
-			on lboxMaxFile selected index do
+			on btnSaveExportPath pressed do
 			(
-				fnGetThumbnail lboxMaxFile
+				g_stPathOrProp.fnSaveXml()
 			)
-			
-			on lboxMaxFile doubleClicked sel do
-			(
-				format "Sanlilog_SelectionFile: % \n" g_stLoadMaxByList.aFile[sel]
-				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
-				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
-				g_stLoadMaxByList.fnLoadMergeOrImport enLoadType sel
-				--loadMaxFile g_stLoadMaxByList.aFile[sel] quiet:on useFileUnits:on
 
-				--Open Startup folder and check the virus
-				g_stFixCallBack.fnCheckFixStartupFileAndScene()
-			)
+
 		)
 
 		rollout roSearch "Search_v1.001"
@@ -813,7 +815,7 @@ struct st1ClipInFileWnd
 			
 			on roExportSettings open do
 			(
-				g_stLoadMaxByList.fnSetMATEmbedType g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.ddlEmbedTextureMode.selection
+				g_stLoadMaxByList.fnSetMATEmbedType g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.ddlEmbedTextureMode.selection
 			)
 
 
@@ -939,16 +941,16 @@ struct st1ClipInFileWnd
 		rollout roRecordExportPath "Record Export Path_v1.001"
 		(
 			label 		lbExportPathRecord "Export Path Record file:"
-			editText 	edtExportPathRecord "" --text: g_stPathOrProp.sExportRecordPath
+			editText 	edtRecordExportPath "" --text: g_stPathOrProp.sExportRecordPath
 						tooltip: "record every files when we export, all of the export path will save in this XML file "
-			button 		btnResetPath "Reset the record path" width:edtExportPathRecord.width			--tooltip:"reset the record path"
+			button 		btnResetPath "Reset the record path" width:edtRecordExportPath.width			--tooltip:"reset the record path"
 
 			on roRecordExportPath open do
 			(
-				edtExportPathRecord.text = g_stPathOrProp.sExportRecordPath
+				edtRecordExportPath.text = g_stPathOrProp.sExportRecordPath
 			)
 
-			on edtExportPathRecord changed sValue do
+			on edtRecordExportPath changed sValue do
 			(
 				g_stPathOrProp.sExportRecordPath = sValue
 			)
@@ -957,7 +959,7 @@ struct st1ClipInFileWnd
 			(
 				--Remove the string after 'Asssets', and replace it to "\\Editor\\Sanli\\ExrpotRecordPath.xml"
 				sExportPathText = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.edtExportPath.text
-				edtExportPathRecord.text = g_stPathOrProp.fnResetUaAndEpRcPath sExportPathText &g_stPathOrProp.sUnityAssetPath
+				edtRecordExportPath.text = g_stPathOrProp.fnResetUaAndEpRcPath sExportPathText &g_stPathOrProp.sUnityAssetPath
 			)
 
 		)
