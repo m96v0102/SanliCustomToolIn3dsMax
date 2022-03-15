@@ -279,53 +279,6 @@ struct st1ClipInFileWnd
 					)
 				)
 			)
-
-			fn fnSetFBXParameter =
-			(
-				FBXExporterSetParam "Skin" g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckSkin.checked
-				FBXExporterSetParam "BakeAnimation" g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckBakeAnin.checked
-				FBXExporterSetParam "Animation" g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckAnimation.checked
-				FBXExporterSetParam "EmbedTextures" g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckEmbedTexture.checked
-				--FbxExporterSetParam "TangentSpaceExport" true
-			)
-
-			fn fnCreateXmlAndRootAndGetUnityPath =
-			(
-				g_stLoadMaxByList.xmlDoc = tXMLDocument()
-
-				g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtRecordExportPath.text =
-				 	g_stPathOrProp.fnResetUaAndEpRcPath g_SanliCustomTool.roMainRollout.ro1Clip1File.edtExportPath.text &g_stPathOrProp.sUnityAssetPath
-
-				sRecordExportFile = g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtRecordExportPath.text
-				if (doesFileExist sRecordExportFile) == true do deleteFile sRecordExportFile
-				sRecordExportPath = pathConfig.removePathLeaf sRecordExportFile
-				makeDir sRecordExportPath
-				g_stLoadMaxByList.xmlDoc.mfCreateXML rXmlFilePath:sRecordExportFile
-				g_stLoadMaxByList.ndRoot = g_stLoadMaxByList.xmlDoc.mfCreateRootNode "RecordPathRoot"
-			)
-			--EX: fnAppendChildNodeToXml sExportFile aSelection[i].name
-			fn fnAppendChildNodeToXml _sExportFile _sName =
-			(
-				ndChildNode = g_stLoadMaxByList.xmlDoc.mfGetNewNode _sName
-				ndChildNode.mfSetText _sExportFile
-				g_stLoadMaxByList.ndRoot.mfAppendChild ndChildNode
-			)
-
-			--EX: sExportFile = fnMakeDirAndExportFile sOutputpath aSelection[i].name
-			fn fnMakeDirAndExportFile _sOutputpath _sName =
-			(
-				sExportFile = _sOutputpath  + _sName + ".FBX"
-				format "Sanlilog_ExportModelFile: % \n" sExportFile
-				makeDir _sOutputpath
-				exportFile sExportFile #noPrompt  selectedOnly:on
-				return sExportFile
-			)
-
-			fn fnSaveXmlAndRelease =
-			(
-				g_stLoadMaxByList.xmlDoc.mfSaveXML()
-				g_stLoadMaxByList.xmlDoc.mfReleaseXML()
-			)
 			
 			on roll open do
 			(
@@ -435,7 +388,7 @@ struct st1ClipInFileWnd
 			)
 		)
 
-		rollout roExportFn "Export"
+		rollout roExportFn "Export_v1.001"
 		(
 			dotNetControl edtExportPath						"TextBox" height:17 width:315 --pos:[20, btnOpenSelFile.pos.y + 53]
 				
@@ -482,6 +435,54 @@ struct st1ClipInFileWnd
 						copyFile mt sOutputTextureFile
 					)
 				)
+			)
+
+			fn fnSetFBXParameter =
+			(
+				FBXExporterSetParam "Skin" g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckSkin.checked
+				FBXExporterSetParam "BakeAnimation" g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckBakeAnin.checked
+				FBXExporterSetParam "Animation" g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckAnimation.checked
+				FBXExporterSetParam "EmbedTextures" g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckEmbedTexture.checked
+				--FbxExporterSetParam "TangentSpaceExport" true
+			)
+
+			fn fnCreateXmlAndRootAndGetUnityPath =
+			(
+				g_stLoadMaxByList.xmlDoc = tXMLDocument()
+
+				g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtRecordExportPath.text =
+				 	g_stPathOrProp.fnResetUaAndEpRcPath edtExportPath.text &g_stPathOrProp.sUnityAssetPath
+
+				sRecordExportFile = g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.edtRecordExportPath.text
+				if (doesFileExist sRecordExportFile) == true do deleteFile sRecordExportFile
+				sRecordExportPath = pathConfig.removePathLeaf sRecordExportFile
+				makeDir sRecordExportPath
+				g_stLoadMaxByList.xmlDoc.mfCreateXML rXmlFilePath:sRecordExportFile
+				g_stLoadMaxByList.ndRoot = g_stLoadMaxByList.xmlDoc.mfCreateRootNode "RecordPathRoot"
+			)
+
+			--EX: sExportFile = fnMakeDirAndExportFile sOutputpath aSelection[i].name
+			fn fnMakeDirAndExportFile _sOutputpath _sName =
+			(
+				sExportFile = _sOutputpath  + _sName + ".FBX"
+				format "Sanlilog_ExportModelFile: % \n" sExportFile
+				makeDir _sOutputpath
+				exportFile sExportFile #noPrompt  selectedOnly:on
+				return sExportFile
+			)
+
+			--EX: fnAppendChildNodeToXml sExportFile aSelection[i].name
+			fn fnAppendChildNodeToXml _sExportFile _sName =
+			(
+				ndChildNode = g_stLoadMaxByList.xmlDoc.mfGetNewNode _sName
+				ndChildNode.mfSetText _sExportFile
+				g_stLoadMaxByList.ndRoot.mfAppendChild ndChildNode
+			)
+
+			fn fnSaveXmlAndRelease =
+			(
+				g_stLoadMaxByList.xmlDoc.mfSaveXML()
+				g_stLoadMaxByList.xmlDoc.mfReleaseXML()
 			)
 			
 			on roExportFn open do
@@ -574,7 +575,7 @@ struct st1ClipInFileWnd
 				aExpMaxFile = #()
 				for iter = 1 to g_stLoadMaxByList.aFile.count do 
 				(
-					if lboxMaxFile.selection[iter] == true then
+					if g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile.selection[iter] == true then
 					(
 						format "Sanlilog_Export file: % \n" g_stLoadMaxByList.aFile[iter]
 						append aExpMaxFile g_stLoadMaxByList.aFile[iter]
