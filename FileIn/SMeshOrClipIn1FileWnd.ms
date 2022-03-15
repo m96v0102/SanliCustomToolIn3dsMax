@@ -532,44 +532,48 @@ struct st1ClipInFileWnd
 			on btnExportFile pressed do
 			(
 				--save ExportPath to xml
+				bRecordExportPath = g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.ckExportPahtRecord.checked
 				g_stPathOrProp.sExportPath = edtExportPath.text
-				if (doesFileExist g_stPathOrProp.sXmlRecordFile) == true then
+				if bRecordExportPath == true do
 				(
-					g_stPathOrProp.xmlDoc = tXMLDocument()
-					g_stPathOrProp.xmlDoc.mfLoadXML g_stPathOrProp.sXmlRecordFile
-					g_stPathOrProp.ndRoot = g_stPathOrProp.xmlDoc.mfGetRootNode()
+					if (doesFileExist g_stPathOrProp.sXmlRecordFile) == true then
+					(
+						g_stPathOrProp.xmlDoc = tXMLDocument()
+						g_stPathOrProp.xmlDoc.mfLoadXML g_stPathOrProp.sXmlRecordFile
+						g_stPathOrProp.ndRoot = g_stPathOrProp.xmlDoc.mfGetRootNode()
 
-					--revise sExportPath for xml node
-					ndExportPath = g_stPathOrProp.ndRoot.mfGetChildrenNodesByName "ExportPath"
-					if ndExportPath.count != 0 then
-					(
-						ndExportPath[1].mfSetText g_stPathOrProp.sExportPath
-						--g_stPathOrProp.sLoadFileFromPath = ndLoadMaxFileFromPath[1].mfGetText()
+						--revise sExportPath for xml node
+						ndExportPath = g_stPathOrProp.ndRoot.mfGetChildrenNodesByName "ExportPath"
+						if ndExportPath.count != 0 then
+						(
+							ndExportPath[1].mfSetText g_stPathOrProp.sExportPath
+							--g_stPathOrProp.sLoadFileFromPath = ndLoadMaxFileFromPath[1].mfGetText()
+						)
+						else --create xml node if the node didn't exist
+						(
+							--create LoadFileFromPath node
+							ndExportPath = g_stPathOrProp.xmlDoc.mfGetNewNode "ExportPath"
+							ndExportPath.mfSetText g_stPathOrProp.sExportPath
+							g_stPathOrProp.ndRoot.mfAppendChild ndExportPath
+						)
+											
+						g_stPathOrProp.fnSaveXmlAndRelease()
 					)
-					else --create xml node if the node didn't exist
+					else
 					(
-						--create LoadFileFromPath node
+						--Create Xml and rootnode
+						makeDir g_stPathOrProp.sXmlRecordPath
+						g_stPathOrProp.xmlDoc = tXMLDocument()
+						g_stPathOrProp.xmlDoc.mfCreateXML rXmlFilePath:g_stPathOrProp.sXmlRecordFile
+						g_stPathOrProp.ndRoot = g_stPathOrProp.xmlDoc.mfCreateRootNode "SomePathesorProperties"
+
+						--create ExportPath node
 						ndExportPath = g_stPathOrProp.xmlDoc.mfGetNewNode "ExportPath"
 						ndExportPath.mfSetText g_stPathOrProp.sExportPath
 						g_stPathOrProp.ndRoot.mfAppendChild ndExportPath
+
+						g_stPathOrProp.fnSaveXmlAndRelease()
 					)
-										
-					g_stPathOrProp.fnSaveXmlAndRelease()
-				)
-				else
-				(
-					--Create Xml and rootnode
-					makeDir g_stPathOrProp.sXmlRecordPath
-					g_stPathOrProp.xmlDoc = tXMLDocument()
-					g_stPathOrProp.xmlDoc.mfCreateXML rXmlFilePath:g_stPathOrProp.sXmlRecordFile
-					g_stPathOrProp.ndRoot = g_stPathOrProp.xmlDoc.mfCreateRootNode "SomePathesorProperties"
-
-					--create ExportPath node
-					ndExportPath = g_stPathOrProp.xmlDoc.mfGetNewNode "ExportPath"
-					ndExportPath.mfSetText g_stPathOrProp.sExportPath
-					g_stPathOrProp.ndRoot.mfAppendChild ndExportPath
-
-					g_stPathOrProp.fnSaveXmlAndRelease()
 				)
 				
 				aExpMaxFile = #()
@@ -583,7 +587,8 @@ struct st1ClipInFileWnd
 				)
 
 				fnSetFBXParameter()
-				fnCreateXmlAndRootAndGetUnityPath()		
+
+				if bRecordExportPath == true do fnCreateXmlAndRootAndGetUnityPath()
 
 				for i = 1 to aExpMaxFile.count do 
 				(
@@ -616,7 +621,7 @@ struct st1ClipInFileWnd
 					if findString sFilename "@" != undefined then
 						sFilename = replace sFilename nMatchIllegalID 1 "_"
 
-					fnAppendChildNodeToXml sExportFile sFilename
+					if bRecordExportPath == true do fnAppendChildNodeToXml sExportFile sFilename
 
 					--Copy Texture
 					if g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckCopyTexture.checked == true then
@@ -626,7 +631,7 @@ struct st1ClipInFileWnd
 				)
 
 				-- the document is saved and released
-				fnSaveXmlAndRelease()
+				if bRecordExportPath == true do fnSaveXmlAndRelease()
 
 				--Copy Unity script into the unity folder if there doesn't have the script to quick select the maxfile.
 				g_stPathOrProp.fnCopyCSToUFolder()
@@ -641,12 +646,15 @@ struct st1ClipInFileWnd
 
 				if ckCreatefolder.checked then sOutputpath =  
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.edtExportPath.text + "\\" + sFilename + "\\" 
+
+				bRecordExportPath = g_SanliCustomTool.roMainRollout.ro1Clip1File.roRecordExportPath.ckExportPahtRecord.checked
 				
 				if selection.count > 0 then
 				(
 					aSelection = selection as array
 					fnSetFBXParameter()
-					fnCreateXmlAndRootAndGetUnityPath()
+					
+					if bRecordExportPath == true do fnCreateXmlAndRootAndGetUnityPath()
 
 					for i = 1 to aSelection.count do
 					(
@@ -654,10 +662,10 @@ struct st1ClipInFileWnd
 						select aSelection[i]
 						sExportFile = fnMakeDirAndExportFile sOutputpath aSelection[i].name
 
-						fnAppendChildNodeToXml sExportFile aSelection[i].name
+						if bRecordExportPath == true do fnAppendChildNodeToXml sExportFile aSelection[i].name
 					)
 
-					fnSaveXmlAndRelease()
+					if bRecordExportPath == true do fnSaveXmlAndRelease()
 
 					--Copy Texture
 					if g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportSettings.ckCopyTexture.checked == true then
@@ -939,16 +947,23 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roRecordExportPath "Record Export Path_v1.001"
+		rollout roRecordExportPath "Record Export Path_v1.002"
 		(
-			label 		lbExportPathRecord "Export Path Record file:"
-			editText 	edtRecordExportPath "" --text: g_stPathOrProp.sExportRecordPath
+			--label 		lbExportPathRecord "Export Path Record file:"
+			checkbox	ckExportPahtRecord "SaveFilePathToXml" align:#center tooltip:"Create a xml file to save every export file path."
+			editText 	edtRecordExportPath "" enabled: false --text: g_stPathOrProp.sExportRecordPath
 						tooltip: "record every files when we export, all of the export path will save in this XML file "
-			button 		btnResetPath "Reset the record path" width:edtRecordExportPath.width			--tooltip:"reset the record path"
+			button 		btnResetPath "Reset the record path" width:edtRecordExportPath.width enabled: false	--tooltip:"reset the record path"
 
 			on roRecordExportPath open do
 			(
 				edtRecordExportPath.text = g_stPathOrProp.sExportRecordPath
+			)
+
+			on ckExportPahtRecord changed state do
+			(
+				edtRecordExportPath.enabled = state
+				btnResetPath.enabled = state
 			)
 
 			on edtRecordExportPath changed sValue do
