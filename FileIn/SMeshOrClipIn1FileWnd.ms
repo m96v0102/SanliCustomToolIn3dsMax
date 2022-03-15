@@ -194,7 +194,7 @@ struct st1ClipInFileWnd
 
 	fn Constructor =
 	(
-		rollout roll "1 clip in 1 file or static mesh_v1.004"
+		rollout roll "1 clip in 1 file or static mesh_v1.005"
 		(
 			group "1 clip in file (or static mesh)"
 			(				

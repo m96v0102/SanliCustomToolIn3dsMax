@@ -4,7 +4,7 @@
 struct o_stFixCallBack
 (
 	sStartupScript = "",
-	aDirtyGlobalVars = #(#CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript),
+	aDirtyGlobalVars = #(#CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript, #PhysXPluginMfx, #PhysXPluginGup),
 	
 	--刪除檔案裡不乾淨的callback
 	fn fnRemoveCRPCallBacks = 
