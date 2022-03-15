@@ -155,7 +155,7 @@ fileIn "FileIn\\SMeshOrClipIn1FileWnd.ms"		--1 clip in 1 file Window
 fileIn "FileIn\\OthersWnd.ms"					--Others Window
 fileIn "FileIn\\fnFixCallBack.ms"				--check and fix callbacks virus
 
-global g_stFixCallBack = o_stFixCallBack()		--fileIn fnFixCallBack嚙褕會嚙諄到的嚙踝蕭嚙箱
+global g_stFixCallBack = o_stFixCallBack()		--fileIn fnFixCallBack時會用到的結構
 
 global g_stLoadMaxByList
 
