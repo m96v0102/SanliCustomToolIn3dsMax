@@ -1,12 +1,21 @@
---刪除外包回傳回來的一些CallbackScript
---callbacks.show()可以觀看目前的max有哪些監聽程式
+--Clean up some dangerous data.
+--The most dangerous data is the callbacks, you can use callbacks.show() to check in the editor log.
+
+--Detect max version and get the relative path.
+global g_sMaxVerPath
+if g_sMaxVerPath == undefined do (fileIn @"D:\ADoc\MaxScript\_Function\fnGetMScriptInitPathByMaxVer.ms")
+
+--if SecurityToolsDialogs_instance == undefined then
+(
+	fileIn  (g_sMaxVerPath + @"_Common\SanliCustomTool\FromGitHub\FileIn\STDScript\SecurityToolsDialogs.ms")
+)
 
 struct o_stFixCallBack
 (
 	sStartupScript = "",
 	aDirtyGlobalVars = #(#CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript, #PhysXPluginMfx, #PhysXPluginGup),
 	
-	--刪除檔案裡不乾淨的callback
+	--Remove CRP callbacks
 	fn fnRemoveCRPCallBacks = 
 	(
 		callbacks.removeScripts id:#ID_CRP_viewportChangeP
@@ -195,7 +204,6 @@ struct o_stFixCallBack
 		)
 	),
 
-	--查看Max檔的callback(max檔要先開好)
 	--EX: local result = fnCheckMaxCallbackScript()
 	fn fnCheckMaxCallbackScript=
 	(
@@ -428,8 +436,11 @@ struct o_stFixCallBack
 		local result = fnCheckMaxCallbackScript()
 		if result != undefined then
 		(
-			messagebox "Max virus detected, \nPlease visit the Check or delete undoMax subrollout."
+			--messagebox "Max virus detected after loading, \nPlease visit the Check or delete undoMax subrollout."
 			--messagebox "偵測到max檔有病毒，請執行【刪除潛伏病毒】後，再存檔"
+
+			SecurityToolsDialogs_instance.display_CallbackFoundInScene_dialog "CorruptByCallBack_3li" "監聽風險程式"
+			--createdialog SecurityToolsDialogs_instance.m_CallbacksFoundInScene_ro
 		)
 		else	--Check some dirty global variables
 		(
