@@ -77,8 +77,8 @@ struct SecurityToolsDialogs_structdef
 		)
 	),
 	
-	-- the display_CallbackFoundInScene_dialog function return value
-	m_display_CallbackFoundInScene_dialog_return_value,
+	-- the display_DangerDataFound_dialog function return value
+	m_display_DangerDataFound_dialog_return_value,
 	
 	 -- the (Autodesk.Max.MaxPlus.Application).EnableDrawing method. Not directly exposed via mxs, so acquired from MaxPlus
 	m_enableDrawing_method,
@@ -155,12 +155,12 @@ struct SecurityToolsDialogs_structdef
 	),
 	
 	-- Rollout definition - found dangerous callbacks in scene(Original name - m_corruptionFoundInScene_ro)
-	m_CallbacksFoundInScene_ro = rollout m_CallbacksFoundInScene_ro "Callbacks Found in Scene by 3ds Max Security Tools" width:545
+	m_DangerDataFound_ro = rollout m_DangerDataFound_ro "Callbacks Found in Scene by 3ds Max Security Tools" width:545
 	(
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
 		label l1 "Dangerous Callback detected" offset:[50, -26] align:#left
 		label l2 ""
-		label l3 "The tool detects % which might caused some problems and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
+		label l3 "The tool detects (%) which might caused some problems and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
 		--label l3 "The current scene is corrupt by a 3rd party script (%) that can cause data loss and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
 		label l4 "We strongly recommend you allow the corruption to be cleaned." align:#left
 		label l5 ""
@@ -168,43 +168,38 @@ struct SecurityToolsDialogs_structdef
 		button bCleanWOSave "Clean without saving" align:#right offset:[-25,0]
 		button b_leave "Leave corruption" align:#right
 		
-		on m_CallbacksFoundInScene_ro open do
+		on m_DangerDataFound_ro open do
 		(
 			set_imgtag_bitmap icon m_warning_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
-			--m_display_CallbackFoundInScene_dialog_return_value = false -- default return value
 		)
 		on bCleanAndSave pressed do
 		(
-			destroyDialog m_CallbacksFoundInScene_ro
+			destroyDialog m_DangerDataFound_ro
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
 			display_CleanAndSave_dialog "PlaceHolderArg_3li"
-			--sMessage = g_stFixCallBack.fnGetMessage g_stFixCallBack.sStartupScript true	--最後的true代表函式裡的第三段字串也顯示
-			--messagebox sMessage
 		)
 		on bCleanWOSave pressed do
 		(
-			--m_display_CallbackFoundInScene_dialog_return_value = true
-			destroyDialog m_CallbacksFoundInScene_ro
+			destroyDialog m_DangerDataFound_ro
 
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
 			display_CleanWithoutSave_dialog "PlaceHolderArg_3li"
 		)
 		on b_leave pressed do
 		(
-			--m_display_CallbackFoundInScene_dialog_return_value = false
-			destroyDialog m_CallbacksFoundInScene_ro
+			destroyDialog m_DangerDataFound_ro
 		)
 	),
 
 	-- Display dialog - found dangerous callbacks in scene. (Original name - display_corruptionFoundInScene_dialog)
-	fn display_CallbackFoundInScene_dialog help_topic_id which_script =
+	fn display_DangerDataFound_dialog help_topic_id which_script =
 	(
 		m_help_topic_id = help_topic_id
 		m_which_script = which_script
-		createdialog m_CallbacksFoundInScene_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
-		m_display_CallbackFoundInScene_dialog_return_value -- return value
+		createdialog m_DangerDataFound_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
+		m_display_DangerDataFound_dialog_return_value -- return value
 	),
 
 	-- the rollout definition for corruption not cleaned in scene

@@ -456,19 +456,17 @@ struct o_stFixCallBack
 		local result = fnCheckMaxCallbackScript()
 		if result != undefined then
 		(
-			--messagebox "Max virus detected after loading, \nPlease visit the Check or delete undoMax subrollout."
-			--messagebox "偵測到max檔有病毒，請執行【刪除潛伏病毒】後，再存檔"
-			format "三立log_result: % \n" result
-			SecurityToolsDialogs_instance.display_CallbackFoundInScene_dialog "PlaceHolderArg_3li" result
-			--createdialog SecurityToolsDialogs_instance.m_CallbacksFoundInScene_ro
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" result
 		)
 		else	--Check some dirty global variables
 		(
 			local varDirtyGlobalVar = fnCheckDirtyGlobalVariables()
 			if varDirtyGlobalVar != undefined do
 			(
-				sMessage = "Dirty variables (" + (varDirtyGlobalVar as string) + ") detected, \nPlease visit the Check or delete undoMax subrollout."
-				messagebox sMessage
+				sDirtyGlobalVar = "Dirty variables_" + (varDirtyGlobalVar as string)
+				SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" sDirtyGlobalVar
+				--sMessage = "Dirty variables (" + (varDirtyGlobalVar as string) + ") detected, \nPlease visit the Check or delete undoMax subrollout."
+				--messagebox sMessage
 			)
 		)
 
