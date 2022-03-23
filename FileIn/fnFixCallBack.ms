@@ -164,7 +164,8 @@ struct o_stFixCallBack
 		closeLog() -- close the log
 	),
 
-	--查看記事本裡面有無CRP這類的字眼(有的話應該就是病毒)
+	--Check the startup file contains some dangerous string - CRP
+	--It's safe if the returned value was undefined, otherwise this startup file might probably bring the virus.
 	fn fnCheckCRPContent _sFile=
 	(
 		if _sFile != undefined do
@@ -178,7 +179,8 @@ struct o_stFixCallBack
 			if result != undefined then
 			(
 				sChar = undefined
-				try(sChar = readChars startupfileHandle 12)catch()
+				sSecurityTool = "SecurityTool"
+				try(sChar = readChars startupfileHandle sSecurityTool.count)catch()
 
 				format "Sanlilog_Char: % \n" sChar
 				if sChar == "SecurityTool" then
@@ -186,11 +188,14 @@ struct o_stFixCallBack
 			)
 
 			close startupfileHandle
+
+			if result != undefined then result = "CRP callback"
 			return result
 		)
 	),
 
-	--查看記事本裡面有無ADSL這類的字眼(有的話應該就是病毒)
+	--Check the startup file contains some dangerous string - ADSL
+	--It's safe if the returned value was undefined, otherwise this startup file might probably bring the virus.
 	fn fnCheckADSLContent _sFile=
 	(
 		if _sFile != undefined do
@@ -204,7 +209,8 @@ struct o_stFixCallBack
 			if result != undefined then
 			(
 				sChar = undefined
-				try(sChar = readChars startupfileHandle 12)catch()
+				sSecurityTool = "SecurityTool"
+				try(sChar = readChars startupfileHandle sSecurityTool.count)catch()
 
 				format "Sanlilog_Char: % \n" sChar
 				if sChar == "SecurityTool" then
@@ -212,6 +218,8 @@ struct o_stFixCallBack
 			)
 
 			close startupfileHandle
+
+			if result != undefined then result = "ADSL callback"
 			return result
 		)
 	),
@@ -450,8 +458,8 @@ struct o_stFixCallBack
 		(
 			--messagebox "Max virus detected after loading, \nPlease visit the Check or delete undoMax subrollout."
 			--messagebox "偵測到max檔有病毒，請執行【刪除潛伏病毒】後，再存檔"
-
-			SecurityToolsDialogs_instance.display_CallbackFoundInScene_dialog "CorruptByCallBack_3li" "監聽風險程式"
+			format "三立log_result: % \n" result
+			SecurityToolsDialogs_instance.display_CallbackFoundInScene_dialog "PlaceHolderArg_3li" result
 			--createdialog SecurityToolsDialogs_instance.m_CallbacksFoundInScene_ro
 		)
 		else	--Check some dirty global variables

@@ -43,8 +43,6 @@ struct SecurityToolsDialogs_structdef
 	-- holds file list to display in some dialogs, Filled in by method displaying dialog.
 	m_filelist = #(),
 	
-	--display_corruptionCleanedInEnv_dialog,
-	
 	-- this works around maxscript issues with using bitmaps containing alpha channel as imgtag bitmaps.
 	fn set_imgtag_bitmap theImgTag theBitmap_filename =
 	(
@@ -88,8 +86,8 @@ struct SecurityToolsDialogs_structdef
 	-- the name of the 3rd party script found
 	m_which_script,
 
-		-- the rollout definition for corruption cleaned in env
-	m_corruptionCleanedInEnv_ro = rollout m_corruptionCleanedInEnv_ro "Corruption Successfully Cleaned by 3ds Max Security Tools" width:400
+	-- Rollout definition - Clean and save the maxfile(Original name - m_corruptionCleanedInEnv_ro)
+	m_CleanAndSave_ro = rollout m_CleanAndSave_ro "Corruption Successfully Cleaned by 3ds Max Security Tools" width:400
 	(
 		local autobackup_enabled -- whether autobackup was enabled when opening the dialog
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
@@ -98,37 +96,36 @@ struct SecurityToolsDialogs_structdef
 		label l2 ""
 		button b_close "Close" align:#right
 		
-		on m_corruptionCleanedInEnv_ro open do
+		on m_CleanAndSave_ro open do
 		(
 			set_imgtag_bitmap icon m_success_icon_filename
 			autobackup_enabled = autobackup.enabled  -- disable autobackup while dialog is displayed
 			autobackup.enabled = false
 		)
-		on m_corruptionCleanedInEnv_ro close do
+		on m_CleanAndSave_ro close do
 		(
 			autobackup.enabled = autobackup_enabled
 		)
 		on b_close pressed do
 		(
-			destroyDialog m_corruptionCleanedInEnv_ro
+			destroyDialog m_CleanAndSave_ro
 		)
-		on m_corruptionCleanedInEnv_ro help do
+		on m_CleanAndSave_ro help do
 		(
 			show_help_for_topic m_help_topic_id
 		)
 	),
 
-	-- display corruption cleaned in env dialog
-	fn display_corruptionCleanedInEnv_dialog help_topic_id =
+	-- Display dialog - Clean and save the maxfile.(Original name - display_corruptionCleanedInEnv_dialog)
+	fn display_CleanAndSave_dialog help_topic_id =
 	(
 		m_help_topic_id = help_topic_id
-		createdialog m_corruptionCleanedInEnv_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
+		createdialog m_CleanAndSave_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
 
-	-- the rollout definition for corruption cleaned in scene
-	m_corruptionCleanedInScene_ro = rollout m_corruptionCleanedInScene_ro "Corruption Successfully Cleaned by 3ds Max Security Tools" width:400
+	-- Rollout definition -Clean the dangerous data without saving the maxfile(Original name - m_corruptionCleanedInScene_ro)
+	m_CleanWithoutSaving_ro = rollout m_CleanWithoutSaving_ro "Corruption Successfully Cleaned by 3ds Max Security Tools" width:400
 	(
-		local autobackup_enabled -- whether autobackup was enabled when opening the dialog
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
 		label l1 "Next steps" offset:[50, -26] align:#left
 		label l2 "The dangerous data was cleaning complete."						offset:[0, 10] align:#left
@@ -136,42 +133,34 @@ struct SecurityToolsDialogs_structdef
 		label l4 ""
 		button b_close "Close" align:#right
 		
-		on m_corruptionCleanedInScene_ro open do
+		on m_CleanWithoutSaving_ro open do
 		(
 			set_imgtag_bitmap icon m_info_icon_filename
-			autobackup_enabled = autobackup.enabled  -- disable autobackup while dialog is displayed
-			autobackup.enabled = false
-		)
-		on m_corruptionCleanedInScene_ro close do
-		(
-			autobackup.enabled = autobackup_enabled
 		)
 		on b_close pressed do
 		(
-			destroyDialog m_corruptionCleanedInScene_ro
+			destroyDialog m_CleanWithoutSaving_ro
 		)
-		on m_corruptionCleanedInScene_ro help do
+		on m_CleanWithoutSaving_ro help do
 		(
 			show_help_for_topic m_help_topic_id
 		)
 	),
 
-	-- display corruption cleaned in scene dialog
-	fn display_corruptionCleanedInScene_dialog help_topic_id =
+	-- Display dialog - clean dangerous data without saving the maxfile(Original name - display_corruptionCleanedInScene_dialog)
+	fn display_CleanWithoutSave_dialog help_topic_id =
 	(
 		m_help_topic_id = help_topic_id
-		createdialog m_corruptionCleanedInScene_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
+		createdialog m_CleanWithoutSaving_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
 	
-	-- the rollout definition for corruption found in scene
+	-- Rollout definition - found dangerous callbacks in scene(Original name - m_corruptionFoundInScene_ro)
 	m_CallbacksFoundInScene_ro = rollout m_CallbacksFoundInScene_ro "Callbacks Found in Scene by 3ds Max Security Tools" width:545
 	(
-		local autobackup_enabled -- whether autobackup was enabled when opening the dialog
-		local enableDrawing_method -- the (Autodesk.Max.MaxPlus.Application).EnableDrawing method. Not directly exposed via mxs, so acquired from MaxPlus
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
 		label l1 "Dangerous Callback detected" offset:[50, -26] align:#left
 		label l2 ""
-		label l3 "The tool detects some callbacks which might caused some problems and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
+		label l3 "The tool detects % which might caused some problems and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
 		--label l3 "The current scene is corrupt by a 3rd party script (%) that can cause data loss and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
 		label l4 "We strongly recommend you allow the corruption to be cleaned." align:#left
 		label l5 ""
@@ -183,28 +172,14 @@ struct SecurityToolsDialogs_structdef
 		(
 			set_imgtag_bitmap icon m_warning_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
-			m_display_CallbackFoundInScene_dialog_return_value = false -- default return value
-			autobackup_enabled = autobackup.enabled  -- disable autobackup while dialog is displayed
-			autobackup.enabled = false
-			-- We want to disable viewport redraws while this dialog is up, otherwise contaminated scripted controllers will be evaluated in the viewport redraws
-			-- while this dialog is displayed, before we have a chance to clean the controllers.
-			-- We really only need to do this when called from test_for_ALC_scripted_controller_callback(), as viewport redraw is already disabled during normal scene load and merge.
-			-- Note that the EnableDrawing method needs to be called in pairs of disabled/enabled. Implementation is 'disabled depth', where redraw is enabled in disabled count is 0.
-			if m_enableDrawing_method != undefined do -- disable viewport redraw while dialog is displayed, otherwise redraw may occur causing scripted controllers to be evaluated
-				m_enableDrawing_method false
-		)
-		on m_CallbacksFoundInScene_ro close do
-		(
-			autobackup.enabled = autobackup_enabled
-			if m_enableDrawing_method != undefined do
-				m_enableDrawing_method true
+			--m_display_CallbackFoundInScene_dialog_return_value = false -- default return value
 		)
 		on bCleanAndSave pressed do
 		(
 			destroyDialog m_CallbacksFoundInScene_ro
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			display_corruptionCleanedInEnv_dialog "FinishCleanup_3li"
+			display_CleanAndSave_dialog "PlaceHolderArg_3li"
 			--sMessage = g_stFixCallBack.fnGetMessage g_stFixCallBack.sStartupScript true	--最後的true代表函式裡的第三段字串也顯示
 			--messagebox sMessage
 		)
@@ -214,7 +189,7 @@ struct SecurityToolsDialogs_structdef
 			destroyDialog m_CallbacksFoundInScene_ro
 
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
-			display_corruptionCleanedInScene_dialog "RememberToSaveMaxFileWarning_3li"
+			display_CleanWithoutSave_dialog "PlaceHolderArg_3li"
 		)
 		on b_leave pressed do
 		(
@@ -223,7 +198,7 @@ struct SecurityToolsDialogs_structdef
 		)
 	),
 
-	-- display corruption found in scene dialog. Returns whether to clean the scene.
+	-- Display dialog - found dangerous callbacks in scene. (Original name - display_corruptionFoundInScene_dialog)
 	fn display_CallbackFoundInScene_dialog help_topic_id which_script =
 	(
 		m_help_topic_id = help_topic_id
@@ -545,18 +520,6 @@ struct SecurityToolsDialogs_structdef
 		m_SecurityToolsStartup_ro_return_value -- return value
 	),
 
-	fn test_dialogs =
-	(
-		local fileNames = #(::getSourceFileName(), ::getSourceFileName())
-		display_corruptionFoundInEnv_dialog fileNames "idh_security_tools_PhysXPluginMfx" "PhysXPluginMfx"
-		display_corruptionNotCleanedInEnv_dialog "idh_security_tools_PhysXPluginMfx"
-		display_corruptionCleanedInEnv_dialog "idh_security_tools_PhysXPluginMfx"
-		display_corruptionErrorCleaningInEnv_dialog fileNames "idh_security_tools_PhysXPluginMfx"
-		display_CallbackFoundInScene_dialog "idh_security_tools_PhysXPluginMfx" "PhysXPluginMfx"
-		display_corruptionNotCleanedInScene_dialog "idh_security_tools_PhysXPluginMfx"
-		display_corruptionCleanedInScene_dialog "idh_security_tools_PhysXPluginMfx"
-	),
-	
 	on create do
 	(
 		m_dialog_background_color = ((colorman.getcolor #window)*255) as color
