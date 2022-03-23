@@ -872,7 +872,7 @@ struct st1ClipInFileWnd
 				(
 					--Clear all the dangerous data first, otherwise the log file probablly have note the virus,  but the maxfile doesn't have this virus.
 					--this might report the wrong information
-					g_stFixCallBack.fnRemoveAllDagerousWOStartup()
+					g_stFixCallBack.fnRemoveDangDataWOStartup()
 
 					if (i-1 >= 1) and enBatchCheckMode == #CheckAndRemove then
 					(
@@ -903,7 +903,7 @@ struct st1ClipInFileWnd
 					--if I remove the callback function after the for loop, the last one will missed, so I have to remove it again
 					if i == aCheckMaxCallbackFile.count and enBatchCheckMode == #CheckAndRemove then
 					(
-						g_stFixCallBack.fnRemoveAllDagerousWOStartup()
+						g_stFixCallBack.fnRemoveDangDataWOStartup()
 						saveMaxFile aCheckMaxCallbackFile[i] quiet:on
 					)
 				)
@@ -912,7 +912,7 @@ struct st1ClipInFileWnd
 				local result = g_stFixCallBack.fnOpenStartupFile()
 				if result != undefined do
 				(
-					g_stFixCallBack.fnReviseStartupScript g_stFixCallBack.sStartupScript
+					g_stFixCallBack.fnReviseCRPStartupScript g_stFixCallBack.sStartupScript
 					g_stFixCallBack.fnReviseADSLStartupScript g_stFixCallBack.sStartupScript
 					g_stFixCallBack.fnRemoveCRPCallBacks()
 					g_stFixCallBack.fnRemoveADSLCallBacks()

@@ -122,8 +122,20 @@ struct o_stFixCallBack
 		)
 	),
 
+	--Remove all of the dangerous data, include the startup file.
+	fn fnRemoveAllDangerousData=
+	(
+		fnReviseCRPStartupScript sStartupScript
+		fnReviseADSLStartupScript sStartupScript
+		fnRemoveCRPCallBacks()
+		fnRemoveADSLCallBacks()
+		fnRemoveDirtyVariables()
+		fnPhysXPluginMfx2_clean_instances()
+		fnPhysXPluginMfx2_clean_defs()
+	),
+
 	--Remove all of the dangerous data, except the startup file.
-	fn fnRemoveAllDagerousWOStartup=
+	fn fnRemoveDangDataWOStartup=
 	(
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
@@ -260,11 +272,11 @@ struct o_stFixCallBack
 	),
 
 	--revise the virus script in the startup folder
-	--EX：fnReviseStartupScript sStartupScript
-	fn fnReviseStartupScript _sStartupScript=
+	--EX：fnReviseCRPStartupScript sStartupScript
+	fn fnReviseCRPStartupScript _sStartupScript=
 	(
-		--read the whole content in the virus ms file, and save it to the sContent
-		--逐行讀取(最後一行是eof)
+		--read the whole content in the virus ms file line by line, and save it to the sContent
+		--The last line will get eof(end of file)
 		--http://forums.cgsociety.org/archive/index.php?t-69988.html
 		posFile = openFile _sStartupScript
 		sContent = ""
@@ -354,7 +366,7 @@ struct o_stFixCallBack
 			
 			if result == #yes then
 			(
-				fnReviseStartupScript sStartupScript
+				fnReviseCRPStartupScript sStartupScript
 				fnReviseADSLStartupScript sStartupScript
 				fnRemoveCRPCallBacks()
 				fnRemoveADSLCallBacks()
@@ -410,7 +422,7 @@ struct o_stFixCallBack
 			
 			if result == #yes then
 			(
-				fnReviseStartupScript sStartupScript
+				fnReviseCRPStartupScript sStartupScript
 				fnReviseADSLStartupScript sStartupScript
 				fnRemoveCRPCallBacks()
 				fnRemoveADSLCallBacks()
@@ -420,7 +432,7 @@ struct o_stFixCallBack
 			)
 			else if result == #no then
 			(
-				fnReviseStartupScript sStartupScript
+				fnReviseCRPStartupScript sStartupScript
 				fnReviseADSLStartupScript sStartupScript
 				fnRemoveCRPCallBacks()
 				fnRemoveADSLCallBacks()
@@ -480,7 +492,7 @@ struct o_stFixCallBack
 		local result = fnOpenStartupFile()
 		if result != undefined then
 		(
-			fnReviseStartupScript sStartupScript
+			fnReviseCRPStartupScript sStartupScript
 			fnReviseADSLStartupScript sStartupScript
 			sMessage = "Maxfile and startup file was fixed, please remember to save the maxfile"
 		)
