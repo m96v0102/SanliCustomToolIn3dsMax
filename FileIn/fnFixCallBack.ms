@@ -427,7 +427,7 @@ struct o_stFixCallBack
 
 	),
 
-	--還原Startup被改的檔案和檔案裡的Callback
+	--Clean all of the dangerous data.
 	fn fnRevertFileAndCallBack =
 	(
 		fnRemoveCRPCallBacks()
@@ -436,7 +436,7 @@ struct o_stFixCallBack
 		fnPhysXPluginMfx2_clean_instances()
 		fnPhysXPluginMfx2_clean_defs()
 
-		sMessage = "Max file fixing complete, please remember to save the maxfile"
+		--sMessage = "Max file fixing complete, please remember to save the maxfile"
 		
 		sStartupScript = fnGetStartupFile()
 		if sStartupScript == undefined do
@@ -448,11 +448,13 @@ struct o_stFixCallBack
 		(
 			fnReviseCRPStartupScript sStartupScript
 			fnReviseADSLStartupScript sStartupScript
-			sMessage = "Maxfile and startup file was fixed, please remember to save the maxfile"
+			--sMessage = "Maxfile and startup file was fixed, please remember to save the maxfile"
 		)
 		
-		if sMessage != undefined do
-			messagebox sMessage
+		--if sMessage != undefined do
+			--messagebox sMessage
+		
+		SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog "PlaceHolderArg_3li"
 	)
 )
 
