@@ -363,42 +363,22 @@ struct o_stFixCallBack
 		if result != undefined do
 		(
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
-			--yesNoCancelBox <message_string> [title:<window_title_string>] [beep:<boolean>] 
-			sMessage = "Startup\\" + sStartupScriptName + "Has detected the virus: \n"
-			sResultYes = "yes = Clean the virus and autosave the maxfile\n"
-			sResultCancel = "No or Cancel = Don't do anything\n"
-			sMessage  = sMessage + sResultYes + sResultCancel
-			result = yesNoCancelBox sMessage title:"Virus detected"	-- [beep:<boolean>] 
-			
-			if result == #yes then
-			(
-				fnReviseCRPStartupScript sStartupScript
-				fnReviseADSLStartupScript sStartupScript
-				fnRemoveCRPCallBacks()
-				fnRemoveADSLCallBacks()
-
-				savemaxfile (maxfilepath + maxfilename) quiet:true
-				sMessage = fnGetMessage sStartupScript true	--最後的true代表函式裡的第三段字串也顯示			
-			)
-			else
-				sMessage = "Cancel the Virus repair."	--修復常駐程式的作業取消
-			messagebox sMessage
+			SecurityToolsDialogs_instance.display_VirusFound_dialog "PlaceHolderArg_3li" sStartupScriptName
 		)
 		
 		--Check callbacks and global variables from the maxfile.
 		local result = fnCheckMaxCallbackScript()
 		if result != undefined then
 		(
-			messagebox "Max virus detected, \nPlease visit the Check or delete undoMax subrollout."
-			--messagebox "偵測到max檔有病毒，請執行【刪除潛伏病毒】後，再存檔"
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" result
 		)
 		else	--Check some dirty global variables
 		(
 			local varDirtyGlobalVar = fnCheckDirtyGlobalVariables()
 			if varDirtyGlobalVar != undefined do
 			(
-				sMessage = "Dirty variables (" + (varDirtyGlobalVar as string) + ") detected, \nPlease visit the Check or delete undoMax subrollout."
-				messagebox sMessage
+				sDirtyGlobalVar = "Dirty variables_" + (varDirtyGlobalVar as string)
+				SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" sDirtyGlobalVar
 			)
 		)
 
@@ -406,7 +386,7 @@ struct o_stFixCallBack
 		local nPhysPlugProblem = fnCheckPhysPlug()
 		if nPhysPlugProblem != 0 then
 		(
-			messagebox "Dangerous data (PhysXPluginMfx2) detected, \nPlease visit the Check or delete undoMax subrollout."
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" "PhysXPluginMfx2"
 		)
 	),
 
@@ -415,43 +395,11 @@ struct o_stFixCallBack
 	(
 		local result = fnOpenStartupFile()
 		
-		--發現可疑字串，準備處理
+		--Show the error message if we get the virus string.
 		if result != undefined do
 		(
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
 			SecurityToolsDialogs_instance.display_VirusFound_dialog "PlaceHolderArg_3li" sStartupScriptName
-			/*
-			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
-			sMessage = "Startup\\" + sStartupScriptName + " Has detected the virus: \n"
-			sResultYes = "yes = Clean the virus and save the file \n"
-			sResultNo = "No = Clean the virus without saving the file \n"
-			sResultCancel = "Cancel = Do nothing\n"
-			sMessage  = sMessage + sResultYes + sResultNo + sResultCancel
-			result = yesNoCancelBox sMessage title:"Virus detected"	-- [beep:<boolean>] 
-			
-			if result == #yes then
-			(
-				fnReviseCRPStartupScript sStartupScript
-				fnReviseADSLStartupScript sStartupScript
-				fnRemoveCRPCallBacks()
-				fnRemoveADSLCallBacks()
-
-				savemaxfile (maxfilepath + maxfilename) quiet:true
-				sMessage = fnGetMessage sStartupScript true	--最後的true代表函式裡的第三段字串也顯示
-			)
-			else if result == #no then
-			(
-				fnReviseCRPStartupScript sStartupScript
-				fnReviseADSLStartupScript sStartupScript
-				fnRemoveCRPCallBacks()
-				fnRemoveADSLCallBacks()
-				sMessage = fnGetMessage sStartupScript false	--最後的false代表函式裡的第三段字串不用顯示
-			)
-			else
-				sMessage = "Cancel the Virus repair."	--修復常駐程式的作業取消
-			
-			messagebox sMessage
-			*/
 		)
 
 		--Check callbacks and global variables from the maxfile.
@@ -475,7 +423,6 @@ struct o_stFixCallBack
 		if nPhysPlugProblem != 0 then
 		(
 			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" "PhysXPluginMfx2"
-			--messagebox "Dangerous data (PhysXPluginMfx2) detected, \nPlease visit the Check or delete undoMax subrollout."
 		)
 
 	),
