@@ -122,6 +122,81 @@ struct o_stFixCallBack
 		)
 	),
 
+	fn fnReviseCRPStartupScript _sStartupScript=
+	(
+		--read the whole content in the virus ms file line by line, and save it to the sContent
+		--The last line will get eof(end of file)
+		--http://forums.cgsociety.org/archive/index.php?t-69988.html
+		posFile = openFile _sStartupScript
+		sContent = ""
+		while not eof posFile do
+		(
+			nNum = filePos posFile
+			--format "Sanlilog_filePos % \n" nNum
+			new_line = readLine posFile
+
+			--seek posFile 0
+			--if (findstring new_line "CRP_") != undefined do exit
+			if (findstring new_line "CRP_") == undefined then
+			(
+				--the first line don't need to add "\n"
+				if nNum == 0 then
+					sContent += new_line
+				else 
+					sContent += ("\n" + new_line)
+			)
+			else
+			(
+				format "the last word: % \n" sContent[sContent.count]
+				exit
+			)
+		)
+		close posFile
+
+		nMyoutputstream  = openfile _sStartupScript mode:"w"
+
+		format "%" sContent to:nMyoutputstream
+		--flushLog() -- flush the log
+		--closeLog() -- close the log
+	),
+
+	fn fnReviseADSLStartupScript _sStartupScript=
+	(
+		--read the whole content in the virus ms file, and save it to the sContent
+		--The last line will get eof(end of file)
+		--http://forums.cgsociety.org/archive/index.php?t-69988.html
+		posFile = openFile _sStartupScript
+		sContent = ""
+		while not eof posFile do
+		(
+			nNum = filePos posFile
+			--format "Sanlilog_filePos % \n" nNum
+			new_line = readLine posFile
+
+			--seek posFile 0
+			if (findstring new_line "ADSL_") == undefined then
+			(
+				--the first line don't need to add "\n"
+				if nNum == 0 then
+					sContent += new_line
+				else 
+					sContent += ("\n" + new_line)
+			)
+			else
+			(
+				format "the last word: % \n" sContent[sContent.count]
+				exit
+			)
+		)
+		close posFile
+
+		nMyoutputstream  = openfile _sStartupScript mode:"w"
+
+		format "%" sContent to:nMyoutputstream
+		--flushLog() -- flush the log
+		--closeLog() -- close the log
+	),
+
 	--Remove all of the dangerous data, include the startup file.
 	fn fnRemoveAllDangerousData=
 	(
@@ -279,83 +354,6 @@ struct o_stFixCallBack
 		return sMessage
 	),
 
-	--revise the virus script in the startup folder
-	--EX：fnReviseCRPStartupScript sStartupScript
-	fn fnReviseCRPStartupScript _sStartupScript=
-	(
-		--read the whole content in the virus ms file line by line, and save it to the sContent
-		--The last line will get eof(end of file)
-		--http://forums.cgsociety.org/archive/index.php?t-69988.html
-		posFile = openFile _sStartupScript
-		sContent = ""
-		while not eof posFile do
-		(
-			nNum = filePos posFile
-			--format "Sanlilog_filePos % \n" nNum
-			new_line = readLine posFile
-
-			--seek posFile 0
-			--if (findstring new_line "CRP_") != undefined do exit
-			if (findstring new_line "CRP_") == undefined then
-			(
-				--the first line don't need to add "\n"
-				if nNum == 0 then
-					sContent += new_line
-				else 
-					sContent += ("\n" + new_line)
-			)
-			else
-			(
-				format "the last word: % \n" sContent[sContent.count]
-				exit
-			)
-		)
-		close posFile
-
-		nMyoutputstream  = openfile _sStartupScript mode:"w"
-
-		format "%" sContent to:nMyoutputstream
-		--flushLog() -- flush the log
-		--closeLog() -- close the log
-	),
-
-	fn fnReviseADSLStartupScript _sStartupScript=
-	(
-		--read the whole content in the virus ms file, and save it to the sContent
-		--逐行讀取(最後一行是eof)
-		--http://forums.cgsociety.org/archive/index.php?t-69988.html
-		posFile = openFile _sStartupScript
-		sContent = ""
-		while not eof posFile do
-		(
-			nNum = filePos posFile
-			--format "Sanlilog_filePos % \n" nNum
-			new_line = readLine posFile
-
-			--seek posFile 0
-			if (findstring new_line "ADSL_") == undefined then
-			(
-				--the first line don't need to add "\n"
-				if nNum == 0 then
-					sContent += new_line
-				else 
-					sContent += ("\n" + new_line)
-			)
-			else
-			(
-				format "the last word: % \n" sContent[sContent.count]
-				exit
-			)
-		)
-		close posFile
-
-		nMyoutputstream  = openfile _sStartupScript mode:"w"
-
-		format "%" sContent to:nMyoutputstream
-		--flushLog() -- flush the log
-		--closeLog() -- close the log
-	),
-
 	--打開並檢查Startup資料夾裡的檔案有無問題，若有問題就嘗試修復(通常專案工具一打開就會呼叫這個函式)
 	fn fnCheckAndFixStartupFile =
 	(
@@ -421,6 +419,9 @@ struct o_stFixCallBack
 		if result != undefined do
 		(
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
+			SecurityToolsDialogs_instance.display_VirusFound_dialog "PlaceHolderArg_3li" sStartupScriptName
+			/*
+			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
 			sMessage = "Startup\\" + sStartupScriptName + " Has detected the virus: \n"
 			sResultYes = "yes = Clean the virus and save the file \n"
 			sResultNo = "No = Clean the virus without saving the file \n"
@@ -450,6 +451,7 @@ struct o_stFixCallBack
 				sMessage = "Cancel the Virus repair."	--修復常駐程式的作業取消
 			
 			messagebox sMessage
+			*/
 		)
 
 		--Check callbacks and global variables from the maxfile.

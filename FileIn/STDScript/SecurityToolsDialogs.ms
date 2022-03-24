@@ -155,12 +155,12 @@ struct SecurityToolsDialogs_structdef
 	),
 	
 	-- Rollout definition - found dangerous data in scene(Original name - m_corruptionFoundInScene_ro)
-	m_DangerDataFound_ro = rollout m_DangerDataFound_ro "Callbacks Found in Scene by 3ds Max Security Tools" width:545
+	m_DangerDataFound_ro = rollout m_DangerDataFound_ro "Dangerous data Found" width:545
 	(
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
 		label l1 "Dangerous data detected" offset:[50, -26] align:#left
 		label l2 ""
-		label l3 "The tool detects (%) which might caused some problems and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
+		label l3 "The tool detects (%) which might caused some problems and instability. \nAny scene you save will probably spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
 		--label l3 "The current scene is corrupt by a 3rd party script (%) that can cause data loss and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
 		label l4 "We strongly recommend you allow the corruption to be cleaned." align:#left
 		label l5 ""
@@ -200,6 +200,52 @@ struct SecurityToolsDialogs_structdef
 		m_which_script = which_script
 		createdialog m_DangerDataFound_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 		m_display_DangerDataFound_dialog_return_value -- return value
+	),
+
+	-- Rollout definition - found virus.
+	m_VirusFound_ro = rollout m_VirusFound_ro "Virus Found" width:545
+	(
+		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
+		label l1 "Virus detected" offset:[50, -26] align:#left
+		label l2 ""
+		label l3 "Your startup file (%) was affected, this might caused some problems and instability. \nAny scene you save will probably spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
+		--label l3 "The current scene is corrupt by a 3rd party script (%) that can cause data loss and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
+		label l4 "We strongly recommend you allow the corruption to be cleaned." align:#left
+		label l5 ""
+		button bCleanAndSave "Clean and save" across:3 align:#left
+		button bCleanWOSave "Clean without saving" align:#right offset:[-25,0]
+		button b_leave "Leave corruption" align:#right
+		
+		on m_VirusFound_ro open do
+		(
+			set_imgtag_bitmap icon m_error_icon_filename
+			l3.text = substituteString l3.text "%" m_which_script
+		)
+		on bCleanAndSave pressed do
+		(
+			destroyDialog m_VirusFound_ro
+			g_stFixCallBack.fnRemoveAllDangerousData()
+			savemaxfile (maxfilepath + maxfilename) quiet:true
+			display_CleanAndSave_dialog "PlaceHolderArg_3li"
+		)
+		on bCleanWOSave pressed do
+		(
+			destroyDialog m_VirusFound_ro
+			g_stFixCallBack.fnRemoveAllDangerousData()
+			display_CleanWithoutSave_dialog "PlaceHolderArg_3li"
+		)
+		on b_leave pressed do
+		(
+			destroyDialog m_VirusFound_ro
+		)
+	),
+
+	-- Display dialog - found virus.
+	fn display_VirusFound_dialog help_topic_id which_script =
+	(
+		m_help_topic_id = help_topic_id
+		m_which_script = which_script
+		createdialog m_VirusFound_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
 
 	-- the rollout definition for corruption not cleaned in scene
