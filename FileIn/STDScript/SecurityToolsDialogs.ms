@@ -154,11 +154,11 @@ struct SecurityToolsDialogs_structdef
 		createdialog m_CleanWithoutSaving_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
 	
-	-- Rollout definition - found dangerous callbacks in scene(Original name - m_corruptionFoundInScene_ro)
+	-- Rollout definition - found dangerous data in scene(Original name - m_corruptionFoundInScene_ro)
 	m_DangerDataFound_ro = rollout m_DangerDataFound_ro "Callbacks Found in Scene by 3ds Max Security Tools" width:545
 	(
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
-		label l1 "Dangerous Callback detected" offset:[50, -26] align:#left
+		label l1 "Dangerous data detected" offset:[50, -26] align:#left
 		label l2 ""
 		label l3 "The tool detects (%) which might caused some problems and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
 		--label l3 "The current scene is corrupt by a 3rd party script (%) that can cause data loss and instability. \nAny scene you save will spread the corruption to copies of 3ds Max in which the scene is loaded."  align:#left height:(2*13)
@@ -193,7 +193,7 @@ struct SecurityToolsDialogs_structdef
 		)
 	),
 
-	-- Display dialog - found dangerous callbacks in scene. (Original name - display_corruptionFoundInScene_dialog)
+	-- Display dialog - found dangerous data in scene. (Original name - display_corruptionFoundInScene_dialog)
 	fn display_DangerDataFound_dialog help_topic_id which_script =
 	(
 		m_help_topic_id = help_topic_id

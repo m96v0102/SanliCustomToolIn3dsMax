@@ -465,8 +465,6 @@ struct o_stFixCallBack
 			(
 				sDirtyGlobalVar = "Dirty variables_" + (varDirtyGlobalVar as string)
 				SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" sDirtyGlobalVar
-				--sMessage = "Dirty variables (" + (varDirtyGlobalVar as string) + ") detected, \nPlease visit the Check or delete undoMax subrollout."
-				--messagebox sMessage
 			)
 		)
 
@@ -474,7 +472,8 @@ struct o_stFixCallBack
 		local nPhysPlugProblem = fnCheckPhysPlug()
 		if nPhysPlugProblem != 0 then
 		(
-			messagebox "Dangerous data (PhysXPluginMfx2) detected, \nPlease visit the Check or delete undoMax subrollout."
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" "PhysXPluginMfx2"
+			--messagebox "Dangerous data (PhysXPluginMfx2) detected, \nPlease visit the Check or delete undoMax subrollout."
 		)
 
 	),
