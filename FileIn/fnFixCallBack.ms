@@ -343,23 +343,14 @@ struct o_stFixCallBack
 
 		return varDirtyGlobalVar
 	),
-	
-	--顯示常駐程式處理後的訊息
-	fn fnGetMessage _sStartupScript _bSaveMax=
-	(
-		sClearCallBackMSG = "1. Virus delete completed。\n"
-		sMessage = sClearCallBackMSG + "2. The path : " + _sStartupScript + " was repaired"
-		if _bSaveMax == true do
-			sMessage = sMessage + "\n3. The Virus in the MaxFile has been deleted."
-		return sMessage
-	),
 
-	--打開並檢查Startup資料夾裡的檔案有無問題，若有問題就嘗試修復(通常專案工具一打開就會呼叫這個函式)
+	--This function will be called when the tools open.
+	--At the beginning, this function doesn't support scene saving until I do some test and ensure there's no issue while we save the reset scene.
 	fn fnCheckAndFixStartupFile =
 	(
 		local result = fnOpenStartupFile()
 		
-		--發現可疑字串，準備處理
+		--Show the error message if we get the virus string.
 		if result != undefined do
 		(
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
@@ -390,7 +381,7 @@ struct o_stFixCallBack
 		)
 	),
 
-	--打開並檢查Startup資料夾裡的檔案有無問題，若有問題就嘗試修復Startup檔和max檔
+	--This function will be called when we load the file by tools.
 	fn fnCheckFixStartupFileAndScene = 
 	(
 		local result = fnOpenStartupFile()
@@ -435,24 +426,18 @@ struct o_stFixCallBack
 		fnRemoveDirtyVariables()
 		fnPhysXPluginMfx2_clean_instances()
 		fnPhysXPluginMfx2_clean_defs()
-
-		--sMessage = "Max file fixing complete, please remember to save the maxfile"
 		
 		sStartupScript = fnGetStartupFile()
 		if sStartupScript == undefined do
 			return 0				
 
-		--發現可疑字串，準備處理
+		--Clean the startup file if we get the virus string.
 		local result = fnOpenStartupFile()
 		if result != undefined then
 		(
 			fnReviseCRPStartupScript sStartupScript
 			fnReviseADSLStartupScript sStartupScript
-			--sMessage = "Maxfile and startup file was fixed, please remember to save the maxfile"
 		)
-		
-		--if sMessage != undefined do
-			--messagebox sMessage
 		
 		SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog "PlaceHolderArg_3li"
 	)
