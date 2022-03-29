@@ -246,17 +246,16 @@ struct o_stFixCallBack
 		(
 			startupfileHandle = openfile _sFile
 			
-			--檢查有沒有CPR_這個可疑字串(若搜尋到CRP_、result就會得到true，反之取得undefined)
+			--Check the CRP string(return true if we get "CRP_", otherwise we will get undefined)
 			local result = skipToString startupfileHandle "CRP_" --"CRP_WriteBScript"
 
-			--如果偵測到的是原廠寫的防毒callback(CRP_SecurityTool)，就避掉
+			--If we get the callback is from Autodesk built-in CRP_SecurityTool, ignore it.
 			if result != undefined then
 			(
 				sChar = undefined
 				sSecurityTool = "SecurityTool"
 				try(sChar = readChars startupfileHandle sSecurityTool.count)catch()
 
-				format "Sanlilog_Char: % \n" sChar
 				if sChar == "SecurityTool" then
 					result = undefined
 			)
@@ -276,17 +275,16 @@ struct o_stFixCallBack
 		(
 			startupfileHandle = openfile _sFile
 			
-			--檢查有沒有CPR_這個可疑字串(若搜尋到CRP_、result就會得到true，反之取得undefined)
+			--Check the CRP string(return true if we get "ADSL_", otherwise we will get undefined)
 			local result = skipToString startupfileHandle "ADSL_"
 
-			--如果偵測到的是原廠寫的防毒callback(CRP_SecurityTool)，就避掉
+			--If we get the callback is from Autodesk built-in ADSL_SecurityTool, ignore it.
 			if result != undefined then
 			(
 				sChar = undefined
 				sSecurityTool = "SecurityTool"
 				try(sChar = readChars startupfileHandle sSecurityTool.count)catch()
 
-				format "Sanlilog_Char: % \n" sChar
 				if sChar == "SecurityTool" then
 					result = undefined
 			)

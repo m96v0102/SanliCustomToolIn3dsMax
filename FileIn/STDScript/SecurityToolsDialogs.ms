@@ -1,10 +1,6 @@
 /**********************************************************************
-// Copyright 2020 Autodesk, Inc.  All rights reserved. 
+// Sanli: Copy the file from Autodesk SecurityTools and do some modify
 **********************************************************************/
--- Provides the dialogs for the Security Tools
--- version 1.0 - initial version of script in package file
--- version 1.0.1 - support 3ds Max 2016 and later, set up to use help file from application bundle package
--- version 1.2.1 - fix height calculation of m_corruptionErrorCleaningInEnv_ro
 
 -- define a temporary version of SecurityToolsDialogs_structdef so that we can use the member variable as part of the rollout definitions in the real version
 -- of SecurityToolsDialogs_structdef.
@@ -248,67 +244,6 @@ struct SecurityToolsDialogs_structdef
 		createdialog m_VirusFound_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
 
-	/*
-	-- the display_security_tools_startup_permission_dialog function return value
-	m_SecurityToolsStartup_ro_return_value,
-	
-	-- the state of security tools startup. Set by display_security_tools_startup_permission_dialog
-	m_SecurityToolsStartup_state,
-	
-	-- the rollout definition for the security tools startup info / permission dialog
-	m_SecurityToolsStartup_ro = rollout m_SecurityToolsStartup_ro "3ds Max Security Tools"  width:450
-	(
-		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
-		label l1 "Protect yourself from potentially malicious scripts" align:#left offset:[50, -26]
-		label l2 ""
-		label l3 "By checking Enable Protection, you give your consent to run 3ds Max Security Tools.\nThis option is also accessible in the Customize menu." align:#left height:(2*13)
-		label l4 ""
-		checkbox cb_enabled "Enable Protection"
-		label l7 ""
-		button b_learn "Learn more" across:2 align:#left
-		button b_close "Ok" align:#right
-		on b_close pressed do 
-		(
-			destroydialog m_SecurityToolsStartup_ro
-		)
-		on m_SecurityToolsStartup_ro open do
-		(
-			set_imgtag_bitmap icon m_info_icon_filename
-			cb_enabled.checked = m_SecurityToolsStartup_state
-		)
-		on b_learn pressed do
-		(
-			show_help_for_topic m_help_topic_id
-		)
-		on m_SecurityToolsStartup_ro close do
-		(
-			if cb_enabled.checked then
-			(
-				m_SecurityToolsStartup_ro_return_value = true
-			)
-			else
-			(
-				m_SecurityToolsStartup_ro_return_value = false
-			)
-		)
-		on m_SecurityToolsStartup_ro help do
-		(
-			show_help_for_topic m_help_topic_id
-		)
-	),
-	
-	-- display the security tools startupinfo / permission dialog as a modal dialog, set ini file to persist that user has seen the dialog
-	-- returns true to load security tools, false to disable security tools
-	fn display_security_tools_startup_permission_dialog security_tools_startup_state help_topic_id =
-	(
-		m_SecurityToolsStartup_ro_returnvalue = true
-		m_SecurityToolsStartup_state = security_tools_startup_state
-		m_help_topic_id = help_topic_id
-		createdialog m_SecurityToolsStartup_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
-		m_SecurityToolsStartup_ro_return_value -- return value
-	),
-	*/
-
 	on create do
 	(
 		m_dialog_background_color = ((colorman.getcolor #window)*255) as color
@@ -351,9 +286,8 @@ struct SecurityToolsDialogs_structdef
 		m_info_icon_filename = pathconfig.appendPath security_tools_icon_dir ("info_" + icon_size + ".png")
 		m_success_icon_filename = pathconfig.appendPath security_tools_icon_dir ("success_" + icon_size + ".png")
 		m_warning_icon_filename = pathconfig.appendPath security_tools_icon_dir ("warning_" + icon_size + ".png")
-
-		format "�T��Testlog_m_warning_icon_filename: % \n" m_warning_icon_filename
 		
+		/*
 		-- by default, use help file in package bundle if less than 3ds Max 2019, otherwise use online help file
 		m_help_use_bundle_help = (maxVersion())[1] < 21000
 		
@@ -378,6 +312,7 @@ struct SecurityToolsDialogs_structdef
 			m_enableDrawing_method = MaxPlus_Application.EnableDrawing
 		)
 		catch ()
+		*/
 	)
 )
 ::SecurityToolsDialogs_instance = SecurityToolsDialogs_structdef()
