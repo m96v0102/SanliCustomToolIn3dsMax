@@ -219,7 +219,7 @@ struct o_stFixCallBack
 		fnPhysXPluginMfx2_clean_defs()
 	),
 
-	--先確認startup資料的日期，載入max檔後再確認有無被改寫
+	--Get the 1st startup file.
 	fn fnGetStartupFile =
 	(
 		sStartScriptsDir = (getDir #startupScripts)
@@ -228,8 +228,7 @@ struct o_stFixCallBack
 		return sStartupScript
 	),
 
-	--將callbacks.show()印成記事本，並存在硬碟裡(相關網址：http://forums.cgsociety.org/archive/index.php?t-621261.html)
-	--D:\ADoc\MaxScript\_Project\pj_pkm\o_roIndexTools.ms\fnInitialize()也有類似的code
+	--Print all message from callbacks.show() and save it into the harddrive(ref:http://forums.cgsociety.org/archive/index.php?t-621261.html)
 	fn fnSaveCallbacksToHDD _sCallBackLog=
 	(
 		closeLog() -- close the listener log file, if any
