@@ -26,7 +26,7 @@ struct o_stFixCallBack
 		callbacks.removeScripts id:#ID_CRP_postImport
 	),
 
-	--刪除檔案裡不乾淨的ADSL callback
+	--Remove ADSL callbacks
 	fn fnRemoveADSLCallBacks = 
 	(
 		callbacks.removeScripts id:#ID_ADSL_viewportChangeP
