@@ -351,14 +351,14 @@ struct o_stFixCallBack
 		if result != undefined do
 		(
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
-			SecurityToolsDialogs_instance.display_VirusFound_dialog "PlaceHolderArg_3li" sStartupScriptName
+			SecurityToolsDialogs_instance.display_VirusFound_dialog sStartupScriptName
 		)
 		
 		--Check callbacks and global variables from the maxfile.
 		local result = fnCheckMaxCallbackScript()
 		if result != undefined then
 		(
-			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" result
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog result
 		)
 		else	--Check some dirty global variables
 		(
@@ -366,7 +366,7 @@ struct o_stFixCallBack
 			if varDirtyGlobalVar != undefined do
 			(
 				sDirtyGlobalVar = "Dirty variables_" + (varDirtyGlobalVar as string)
-				SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" sDirtyGlobalVar
+				SecurityToolsDialogs_instance.display_DangerDataFound_dialog sDirtyGlobalVar
 			)
 		)
 
@@ -374,7 +374,7 @@ struct o_stFixCallBack
 		local nPhysPlugProblem = fnCheckPhysPlug()
 		if nPhysPlugProblem != 0 then
 		(
-			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" "PhysXPluginMfx2"
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PhysXPluginMfx2"
 		)
 	),
 
@@ -387,14 +387,14 @@ struct o_stFixCallBack
 		if result != undefined do
 		(
 			sStartupScriptName = getFilenameFile sStartupScript + ".ms"
-			SecurityToolsDialogs_instance.display_VirusFound_dialog "PlaceHolderArg_3li" sStartupScriptName
+			SecurityToolsDialogs_instance.display_VirusFound_dialog sStartupScriptName
 		)
 
 		--Check callbacks and global variables from the maxfile.
 		local result = fnCheckMaxCallbackScript()
 		if result != undefined then
 		(
-			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" result
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog result
 		)
 		else	--Check some dirty global variables
 		(
@@ -402,7 +402,7 @@ struct o_stFixCallBack
 			if varDirtyGlobalVar != undefined do
 			(
 				sDirtyGlobalVar = "Dirty variables_" + (varDirtyGlobalVar as string)
-				SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" sDirtyGlobalVar
+				SecurityToolsDialogs_instance.display_DangerDataFound_dialog sDirtyGlobalVar
 			)
 		)
 
@@ -410,7 +410,7 @@ struct o_stFixCallBack
 		local nPhysPlugProblem = fnCheckPhysPlug()
 		if nPhysPlugProblem != 0 then
 		(
-			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PlaceHolderArg_3li" "PhysXPluginMfx2"
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PhysXPluginMfx2"
 		)
 
 	),
@@ -436,7 +436,7 @@ struct o_stFixCallBack
 			fnReviseADSLStartupScript sStartupScript
 		)
 		
-		SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog "PlaceHolderArg_3li"
+		SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog
 	)
 )
 

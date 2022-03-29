@@ -28,10 +28,6 @@ struct SecurityToolsDialogs_structdef
 	-- whether to by default use the embedded localized help files from the application bundle package (true) or the help topics from the 3ds Max 
 	m_help_use_bundle_help = true,
 	
-	-- the help topic id for the 'Learn about corruption' and 'Learn more' buttons and F1 handling, Filled in by method displaying dialog.
-	-- used when not using embedded localized help file
-	m_help_topic_id,
-	
 	-- the leaf file name of the embedded help file in the application bundle package. File will be in 3dsMaxSecurityTools\Contents\Help\<lang>
 	m_help_bundle_filename = "index.htm",
 	
@@ -106,16 +102,11 @@ struct SecurityToolsDialogs_structdef
 		(
 			destroyDialog m_CleanAndSave_ro
 		)
-		on m_CleanAndSave_ro help do
-		(
-			show_help_for_topic m_help_topic_id
-		)
 	),
 
 	-- Display dialog - Clean and save the maxfile.(Original name - display_corruptionCleanedInEnv_dialog)
-	fn display_CleanAndSave_dialog help_topic_id =
+	fn display_CleanAndSave_dialog =
 	(
-		m_help_topic_id = help_topic_id
 		createdialog m_CleanAndSave_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
 
@@ -137,16 +128,11 @@ struct SecurityToolsDialogs_structdef
 		(
 			destroyDialog m_CleanWithoutSaving_ro
 		)
-		on m_CleanWithoutSaving_ro help do
-		(
-			show_help_for_topic m_help_topic_id
-		)
 	),
 
 	-- Display dialog - clean dangerous data without saving the maxfile(Original name - display_corruptionCleanedInScene_dialog)
-	fn display_CleanWithoutSave_dialog help_topic_id =
+	fn display_CleanWithoutSave_dialog=
 	(
-		m_help_topic_id = help_topic_id
 		createdialog m_CleanWithoutSaving_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
 	
@@ -174,14 +160,14 @@ struct SecurityToolsDialogs_structdef
 			destroyDialog m_DangerDataFound_ro
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			display_CleanAndSave_dialog "PlaceHolderArg_3li"
+			display_CleanAndSave_dialog
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
-			display_CleanWithoutSave_dialog "PlaceHolderArg_3li"
+			display_CleanWithoutSave_dialog
 		)
 		on b_leave pressed do
 		(
@@ -190,9 +176,8 @@ struct SecurityToolsDialogs_structdef
 	),
 
 	-- Display dialog - found dangerous data in scene. (Original name - display_corruptionFoundInScene_dialog)
-	fn display_DangerDataFound_dialog help_topic_id which_script =
+	fn display_DangerDataFound_dialog which_script =
 	(
-		m_help_topic_id = help_topic_id
 		m_which_script = which_script
 		createdialog m_DangerDataFound_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 		m_display_DangerDataFound_dialog_return_value -- return value
@@ -222,13 +207,13 @@ struct SecurityToolsDialogs_structdef
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			display_CleanAndSave_dialog "PlaceHolderArg_3li"
+			display_CleanAndSave_dialog
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
-			display_CleanWithoutSave_dialog "PlaceHolderArg_3li"
+			display_CleanWithoutSave_dialog
 		)
 		on b_leave pressed do
 		(
@@ -237,9 +222,8 @@ struct SecurityToolsDialogs_structdef
 	),
 
 	-- Display dialog - found virus.
-	fn display_VirusFound_dialog help_topic_id which_script =
+	fn display_VirusFound_dialog which_script =
 	(
-		m_help_topic_id = help_topic_id
 		m_which_script = which_script
 		createdialog m_VirusFound_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
@@ -286,33 +270,7 @@ struct SecurityToolsDialogs_structdef
 		m_info_icon_filename = pathconfig.appendPath security_tools_icon_dir ("info_" + icon_size + ".png")
 		m_success_icon_filename = pathconfig.appendPath security_tools_icon_dir ("success_" + icon_size + ".png")
 		m_warning_icon_filename = pathconfig.appendPath security_tools_icon_dir ("warning_" + icon_size + ".png")
-		
-		/*
-		-- by default, use help file in package bundle if less than 3ds Max 2019, otherwise use online help file
-		m_help_use_bundle_help = (maxVersion())[1] < 21000
-		
-		local help_base_dir = pathconfig.appendPath (pathconfig.removePathLeaf security_tools_scripts_dir) "Help"
-		local lang = (sysinfo.GetMaxLanguage())[5] -- for example, "en-US"
-		local help_dir = pathconfig.appendPath help_base_dir "en-US"
-		local help_file = pathconfig.appendPath help_dir m_help_bundle_filename
-		if (doesFileExist help_file) then
-			m_help_filename = help_file
-		else
-		(
-			help_dir = pathconfig.appendPath help_base_dir "en-US" -- use "en-US" as a defaule
-			help_file = pathconfig.appendPath help_dir m_help_bundle_filename
-			if (doesFileExist help_file) do
-				m_help_filename = help_file
-		)
-		
-		try
-		(
-			local maxPlusAssembly = dotNet.loadAssembly ((symbolicPaths.getPathValue "$max") + @"\MaxPlusDotNet.dll")
-			local MaxPlus_Application = dotnetclass "Autodesk.Max.MaxPlus.Application"
-			m_enableDrawing_method = MaxPlus_Application.EnableDrawing
-		)
-		catch ()
-		*/
+
 	)
 )
 ::SecurityToolsDialogs_instance = SecurityToolsDialogs_structdef()
