@@ -44,7 +44,6 @@ struct SecurityToolsDialogs_structdef
 	-- Rollout definition - Clean and save the maxfile(Original name - m_corruptionCleanedInEnv_ro)
 	m_CleanAndSave_ro = rollout m_CleanAndSave_ro "Corruption Successfully Cleaned by 3ds Max Security Tools" width:400
 	(
-		local autobackup_enabled -- whether autobackup was enabled when opening the dialog
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
 		--label l1 "All corrupt script files were cleaned successfully" offset:[50, -26] align:#left
 		label l1 "The current file was cleaned and saved successfully" offset:[50, -26] align:#left
@@ -54,12 +53,6 @@ struct SecurityToolsDialogs_structdef
 		on m_CleanAndSave_ro open do
 		(
 			set_imgtag_bitmap icon m_success_icon_filename
-			autobackup_enabled = autobackup.enabled  -- disable autobackup while dialog is displayed
-			autobackup.enabled = false
-		)
-		on m_CleanAndSave_ro close do
-		(
-			autobackup.enabled = autobackup_enabled
 		)
 		on b_close pressed do
 		(
