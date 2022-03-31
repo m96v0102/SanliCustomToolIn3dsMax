@@ -1,5 +1,6 @@
 /**********************************************************************
 // Sanli: Copy the file from Autodesk SecurityTools and do some modify
+// This file is under the 'STDScript' folder, wich stands for 'SecurityToolsDialog script'
 **********************************************************************/
 
 global g_stFixCallBack
