@@ -37,9 +37,6 @@ struct SecurityToolsDialogs_structdef
 	-- the display_DangerDataFound_dialog function return value
 	m_display_DangerDataFound_dialog_return_value,
 	
-	 -- the (Autodesk.Max.MaxPlus.Application).EnableDrawing method. Not directly exposed via mxs, so acquired from MaxPlus
-	m_enableDrawing_method,
-	
 	-- the name of the 3rd party script found
 	m_which_script,
 
