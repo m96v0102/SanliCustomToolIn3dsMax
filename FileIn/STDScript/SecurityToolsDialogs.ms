@@ -123,14 +123,14 @@ struct SecurityToolsDialogs_structdef
 			destroyDialog m_DangerDataFound_ro
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			display_CleanAndSave_dialog
+			display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
-			display_CleanWithoutSave_dialog
+			display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(
@@ -170,13 +170,13 @@ struct SecurityToolsDialogs_structdef
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			display_CleanAndSave_dialog
+			display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
-			display_CleanWithoutSave_dialog
+			display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(

@@ -436,7 +436,7 @@ struct o_stFixCallBack
 			fnReviseADSLStartupScript sStartupScript
 		)
 		
-		SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog
+		SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog()
 	)
 )
 
