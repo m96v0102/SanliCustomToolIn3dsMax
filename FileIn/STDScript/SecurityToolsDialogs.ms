@@ -2,14 +2,6 @@
 // Sanli: Copy the file from Autodesk SecurityTools and do some modify
 **********************************************************************/
 
--- define a temporary version of SecurityToolsDialogs_structdef so that we can use the member variable as part of the rollout definitions in the real version
--- of SecurityToolsDialogs_structdef.
-struct SecurityToolsDialogs_structdef 
-(
-	m_filelist = #()
-)
-::SecurityToolsDialogs_instance = SecurityToolsDialogs_structdef()
-
 global g_stFixCallBack
 
 struct SecurityToolsDialogs_structdef 
@@ -20,20 +12,9 @@ struct SecurityToolsDialogs_structdef
 	m_info_icon_filename,
 	m_success_icon_filename,
 	m_warning_icon_filename,
-	m_help_filename,
 
 	-- The dialog background color. Set by create handler. Used when creating the dialogs and for alpha compositing of icons.
 	m_dialog_background_color,
-
-	-- whether to by default use the embedded localized help files from the application bundle package (true) or the help topics from the 3ds Max 
-	m_help_use_bundle_help = true,
-	
-	-- the leaf file name of the embedded help file in the application bundle package. File will be in 3dsMaxSecurityTools\Contents\Help\<lang>
-	m_help_bundle_filename = "index.htm",
-	
-	public
-	-- holds file list to display in some dialogs, Filled in by method displaying dialog.
-	m_filelist = #(),
 	
 	-- this works around maxscript issues with using bitmaps containing alpha channel as imgtag bitmaps.
 	fn set_imgtag_bitmap theImgTag theBitmap_filename =
@@ -51,22 +32,6 @@ struct SecurityToolsDialogs_structdef
 			iDisplayGamma.colorCorrectionMode = old_colorCorrectionMode
 		)
 		ok
-	),
-	
-	-- displays the help file if using bundled help file, or the 3ds Max Help file for a topic id
-	-- if topic_id is undefined, display bundled help file.
-	fn show_help_for_topic topic_id = 
-	(
-		if m_help_use_bundle_help or topic_id == undefined then
-		(
-			if m_help_filename != undefined and securitytools != undefined do
-				securitytools.ShowProductHelpForTopic m_help_filename
-		)
-		else
-		(
-			if securitytools != undefined do
-				securitytools.ShowProductHelpForTopic topic_id
-		)
 	),
 	
 	-- the display_DangerDataFound_dialog function return value
