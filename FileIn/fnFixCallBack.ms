@@ -246,7 +246,7 @@ struct o_stFixCallBack
 		(
 			startupfileHandle = openfile _sFile
 			
-			--Check the CRP string(return true if we get "CRP_", otherwise we will get undefined)
+			--Check the CRP string(return the relevant string if we get "CRP_", otherwise we will get undefined)
 			local result = skipToString startupfileHandle "CRP_" --"CRP_WriteBScript"
 
 			--If we get the callback is from Autodesk built-in CRP_SecurityTool, ignore it.
