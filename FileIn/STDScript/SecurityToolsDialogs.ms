@@ -229,5 +229,5 @@ struct SecurityToolsDialogs_structdef
 
 	)
 )
-::SecurityToolsDialogs_instance = SecurityToolsDialogs_structdef()
+SecurityToolsDialogs_instance = SecurityToolsDialogs_structdef()
 

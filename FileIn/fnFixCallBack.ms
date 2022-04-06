@@ -1,13 +1,12 @@
 --Clean up some dangerous data.
 --The most dangerous data is the callbacks, you can use callbacks.show() to check in the editor log.
 
---Detect max version and get the relative path.
-global g_sMaxVerPath
-if g_sMaxVerPath == undefined do (fileIn @"D:\ADoc\MaxScript\_Function\fnGetMScriptInitPathByMaxVer.ms")
-
+--Filein the SecurityToolsDialogs(We might get this file from gitHub, so we will detect this file under the STDScript folder)
 --if SecurityToolsDialogs_instance == undefined then
 (
-	fileIn  (g_sMaxVerPath + @"_Common\SanliCustomTool\FromGitHub\FileIn\STDScript\SecurityToolsDialogs.ms")
+	local myPath = pathconfig.removePathLeaf (getThisScriptFilename())
+	local dialogScriptPath = myPath
+	filein (pathconfig.appendPath dialogScriptPath @"STDScript\SecurityToolsDialogs.ms")
 )
 
 struct o_stFixCallBack
