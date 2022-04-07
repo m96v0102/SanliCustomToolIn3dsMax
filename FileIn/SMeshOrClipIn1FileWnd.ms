@@ -912,8 +912,8 @@ struct st1ClipInFileWnd
 				local result = g_stFixCallBack.fnOpenStartupFile()
 				if result != undefined do
 				(
-					g_stFixCallBack.fnReviseCRPStartupScript g_stFixCallBack.sStartupScript
-					g_stFixCallBack.fnReviseADSLStartupScript g_stFixCallBack.sStartupScript
+					g_stFixCallBack.fnReviseStartupScript g_stFixCallBack.sStartupScript "CRP_"
+					g_stFixCallBack.fnReviseStartupScript g_stFixCallBack.sStartupScript "ADSL_"
 					g_stFixCallBack.fnRemoveCRPCallBacks()
 					g_stFixCallBack.fnRemoveADSLCallBacks()
 				)

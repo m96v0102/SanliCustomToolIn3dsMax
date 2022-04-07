@@ -121,7 +121,50 @@ struct o_stFixCallBack
 		)
 	),
 
-	fn fnReviseCRPStartupScript _sStartupScript=
+	--fnReviseStartupScript sStartupScript "CRP_"
+	--fnReviseStartupScript sStartupScript "ADSL_"
+	fn fnReviseStartupScript _sStartupScript _sVirusKeyWord=
+	(
+		--read the whole content in the virus ms file, and save it to the sContent
+		--The last line will get eof(end of file)
+		--http://forums.cgsociety.org/archive/index.php?t-69988.html
+		posFile = openFile _sStartupScript
+		sContent = ""
+		while not eof posFile do
+		(
+			nNum = filePos posFile
+			--format "Sanlilog_filePos % \n" nNum
+			new_line = readLine posFile
+
+			--seek posFile 0
+			if (findstring new_line _sVirusKeyWord) == undefined then
+			(
+				--the first line don't need to add "\n"
+				if nNum == 0 then
+					sContent += new_line
+				else 
+					sContent += ("\n" + new_line)
+			)
+			else
+			(
+				format "the last word: % \n" sContent[sContent.count]
+				exit
+			)
+		)
+		close posFile
+
+		try fileMyoutputstream  = openfile _sStartupScript mode:"wt"	-- try to open with write access
+		catch()
+		if fileMyoutputstream == undefined do
+		(
+			messagebox "Unable to rewrite the file!!"
+		)
+
+		format "%" sContent to:fileMyoutputstream
+	),
+
+	/*
+	Ready remove - fn fnReviseCRPStartupScript _sStartupScript=
 	(
 		--read the whole content in the virus ms file line by line, and save it to the sContent
 		--The last line will get eof(end of file)
@@ -152,14 +195,19 @@ struct o_stFixCallBack
 		)
 		close posFile
 
-		nMyoutputstream  = openfile _sStartupScript mode:"w"
+		try fileMyoutputstream  = openfile _sStartupScript mode:"wt"	-- try to open with write access
+		catch()
+		if fileMyoutputstream == undefined do
+		(
+			messagebox "Unable to rewrite the file!!"
+		)
 
-		format "%" sContent to:nMyoutputstream
+		format "%" sContent to:fileMyoutputstream
 		--flushLog() -- flush the log
 		--closeLog() -- close the log
 	),
 
-	fn fnReviseADSLStartupScript _sStartupScript=
+	Ready remove - fn fnReviseADSLStartupScript _sStartupScript=
 	(
 		--read the whole content in the virus ms file, and save it to the sContent
 		--The last line will get eof(end of file)
@@ -189,18 +237,22 @@ struct o_stFixCallBack
 		)
 		close posFile
 
-		nMyoutputstream  = openfile _sStartupScript mode:"w"
+		try fileMyoutputstream  = openfile _sStartupScript mode:"wt"	-- try to open with write access
+		catch()
+		if fileMyoutputstream == undefined do
+		(
+			messagebox "Unable to rewrite the file!!"
+		)
 
-		format "%" sContent to:nMyoutputstream
-		--flushLog() -- flush the log
-		--closeLog() -- close the log
+		format "%" sContent to:fileMyoutputstream
 	),
+	*/
 
 	--Remove all of the dangerous data, include the startup file.
 	fn fnRemoveAllDangerousData=
 	(
-		fnReviseCRPStartupScript sStartupScript
-		fnReviseADSLStartupScript sStartupScript
+		fnReviseStartupScript sStartupScript "CRP_"
+		fnReviseStartupScript sStartupScript "ADSL_"
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
@@ -431,8 +483,8 @@ struct o_stFixCallBack
 		local result = fnOpenStartupFile()
 		if result != undefined then
 		(
-			fnReviseCRPStartupScript sStartupScript
-			fnReviseADSLStartupScript sStartupScript
+			fnReviseStartupScript sStartupScript "CRP_"
+			fnReviseStartupScript sStartupScript "ADSL_"
 		)
 		
 		SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog()
