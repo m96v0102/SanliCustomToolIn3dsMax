@@ -160,7 +160,7 @@ struct o_stFixCallBack
 			messagebox "Unable to rewrite the file!!"
 		)
 
-		format "%" sContent to:fileMyoutputstream
+		try(format "%" sContent to:fileMyoutputstream)catch()
 	),
 
 	--Remove all of the dangerous data, include the startup file.
