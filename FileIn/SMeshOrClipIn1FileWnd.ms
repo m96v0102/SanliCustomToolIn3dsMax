@@ -880,24 +880,15 @@ struct st1ClipInFileWnd
 					)					
 					
 					loadMaxFile aCheckMaxCallbackFile[i] quiet:on useFileUnits:on
-
-					local result = g_stFixCallBack.fnCheckMaxCallbackScript()
-					if result != undefined then
-					(
-						--g_stFixCallBack.fnRemoveCRPCallBacks()
+					
+					local varDirtyGlobalVar = g_stFixCallBack.fnCheckDirtyGlobalVariables()
+					if varDirtyGlobalVar != undefined then
 						append aDangerousFile maxfilename
-					)
-					else	--Check some dirty global variables and PhysPlug
+					else --Check PhysPlug
 					(
-						local varDirtyGlobalVar = g_stFixCallBack.fnCheckDirtyGlobalVariables()
-						if varDirtyGlobalVar != undefined then
+						local nPhysPlugProblem = g_stFixCallBack.fnCheckPhysPlug()
+						if nPhysPlugProblem != 0 then
 							append aDangerousFile maxfilename
-						else --Check PhysPlug
-						(
-							local nPhysPlugProblem = g_stFixCallBack.fnCheckPhysPlug()
-							if nPhysPlugProblem != 0 then
-								append aDangerousFile maxfilename
-						)
 					)
 
 					--if I remove the callback function after the for loop, the last one will missed, so I have to remove it again
