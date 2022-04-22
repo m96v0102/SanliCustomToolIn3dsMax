@@ -356,21 +356,24 @@ struct o_stFixCallBack
 			SecurityToolsDialogs_instance.display_VirusFound_dialog sStartupScriptName
 		)
 
+		--If the callback have some virus, it will have dirty values in global variables, so we don't need to detect the callbacks, 
+		  --We just need to check any dirty value in global variables, this will speed up the checking process
 		--Check callbacks and global variables from the maxfile.
-		local result = fnCheckMaxCallbackScript()
-		if result != undefined then
-		(
-			SecurityToolsDialogs_instance.display_DangerDataFound_dialog result
-		)
-		else	--Check some dirty global variables
-		(
+		--local result = fnCheckMaxCallbackScript()
+		--if result != undefined then
+		--(
+			--SecurityToolsDialogs_instance.display_DangerDataFound_dialog result
+		--)
+		--else
+		--(
+			--Check some dirty global variables
 			local varDirtyGlobalVar = fnCheckDirtyGlobalVariables()
 			if varDirtyGlobalVar != undefined do
 			(
 				sDirtyGlobalVar = "Dirty variables_" + (varDirtyGlobalVar as string)
 				SecurityToolsDialogs_instance.display_DangerDataFound_dialog sDirtyGlobalVar
 			)
-		)
+		--)
 
 		--Check the dagerous data 'PhysXPluginMfx2' was exist
 		local nPhysPlugProblem = fnCheckPhysPlug()
