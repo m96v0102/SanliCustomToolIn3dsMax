@@ -12,7 +12,22 @@
 struct o_stFixCallBack
 (
 	sStartupScript = "",
-	aDirtyGlobalVars = #(#CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript, #PhysXPluginMfx, #PhysXPluginGup),
+	aDirtyGlobalVars = #(#ThePropParameterNodes, #CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript, #PhysXPluginMfx, #PhysXPluginGup),
+
+	fn fnCheckBuiltInSecurityToolEnable =
+	(
+		sMaxINIFile = getMAXIniFile()
+		sBuiltInSecurityEnable = getINISetting sMaxINIFile "SecurityTools" "LoadSecurityTools"
+		if sBuiltInSecurityEnable == 1 then
+		(
+			
+		)
+	),
+
+	fn fnRemoveMSCPROPCallBacks =
+	(
+		callbacks.removeScripts id:#PropertyParameters
+	),
 	
 	--Remove CRP callbacks
 	fn fnRemoveCRPCallBacks = 
@@ -168,6 +183,7 @@ struct o_stFixCallBack
 	(
 		fnReviseStartupScript sStartupScript "CRP_"
 		fnReviseStartupScript sStartupScript "ADSL_"
+		fnRemoveMSCPROPCallBacks()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
@@ -178,6 +194,7 @@ struct o_stFixCallBack
 	--Remove all of the dangerous data, except the startup file.
 	fn fnRemoveDangDataWOStartup=
 	(
+		fnRemoveMSCPROPCallBacks()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
@@ -277,8 +294,7 @@ struct o_stFixCallBack
 
 		return result
 	),
-	
-	--開啟Startup資料夾裡的檔案
+
 	fn fnOpenStartupFile =
 	(
 		sStartupScript = fnGetStartupFile()
@@ -368,6 +384,7 @@ struct o_stFixCallBack
 	--Clean all of the dangerous data.
 	fn fnRevertFileAndCallBack =
 	(
+		fnRemoveMSCPROPCallBacks()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
