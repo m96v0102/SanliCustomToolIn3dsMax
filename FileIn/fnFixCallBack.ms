@@ -56,17 +56,8 @@ struct o_stFixCallBack
 				sDelResult = deleteFile sLocalTempFile
 				if sDelResult == false do
 				(
-					messagebox "SanliTemp_Can't delete the file, Please restart 3dsMax to delete again"
-					
-					--Open the file browser and select a specifice file, let the use know this file will going to be deleted.
-					sExpression = "explorer /select, " + sLocalTempFile
-					DOSCommand sExpression
-
-					--Execute "D:\ADoc\MaxScript\_Common\SanliCustomTool\FromGitHub\FileIn\STDScript\DelLocalTemp.bat",
-					--  this will close the 3dsMax and delte the "Local_temp.ms".
-					sDelLocalTmpBatFile = (pathconfig.appendPath g_sCurrDirPath @"STDScript\DelLocalTemp.bat")
-					shelllaunch sDelLocalTmpBatFile ""
-
+					aLocalTempFile = #(sLocalTempFile)
+					SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog aLocalTempFile
 				)
 			)
 		)

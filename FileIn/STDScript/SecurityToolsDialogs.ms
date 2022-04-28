@@ -4,6 +4,14 @@
 
 global g_stFixCallBack
 
+--We shoud define an empty SecurityToolsDialogs_structdef and do a simple instantiation, 
+-- otherwise we will get an error when we run through the m_DeleteFileIssue rollout
+struct SecurityToolsDialogs_structdef 
+(
+	m_filelist = #()
+)
+SecurityToolsDialogs_instance = SecurityToolsDialogs_structdef()
+
 struct SecurityToolsDialogs_structdef 
 (
 	--private
@@ -34,8 +42,7 @@ struct SecurityToolsDialogs_structdef
 		ok
 	),
 	
-	-- the display_DangerDataFound_dialog function return value
-	m_display_DangerDataFound_dialog_return_value,
+	m_filelist = #(),
 	
 	-- the name of the 3rd party script found
 	m_which_script,
@@ -135,7 +142,6 @@ struct SecurityToolsDialogs_structdef
 	(
 		m_which_script = which_script
 		createdialog m_DangerDataFound_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
-		m_display_DangerDataFound_dialog_return_value -- return value
 	),
 
 	-- Rollout definition - found virus.
@@ -181,6 +187,86 @@ struct SecurityToolsDialogs_structdef
 	(
 		m_which_script = which_script
 		createdialog m_VirusFound_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
+	),
+
+	m_DeleteFileIssue = rollout m_DeleteFileIssue "Corruption Found in Environment by 3ds Max Security Tools" width:580
+	(
+		-- local initial values are evaluated at compile time. We use m_filelist_height as the height for edtFileList so that controls under it are laid out correctly and the rollout height is ok.
+		local m_filelist_height = if SecurityToolsDialogs_instance.m_filelist == undefined then 16 else SecurityToolsDialogs_instance.m_filelist.count * 16
+		local m_orig_height -- restore initial rollout height in close handler
+			
+		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
+		label l1 "File deleting issue" offset:[50, -26] align:#left
+		label l2 ""
+		label l3 "The following file was created by the third party script and can't delete it immediately" align:#left height:(14*2)
+		label l4 "We strongly recommend to close the 3dsMax and delete the following file:" align:#left
+		edittext edtFileList height:m_filelist_height readOnly:true
+		label l5 ""
+		button bCloseMax "Close 3dsMax and delete the file" across:2 align:#right offset:[160,0]
+		button btnLeave "Leave corruption" align:#right
+		
+		on m_DeleteFileIssue open do
+		(
+			set_imgtag_bitmap icon m_warning_icon_filename
+			local content = ""
+			local first_entry = true
+			for sFile in m_filelist do 
+			(
+				if not first_entry do content += "\n"
+				first_entry = false
+				content += sFile
+			)
+			edtFileList.text = content
+			
+			-- futz with height of rollout. May be easier to not use m_filelist_height as param for edtFileList, but rather set the height in this open handler
+			-- and manually reposition controls below it.
+			m_orig_height = m_DeleteFileIssue.height
+			if m_DeleteFileIssue_first_filelist_count == undefined then
+				m_DeleteFileIssue_first_filelist_count = m_filelist.count
+			m_DeleteFileIssue.height += (m_filelist.count - m_DeleteFileIssue_first_filelist_count) * 16 
+			-- for 3ds Max 2016 and earlier following is needed to get the dialog height to update when inside the open handler
+			if ((maxVersion())[1] < 19000) do
+			(
+				--https://www.cnblogs.com/ibingshan/p/12101560.html
+				--Calling this method will process all pending messages. It can be used inside a MAXScript loop which would otherwise cause a "white screen" in Windows 7
+				try(windows.processpostedmessages())
+				catch()
+			)
+			
+			autobackup.enabled = false
+		)
+		on m_DeleteFileIssue close do
+		(
+			m_DeleteFileIssue.height = m_orig_height
+		)
+		on bCloseMax pressed do
+		(
+			destroyDialog m_DeleteFileIssue
+			
+			sLocalTempFile = sysInfo.tempdir +"Local_temp.ms"
+			if doesFileExist sLocalTempFile == true do
+			(
+				--Open the file browser and select a specifice file, let the use know this file will going to be deleted.
+				sExpression = "explorer /select, " + sLocalTempFile
+				DOSCommand sExpression
+
+				--Execute "D:\ADoc\MaxScript\_Common\SanliCustomTool\FromGitHub\FileIn\STDScript\DelLocalTemp.bat",
+				--  this will close the 3dsMax and delte the "Local_temp.ms".
+				sDelLocalTmpBatFile = (pathconfig.appendPath (pathconfig.removePathLeaf (getThisScriptFilename())) "DelLocalTemp.bat")
+				shelllaunch sDelLocalTmpBatFile ""
+			)
+			
+		)
+		on btnLeave pressed do
+		(
+			destroyDialog m_DeleteFileIssue
+		)
+	),
+
+	fn display_DeleteFileIssue_dialog aFileList =
+	(
+		m_filelist = aFileList
+		createdialog m_DeleteFileIssue bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
 
 	on create do
