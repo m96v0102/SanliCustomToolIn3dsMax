@@ -116,24 +116,25 @@ struct SecurityToolsDialogs_structdef
 		(
 			set_imgtag_bitmap icon m_warning_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
+			g_stFixCallBack.bCouldLocalTempBeDeleted = true
 		)
 		on bCleanAndSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			display_CleanAndSave_dialog()
+			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
-			display_CleanWithoutSave_dialog()
+			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(
-			destroyDialog m_DangerDataFound_ro
+			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do destroyDialog m_DangerDataFound_ro
 		)
 	),
 
@@ -162,23 +163,24 @@ struct SecurityToolsDialogs_structdef
 		(
 			set_imgtag_bitmap icon m_error_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
+			g_stFixCallBack.bCouldLocalTempBeDeleted = true
 		)
 		on bCleanAndSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			display_CleanAndSave_dialog()
+			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
-			display_CleanWithoutSave_dialog()
+			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(
-			destroyDialog m_VirusFound_ro
+			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do destroyDialog m_VirusFound_ro
 		)
 	),
 
@@ -233,7 +235,7 @@ struct SecurityToolsDialogs_structdef
 				catch()
 			)
 			
-			autobackup.enabled = false
+			g_stFixCallBack.bCouldLocalTempBeDeleted = false
 		)
 		on m_DeleteFileIssue close do
 		(
