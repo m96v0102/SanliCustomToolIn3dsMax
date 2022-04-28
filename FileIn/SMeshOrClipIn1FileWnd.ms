@@ -905,7 +905,7 @@ struct st1ClipInFileWnd
 				(
 					g_stFixCallBack.fnReviseStartupScript g_stFixCallBack.sStartupScript "CRP_"
 					g_stFixCallBack.fnReviseStartupScript g_stFixCallBack.sStartupScript "ADSL_"
-					g_stFixCallBack.fnRemoveMSCPROPCallBacks()
+					g_stFixCallBack.fnRemoveMscpropCbkNProp()
 					g_stFixCallBack.fnRemoveCRPCallBacks()
 					g_stFixCallBack.fnRemoveADSLCallBacks()
 				)

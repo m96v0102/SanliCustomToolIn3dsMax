@@ -5,8 +5,8 @@
 --if SecurityToolsDialogs_instance == undefined then
 (
 	local myPath = pathconfig.removePathLeaf (getThisScriptFilename())
-	local dialogScriptPath = myPath
-	filein (pathconfig.appendPath dialogScriptPath @"STDScript\SecurityToolsDialogs.ms")
+	global g_sCurrDirPath = myPath
+	filein (pathconfig.appendPath g_sCurrDirPath @"STDScript\SecurityToolsDialogs.ms")
 )
 
 struct o_stFixCallBack
@@ -24,9 +24,53 @@ struct o_stFixCallBack
 		)
 	),
 
-	fn fnRemoveMSCPROPCallBacks =
+	--Remove callbacks and relevant properties which associated with MSCPROP
+	fn fnRemoveMscpropCbkNProp =
 	(
-		callbacks.removeScripts id:#PropertyParameters
+		if globalVars.isglobal #ThePropParameterNodes == true do
+		(
+			sMaxRoot = getdir #maxroot
+			deletefile (sMaxRoot + "\\mscprop.dll")
+			deletefile (sMaxRoot + "\\stdplugs\\PropertyParametersLocal.mse")
+
+			callbacks.removeScripts id:#PropertyParameters
+
+			--Delete customattributes - TrackViewNodes.TVProperty
+			aCustAttr = custAttributes.getSceneDefs() as array
+			for i = 1 to aCustAttr.count do
+			(
+				if aCustAttr[i].name == #TVProperty do
+				(	
+					--Remove connection from the TrackViewNodes first.
+					custAttributes.delete TrackViewNodes aCustAttr[i]
+					
+					--Delete custom attribute.
+					custAttributes.deleteDef aCustAttr[i]
+					exit
+				)
+			)
+
+			sLocalTempFile = sysInfo.tempdir +"Local_temp.ms"
+			if doesFileExist sLocalTempFile == true do
+			(
+				sDelResult = deleteFile sLocalTempFile
+				if sDelResult == false do
+				(
+					messagebox "SanliTemp_Can't delete the file, Please restart 3dsMax to delete again"
+					
+					--Open the file browser and select a specifice file, let the use know this file will going to be deleted.
+					sExpression = "explorer /select, " + sLocalTempFile
+					DOSCommand sExpression
+
+					--Execute "D:\ADoc\MaxScript\_Common\SanliCustomTool\FromGitHub\FileIn\STDScript\DelLocalTemp.bat",
+					--  this will close the 3dsMax and delte the "Local_temp.ms".
+					sDelLocalTmpBatFile = (pathconfig.appendPath g_sCurrDirPath @"STDScript\DelLocalTemp.bat")
+					shelllaunch sDelLocalTmpBatFile ""
+
+				)
+			)
+		)
+		
 	),
 	
 	--Remove CRP callbacks
@@ -183,7 +227,7 @@ struct o_stFixCallBack
 	(
 		fnReviseStartupScript sStartupScript "CRP_"
 		fnReviseStartupScript sStartupScript "ADSL_"
-		fnRemoveMSCPROPCallBacks()
+		fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
@@ -194,7 +238,7 @@ struct o_stFixCallBack
 	--Remove all of the dangerous data, except the startup file.
 	fn fnRemoveDangDataWOStartup=
 	(
-		fnRemoveMSCPROPCallBacks()
+		fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
@@ -384,7 +428,7 @@ struct o_stFixCallBack
 	--Clean all of the dangerous data.
 	fn fnRevertFileAndCallBack =
 	(
-		fnRemoveMSCPROPCallBacks()
+		fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
