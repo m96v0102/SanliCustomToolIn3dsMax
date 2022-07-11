@@ -1,8 +1,9 @@
 
 @echo off
 
-echo Close 3dsMax
-taskkill /f /im 3dsmax.exe
+echo Close all 3dsMax, include background app
+rem taskkill /f /im 3dsmax.exe
+wmic process where name="3dsMax.exe" call terminate
 
 echo Ready to delete the file
 rem puase 5 seconds

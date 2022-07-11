@@ -201,10 +201,10 @@ struct SecurityToolsDialogs_structdef
 		label l1 "File deleting issue" offset:[50, -26] align:#left
 		label l2 ""
 		label l3 "The following file was created by the third party script and can't delete it immediately" align:#left height:(14*2)
-		label l4 "We strongly recommend to close the 3dsMax and delete the following file:" align:#left
+		label l4 "We strongly recommend to close all of the 3dsMax and delete the following file:" align:#left
 		edittext edtFileList height:m_filelist_height readOnly:true
 		label l5 ""
-		button bCloseMax "Close 3dsMax and delete the file" across:2 align:#right offset:[160,0]
+		button bCloseMax "Close all 3dsMax and delete the file" across:2 align:#right offset:[160,0]
 		button btnLeave "Leave corruption" align:#right
 		
 		on m_DeleteFileIssue open do
