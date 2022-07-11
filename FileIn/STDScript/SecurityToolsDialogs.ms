@@ -47,7 +47,32 @@ struct SecurityToolsDialogs_structdef
 	-- the name of the 3rd party script found
 	m_which_script,
 
-	-- Rollout definition - Clean and save the maxfile(Original name - m_corruptionCleanedInEnv_ro)
+	-- Rollout definition - Delete the file completed
+	m_DelFileCompleted_ro = rollout m_DelFileCompleted_ro "File delete completed" width:400
+	(
+		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
+		--label l1 "All corrupt script files were cleaned successfully" offset:[50, -26] align:#left
+		label l1 "The dangerous local file was deleted successfully" offset:[50, -26] align:#left
+		label l2 ""
+		button b_close "Close" align:#right
+		
+		on m_DelFileCompleted_ro open do
+		(
+			set_imgtag_bitmap icon m_success_icon_filename
+		)
+		on b_close pressed do
+		(
+			destroyDialog m_DelFileCompleted_ro
+		)
+	),
+
+	-- Display dialog - Delete the file completed
+	fn display_DelFileCompleted_dialog =
+	(
+		createdialog m_DelFileCompleted_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
+	),
+
+	-- Rollout definition - Clean and save the maxfile
 	m_CleanAndSave_ro = rollout m_CleanAndSave_ro "Corruption Successfully Cleaned by 3ds Max Security Tools" width:400
 	(
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
@@ -66,7 +91,7 @@ struct SecurityToolsDialogs_structdef
 		)
 	),
 
-	-- Display dialog - Clean and save the maxfile.(Original name - display_corruptionCleanedInEnv_dialog)
+	-- Display dialog - Clean and save the maxfile.
 	fn display_CleanAndSave_dialog =
 	(
 		createdialog m_CleanAndSave_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
@@ -333,7 +358,11 @@ struct SecurityToolsDialogs_structdef
 			if doesFileExist sLocalTempFile == true do
 			(
 				sDelResult = deleteFile sLocalTempFile
-				if sDelResult == false do
+				if sDelResult == true then
+				(
+					SecurityToolsDialogs_instance.display_DelFileCompleted_dialog()
+				)
+				else
 				(
 					aLocalTempFile = #(sLocalTempFile)
 					SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog aLocalTempFile
