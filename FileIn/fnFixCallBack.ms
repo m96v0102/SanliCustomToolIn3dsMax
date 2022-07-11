@@ -57,8 +57,7 @@ struct o_stFixCallBack
 				sDelResult = deleteFile sLocalTempFile
 				if sDelResult == false do
 				(
-					aLocalTempFile = #(sLocalTempFile)
-					SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog aLocalTempFile
+					SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog #(sLocalTempFile)
 				)
 			)
 		)
@@ -386,6 +385,13 @@ struct o_stFixCallBack
 		(
 			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PhysXPluginMfx2"
 		)
+
+		sLocalTempFile = sysInfo.tempdir +"Local_temp.ms"
+		if doesFileExist sLocalTempFile == true do
+		(
+			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
+		)
+			
 	),
 
 	--This function will be called when we load the file by tools.
