@@ -7,7 +7,7 @@ wmic process where name="3dsMax.exe" call terminate
 
 echo Ready to delete the file
 rem puase 5 seconds
-timeout /t 5
+timeout /t 1
 
 rem Delete the file by force("C:\Users\m96v0102\AppData\Local\Temp\Local_temp.ms")
 del /f %temp%\Local_temp.ms

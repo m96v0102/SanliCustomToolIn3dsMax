@@ -141,25 +141,25 @@ struct SecurityToolsDialogs_structdef
 		(
 			set_imgtag_bitmap icon m_warning_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
-			g_stFixCallBack.bCouldLocalTempBeDeleted = true
+			g_stFixCallBack.bFinishProcess = true
 		)
 		on bCleanAndSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do display_CleanAndSave_dialog()
+			if g_stFixCallBack.bFinishProcess == true do display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
-			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do display_CleanWithoutSave_dialog()
+			if g_stFixCallBack.bFinishProcess == true do display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(
-			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do destroyDialog m_DangerDataFound_ro
+			if g_stFixCallBack.bFinishProcess == true do destroyDialog m_DangerDataFound_ro
 		)
 	),
 
@@ -188,24 +188,24 @@ struct SecurityToolsDialogs_structdef
 		(
 			set_imgtag_bitmap icon m_error_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
-			g_stFixCallBack.bCouldLocalTempBeDeleted = true
+			g_stFixCallBack.bFinishProcess = true
 		)
 		on bCleanAndSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do display_CleanAndSave_dialog()
+			if g_stFixCallBack.bFinishProcess == true do display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
-			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do display_CleanWithoutSave_dialog()
+			if g_stFixCallBack.bFinishProcess == true do display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(
-			if g_stFixCallBack.bCouldLocalTempBeDeleted == true do destroyDialog m_VirusFound_ro
+			if g_stFixCallBack.bFinishProcess == true do destroyDialog m_VirusFound_ro
 		)
 	),
 
@@ -229,8 +229,9 @@ struct SecurityToolsDialogs_structdef
 		label l4 "We strongly recommend to close all of the 3dsMax and delete the following file:" align:#left
 		edittext edtFileList height:m_filelist_height readOnly:true
 		label l5 ""
-		button bShowLocalFile "Show up this local file" across:3 align:#right --offset:[160,0]
-		button bCloseMax "Close all 3dsMax and delete the file" align:#right offset:[46,0]
+		button bShowLocalFile "Show up this local file" across:4 align:#right --offset:[160,0]
+		button bCloseWSave "Save and close 3dsMax" align:#right tooltip: "Save maxfile, close all 3dsMax and delete the file." offset:[15,0]
+		button bCloseWOSave "Close without saving" align:#right tooltip: "Close all 3dsMax and delete the file without saving" offset:[15,0]
 		button btnLeave "Leave corruption" align:#right
 		
 		on m_DeleteFileIssue open do
@@ -261,7 +262,7 @@ struct SecurityToolsDialogs_structdef
 				catch()
 			)
 			
-			g_stFixCallBack.bCouldLocalTempBeDeleted = false
+			g_stFixCallBack.bFinishProcess = false
 		)
 		on m_DeleteFileIssue close do
 		(
@@ -270,16 +271,19 @@ struct SecurityToolsDialogs_structdef
 		on bShowLocalFile pressed do
 		(
 			--Open the file browser and select a specifice file, let the use know this file will going to be deleted.
-			sLocalTempFile = sysInfo.tempdir +"Local_temp.ms"
-			sExpression = "explorer /select, " + sLocalTempFile
+			sExpression = "explorer /select, " + g_stFixCallBack.sLocalTempFile
 			DOSCommand sExpression
 		)
-		on bCloseMax pressed do
+		on bCloseWSave pressed do
+		(
+			savemaxfile (maxfilepath + maxfilename) quiet:true
+			bCloseWOSave.pressed()
+		)
+		on bCloseWOSave pressed do
 		(
 			destroyDialog m_DeleteFileIssue
-			
-			sLocalTempFile = sysInfo.tempdir +"Local_temp.ms"
-			if doesFileExist sLocalTempFile == true do
+
+			if doesFileExist g_stFixCallBack.sLocalTempFile == true do
 			(
 				--Execute "D:\ADoc\MaxScript\_Common\SanliCustomTool\FromGitHub\FileIn\STDScript\DelLocalTemp.bat",
 				--  this will close the 3dsMax and delte the "Local_temp.ms".
@@ -313,7 +317,8 @@ struct SecurityToolsDialogs_structdef
 		label l4 "We strongly recommend to delete the following file:" align:#left
 		edittext edtFileList height:m_filelist_height readOnly:true
 		label l5 ""
-		button bDeleteLocalFile "Delete the file" across:2 align:#right offset:[160,0]
+		button bShowLocalFile "Show up this local file" across:3 align:#right --offset:[160,0]
+		button bDeleteLocalFile "Delete this local file" align:#right offset:[10,0]
 		button btnLeave "Leave corruption" align:#right
 		
 		on m_DangerLocalFile open do
@@ -344,29 +349,36 @@ struct SecurityToolsDialogs_structdef
 				catch()
 			)
 			
-			g_stFixCallBack.bCouldLocalTempBeDeleted = false
+			g_stFixCallBack.bFinishProcess = false
 		)
 		on m_DangerLocalFile close do
 		(
 			m_DangerLocalFile.height = m_orig_height
 		)
+		on bShowLocalFile pressed do
+		(
+			--Open the file browser and select a specifice file, let the use know this file will going to be deleted.
+			sExpression = "explorer /select, " + g_stFixCallBack.sLocalTempFile
+			DOSCommand sExpression
+		)
 		on bDeleteLocalFile pressed do
 		(
 			destroyDialog m_DangerLocalFile
 			
-			sLocalTempFile = sysInfo.tempdir +"Local_temp.ms"
-			if doesFileExist sLocalTempFile == true do
+			if doesFileExist g_stFixCallBack.sLocalTempFile == true do
 			(
-				sDelResult = deleteFile sLocalTempFile
-				if sDelResult == true then
-				(
-					SecurityToolsDialogs_instance.display_DelFileCompleted_dialog()
-				)
-				else
-				(
-					aLocalTempFile = #(sLocalTempFile)
-					SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog aLocalTempFile
-				)
+				g_stFixCallBack.fnCheckNRemoveMscpropCbkNProp()
+
+				-- sDelResult = deleteFile g_stFixCallBack.sLocalTempFile
+				-- if sDelResult == true then
+				-- (
+				-- 	SecurityToolsDialogs_instance.display_DelFileCompleted_dialog()
+				-- )
+				-- else
+				-- (
+				-- 	aLocalTempFile = #(g_stFixCallBack.sLocalTempFile)
+				-- 	SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog aLocalTempFile
+				-- )
 			)
 			
 		)

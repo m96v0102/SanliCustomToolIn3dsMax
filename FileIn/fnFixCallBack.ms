@@ -11,10 +11,12 @@
 
 struct o_stFixCallBack
 (
-	bCouldLocalTempBeDeleted = false,	--Let the tools know the local_temp.ms can't be deleted, so they won't show the cleaning complete dialog.
+	bFinishProcess = false,	--Let the tools know the local_temp.ms can't be deleted, so they won't show the cleaning complete dialog.
 	sStartupScript = "",
 	aDirtyGlobalVars = #(#ThePropParameterNodes, #CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript, #PhysXPluginMfx, #PhysXPluginGup),
+	sLocalTempFile = sysInfo.tempdir +"Local_temp.ms",
 
+	-- TODO: Finish the BuiltInSecurityTool detection.
 	fn fnCheckBuiltInSecurityToolEnable =
 	(
 		sMaxINIFile = getMAXIniFile()
@@ -50,18 +52,33 @@ struct o_stFixCallBack
 					exit
 				)
 			)
-
-			sLocalTempFile = sysInfo.tempdir +"Local_temp.ms"
-			if doesFileExist sLocalTempFile == true do
-			(
-				sDelResult = deleteFile sLocalTempFile
-				if sDelResult == false do
-				(
-					SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog #(sLocalTempFile)
-				)
-			)
 		)
 		
+	),
+
+	fn fnRemoveDirtyVariables =
+	(
+		for var in aDirtyGlobalVars do 
+		(
+			if (persistents.isPersistent var) do
+				persistents.remove var
+			globalVars.remove var
+		)	
+	),
+
+	--Check and remove callbacks and relevant properties which associated with MSCPROP
+	fn fnCheckNRemoveMscpropCbkNProp =
+	(
+		fnRemoveMscpropCbkNProp()
+		fnRemoveDirtyVariables()
+		if doesFileExist sLocalTempFile == true do
+		(
+			sDelResult = deleteFile sLocalTempFile
+			if sDelResult == false do
+			(
+				SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog #(sLocalTempFile)
+			)
+		)
 	),
 	
 	--Remove CRP callbacks
@@ -84,16 +101,6 @@ struct o_stFixCallBack
 		callbacks.removeScripts id:#ID_ADSL_filePostMerge
 		callbacks.removeScripts id:#ID_ADSL_preRenderP
 		callbacks.removeScripts id:#ID_ADSL_postImport
-	),
-	
-	fn fnRemoveDirtyVariables =
-	(
-		for var in aDirtyGlobalVars do 
-		(
-			if (persistents.isPersistent var) do
-				persistents.remove var
-			globalVars.remove var
-		)	
 	),
 	
 	-- function to count PhysXPluginMfx2 Anim Tracks instances
@@ -214,11 +221,12 @@ struct o_stFixCallBack
 	),
 
 	--Remove all of the dangerous data, include the startup file.
+	--This function was called when the callback was detected in the startup file.
 	fn fnRemoveAllDangerousData=
 	(
 		fnReviseStartupScript sStartupScript "CRP_"
 		fnReviseStartupScript sStartupScript "ADSL_"
-		fnRemoveMscpropCbkNProp()
+		--fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
@@ -229,7 +237,7 @@ struct o_stFixCallBack
 	--Remove all of the dangerous data, except the startup file.
 	fn fnRemoveDangDataWOStartup=
 	(
-		fnRemoveMscpropCbkNProp()
+		--fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
@@ -362,6 +370,11 @@ struct o_stFixCallBack
 	--At the beginning, this function doesn't support scene saving until I do some test and ensure there's no issue while we save the reset scene.
 	fn fnCheckAndFixStartupFile =
 	(
+		-- This function will propably shut down the max(To delete the localtemp file), so we should run this first,
+		--      otherwise this will cause a file damage while the max was shutting down when he was saving the max file.
+		if doesFileExist sLocalTempFile == true do
+			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
+
 		local result = fnOpenStartupFile()
 		
 		--Show the error message if we get the virus string.
@@ -385,18 +398,17 @@ struct o_stFixCallBack
 		(
 			SecurityToolsDialogs_instance.display_DangerDataFound_dialog "PhysXPluginMfx2"
 		)
-
-		sLocalTempFile = sysInfo.tempdir +"Local_temp.ms"
-		if doesFileExist sLocalTempFile == true do
-		(
-			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
-		)
 			
 	),
 
 	--This function will be called when we load the file by tools.
 	fn fnCheckFixStartupFileAndScene = 
 	(
+		-- This function will propably shut down the max(To delete the localtemp file), so we should run this first,
+		--      otherwise this will cause a file damage while the max was shutting down when he was saving the max file.
+		if doesFileExist sLocalTempFile == true do
+			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
+
 		local result = fnOpenStartupFile()
 		
 		--Show the error message if we get the virus string.
@@ -426,7 +438,7 @@ struct o_stFixCallBack
 	--Clean all of the dangerous data.
 	fn fnRevertFileAndCallBack =
 	(
-		fnRemoveMscpropCbkNProp()
+		--fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
