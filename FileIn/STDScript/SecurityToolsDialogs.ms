@@ -43,6 +43,8 @@ struct SecurityToolsDialogs_structdef
 	),
 	
 	m_filelist = #(),
+
+	bMaxOpening = true,
 	
 	-- the name of the 3rd party script found
 	m_which_script,
@@ -281,6 +283,7 @@ struct SecurityToolsDialogs_structdef
 		)
 		on bCloseWOSave pressed do
 		(
+			bMaxOpening = false
 			destroyDialog m_DeleteFileIssue
 
 			if doesFileExist g_stFixCallBack.sLocalTempFile == true do
@@ -302,6 +305,7 @@ struct SecurityToolsDialogs_structdef
 	(
 		m_filelist = aFileList
 		createdialog m_DeleteFileIssue bgcolor:m_dialog_background_color modal:true escapeEnable:true
+		return bMaxOpening
 	),
 
 	m_DangerLocalFile = rollout m_DangerLocalFile "Danger local file found by 3ds Max Security Tools" width:580
@@ -367,18 +371,7 @@ struct SecurityToolsDialogs_structdef
 			
 			if doesFileExist g_stFixCallBack.sLocalTempFile == true do
 			(
-				g_stFixCallBack.fnCheckNRemoveMscpropCbkNProp()
-
-				-- sDelResult = deleteFile g_stFixCallBack.sLocalTempFile
-				-- if sDelResult == true then
-				-- (
-				-- 	SecurityToolsDialogs_instance.display_DelFileCompleted_dialog()
-				-- )
-				-- else
-				-- (
-				-- 	aLocalTempFile = #(g_stFixCallBack.sLocalTempFile)
-				-- 	SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog aLocalTempFile
-				-- )
+				bMaxOpening = g_stFixCallBack.fnCheckNRemoveMscpropCbkNProp()
 			)
 			
 		)
@@ -392,6 +385,7 @@ struct SecurityToolsDialogs_structdef
 	(
 		m_filelist = aFileList
 		createdialog m_DangerLocalFile bgcolor:m_dialog_background_color modal:true escapeEnable:true
+		return bMaxOpening
 	),
 
 	on create do

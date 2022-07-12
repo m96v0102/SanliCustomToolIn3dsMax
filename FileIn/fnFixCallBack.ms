@@ -69,6 +69,7 @@ struct o_stFixCallBack
 	--Check and remove callbacks and relevant properties which associated with MSCPROP
 	fn fnCheckNRemoveMscpropCbkNProp =
 	(
+		local bMaxOpening = true
 		fnRemoveMscpropCbkNProp()
 		fnRemoveDirtyVariables()
 		if doesFileExist sLocalTempFile == true do
@@ -76,9 +77,10 @@ struct o_stFixCallBack
 			sDelResult = deleteFile sLocalTempFile
 			if sDelResult == false do
 			(
-				SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog #(sLocalTempFile)
+				bMaxOpening = SecurityToolsDialogs_instance.display_DeleteFileIssue_dialog #(sLocalTempFile)
 			)
 		)
+		return bMaxOpening
 	),
 	
 	--Remove CRP callbacks
@@ -366,14 +368,23 @@ struct o_stFixCallBack
 		return varDirtyGlobalVar
 	),
 
+	-- This function will propably shut down the max(To delete the localtemp file), so we should run this first,
+	--      otherwise this will cause a file damage while the max was shutting down when he was saving the max file.
+	--      We also should return true of false to let the rest of the code known the process should be continue or not.
+	fn fnCheckDangerLocalFileAndDetectMaxShouldOpening =
+	(
+		bMaxOpening = true
+		if doesFileExist sLocalTempFile == true do
+			bMaxOpening = SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
+
+		return bMaxOpening
+	),
+
 	--This function will be called when the tools open.
 	--At the beginning, this function doesn't support scene saving until I do some test and ensure there's no issue while we save the reset scene.
 	fn fnCheckAndFixStartupFile =
 	(
-		-- This function will propably shut down the max(To delete the localtemp file), so we should run this first,
-		--      otherwise this will cause a file damage while the max was shutting down when he was saving the max file.
-		if doesFileExist sLocalTempFile == true do
-			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
+		if fnCheckDangerLocalFileAndDetectMaxShouldOpening() == false do return 0
 
 		local result = fnOpenStartupFile()
 		
@@ -404,10 +415,7 @@ struct o_stFixCallBack
 	--This function will be called when we load the file by tools.
 	fn fnCheckFixStartupFileAndScene = 
 	(
-		-- This function will propably shut down the max(To delete the localtemp file), so we should run this first,
-		--      otherwise this will cause a file damage while the max was shutting down when he was saving the max file.
-		if doesFileExist sLocalTempFile == true do
-			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
+		if fnCheckDangerLocalFileAndDetectMaxShouldOpening() == false do return 0
 
 		local result = fnOpenStartupFile()
 		
