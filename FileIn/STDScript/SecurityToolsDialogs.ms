@@ -362,14 +362,14 @@ struct SecurityToolsDialogs_structdef
 		on bShowLocalFile pressed do
 		(
 			--Open the file browser and select a specifice file, let the use know this file will going to be deleted.
-			sExpression = "explorer /select, " + g_stFixCallBack.sLocalTempFile
+			sExpression = "explorer /select, " + m_filelist[1]
 			DOSCommand sExpression
 		)
 		on bDeleteLocalFile pressed do
 		(
 			destroyDialog m_DangerLocalFile
 			
-			if doesFileExist g_stFixCallBack.sLocalTempFile == true do
+			if doesFileExist m_filelist[1] == true do
 			(
 				bMaxOpening = g_stFixCallBack.fnCheckNRemoveMscpropCbkNProp()
 			)

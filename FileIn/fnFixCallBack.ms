@@ -15,6 +15,9 @@ struct o_stFixCallBack
 	sStartupScript = "",
 	aDirtyGlobalVars = #(#ThePropParameterNodes, #CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript, #PhysXPluginMfx, #PhysXPluginGup),
 	sLocalTempFile = sysInfo.tempdir +"Local_temp.ms",
+	sMaxRoot = getdir #maxroot,
+	sDangerMscpropDll = sMaxRoot + "mscprop.dll",
+	sDangerPropPrmLcMSE = sMaxRoot + "stdplugs\\PropertyParametersLocal.mse",
 
 	-- TODO: Finish the BuiltInSecurityTool detection.
 	fn fnCheckBuiltInSecurityToolEnable =
@@ -32,10 +35,6 @@ struct o_stFixCallBack
 	(
 		if globalVars.isglobal #ThePropParameterNodes == true do
 		(
-			sMaxRoot = getdir #maxroot
-			deletefile (sMaxRoot + "\\mscprop.dll")
-			deletefile (sMaxRoot + "\\stdplugs\\PropertyParametersLocal.mse")
-
 			callbacks.removeScripts id:#PropertyParameters
 
 			--Delete customattributes - TrackViewNodes.TVProperty
@@ -70,8 +69,10 @@ struct o_stFixCallBack
 	fn fnCheckNRemoveMscpropCbkNProp =
 	(
 		local bMaxOpening = true
-		fnRemoveMscpropCbkNProp()
+		fnRemoveMscpropCbkNProp()	--this function must run before fnRemoveDirtyVariables(), otherwise the callbacks won't remove.
 		fnRemoveDirtyVariables()
+		if doesFileExist sDangerMscpropDll == true do deleteFile sDangerMscpropDll
+		if doesFileExist sDangerPropPrmLcMSE == true do deleteFile sDangerPropPrmLcMSE
 		if doesFileExist sLocalTempFile == true do
 		(
 			sDelResult = deleteFile sLocalTempFile
@@ -228,7 +229,7 @@ struct o_stFixCallBack
 	(
 		fnReviseStartupScript sStartupScript "CRP_"
 		fnReviseStartupScript sStartupScript "ADSL_"
-		--fnRemoveMscpropCbkNProp()
+		fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
@@ -239,7 +240,7 @@ struct o_stFixCallBack
 	--Remove all of the dangerous data, except the startup file.
 	fn fnRemoveDangDataWOStartup=
 	(
-		--fnRemoveMscpropCbkNProp()
+		fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
@@ -374,7 +375,11 @@ struct o_stFixCallBack
 	fn fnCheckDangerLocalFileAndDetectMaxShouldOpening =
 	(
 		bMaxOpening = true
-		if doesFileExist sLocalTempFile == true do
+		if doesFileExist sDangerMscpropDll == true then
+			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sDangerMscpropDll)
+		if doesFileExist sDangerPropPrmLcMSE == true then
+			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sDangerPropPrmLcMSE)
+		else if doesFileExist sLocalTempFile == true then
 			bMaxOpening = SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
 
 		return bMaxOpening
@@ -446,7 +451,7 @@ struct o_stFixCallBack
 	--Clean all of the dangerous data.
 	fn fnRevertFileAndCallBack =
 	(
-		--fnRemoveMscpropCbkNProp()
+		fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
 		fnRemoveDirtyVariables()
