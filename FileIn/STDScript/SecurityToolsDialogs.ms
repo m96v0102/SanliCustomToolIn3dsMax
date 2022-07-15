@@ -218,6 +218,68 @@ struct SecurityToolsDialogs_structdef
 		createdialog m_VirusFound_ro bgcolor:m_dialog_background_color modal:true escapeEnable:true
 	),
 
+	--In win10, we need to use administrator to delete some files
+	m_PleaseDelByAdmin = rollout m_PleaseDelByAdmin "Please delete the file by administrator" width:580
+	(
+		-- local initial values are evaluated at compile time. We use m_filelist_height as the height for edtFileList so that controls under it are laid out correctly and the rollout height is ok.
+		local m_filelist_height = if SecurityToolsDialogs_instance.m_filelist == undefined then 16 else SecurityToolsDialogs_instance.m_filelist.count * 16
+		local m_orig_height -- restore initial rollout height in close handler
+			
+		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
+		label l1 "The file cannot be delete in current mode," offset:[50, -26] align:#left
+		label l2 ""
+		label l3 "Please delete the following file by administrator." align:#left height:(18)
+		--label l4 "We strongly recommend to delete the following file:" align:#left
+		edittext edtFileList height:m_filelist_height readOnly:true offset:[-4, 0]
+		label l5 ""
+		button btnLeave "Leave corruption" align:#right
+		
+		on m_PleaseDelByAdmin open do
+		(
+			set_imgtag_bitmap icon m_warning_icon_filename
+			local content = ""
+			local first_entry = true
+			for sFile in m_filelist do 
+			(
+				if not first_entry do content += "\n"
+				first_entry = false
+				content += sFile
+			)
+			edtFileList.text = content
+			
+			-- futz with height of rollout. May be easier to not use m_filelist_height as param for edtFileList, but rather set the height in this open handler
+			-- and manually reposition controls below it.
+			m_orig_height = m_PleaseDelByAdmin.height
+			if m_PleaseDelByAdmin_first_filelist_count == undefined then
+				m_PleaseDelByAdmin_first_filelist_count = m_filelist.count
+			m_PleaseDelByAdmin.height += (m_filelist.count - m_PleaseDelByAdmin_first_filelist_count) * 16 
+			-- for 3ds Max 2016 and earlier following is needed to get the dialog height to update when inside the open handler
+			if ((maxVersion())[1] < 19000) do
+			(
+				--https://www.cnblogs.com/ibingshan/p/12101560.html
+				--Calling this method will process all pending messages. It can be used inside a MAXScript loop which would otherwise cause a "white screen" in Windows 7
+				try(windows.processpostedmessages())
+				catch()
+			)
+			
+			g_stFixCallBack.bFinishProcess = false
+		)
+		on m_PleaseDelByAdmin close do
+		(
+			m_PleaseDelByAdmin.height = m_orig_height
+		)
+		on btnLeave pressed do
+		(
+			destroyDialog m_PleaseDelByAdmin
+		)
+	),
+
+	fn display_PleaseDelByAdmin_dialog aFileList =
+	(
+		m_filelist = aFileList
+		createdialog m_PleaseDelByAdmin bgcolor:m_dialog_background_color modal:true escapeEnable:true
+	),
+
 	m_DeleteFileIssue = rollout m_DeleteFileIssue "File deleting issue by 3ds Max Security Tools" width:580
 	(
 		-- local initial values are evaluated at compile time. We use m_filelist_height as the height for edtFileList so that controls under it are laid out correctly and the rollout height is ok.
@@ -371,7 +433,7 @@ struct SecurityToolsDialogs_structdef
 			
 			if doesFileExist m_filelist[1] == true do
 			(
-				bMaxOpening = g_stFixCallBack.fnCheckNRemoveMscpropCbkNProp()
+				bMaxOpening = g_stFixCallBack.fnCheckNRemoveMscpropCbkNProp m_filelist[1]
 			)
 			
 		)

@@ -66,14 +66,24 @@ struct o_stFixCallBack
 	),
 
 	--Check and remove callbacks and relevant properties which associated with MSCPROP
-	fn fnCheckNRemoveMscpropCbkNProp =
+	fn fnCheckNRemoveMscpropCbkNProp _sFile=
 	(
 		local bMaxOpening = true
-		fnRemoveMscpropCbkNProp()	--this function must run before fnRemoveDirtyVariables(), otherwise the callbacks won't remove.
-		fnRemoveDirtyVariables()
-		if doesFileExist sDangerMscpropDll == true do deleteFile sDangerMscpropDll
-		if doesFileExist sDangerPropPrmLcMSE == true do deleteFile sDangerPropPrmLcMSE
-		if doesFileExist sLocalTempFile == true do
+		fnRemoveMscpropCbkNProp()	--this function must run before we remove dirty Variables, otherwise the callbacks won't remove.
+		
+		if (persistents.isPersistent #ThePropParameterNodes) do
+			persistents.remove #ThePropParameterNodes
+		globalVars.remove #ThePropParameterNodes
+
+		if _sFile != sLocalTempFile and (doesFileExist _sFile) == true then
+		(
+			sDelResult = deleteFile _sFile
+			if sDelResult == false do
+			(
+				SecurityToolsDialogs_instance.display_PleaseDelByAdmin_dialog #(_sFile)
+			)
+		)
+		else if _sFile == sLocalTempFile and (doesFileExist sLocalTempFile) == true do
 		(
 			sDelResult = deleteFile sLocalTempFile
 			if sDelResult == false do
@@ -379,7 +389,7 @@ struct o_stFixCallBack
 			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sDangerMscpropDll)
 		if doesFileExist sDangerPropPrmLcMSE == true then
 			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sDangerPropPrmLcMSE)
-		else if doesFileExist sLocalTempFile == true then
+		if doesFileExist sLocalTempFile == true then
 			bMaxOpening = SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
 
 		return bMaxOpening
