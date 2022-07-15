@@ -230,7 +230,7 @@ struct SecurityToolsDialogs_structdef
 		label l2 ""
 		label l3 "Please delete the following file by administrator." align:#left height:(18)
 		--label l4 "We strongly recommend to delete the following file:" align:#left
-		edittext edtFileList height:m_filelist_height readOnly:true offset:[-4, 0]
+		edittext edtFileList height:m_filelist_height readOnly:true offset:[-6, 0]
 		label l5 ""
 		button btnLeave "Leave corruption" align:#right
 		
@@ -291,7 +291,7 @@ struct SecurityToolsDialogs_structdef
 		label l2 ""
 		label l3 "The following file was created by the third party script and can't delete it immediately" align:#left height:(14*2)
 		label l4 "We strongly recommend to close all of the 3dsMax and delete the following file:" align:#left
-		edittext edtFileList height:m_filelist_height readOnly:true
+		edittext edtFileList height:m_filelist_height readOnly:true offset:[-6,0]
 		label l5 ""
 		button bShowLocalFile "Show up this local file" across:4 align:#right --offset:[160,0]
 		button bCloseWSave "Save and close 3dsMax" align:#right tooltip: "Save maxfile, close all 3dsMax and delete the file." offset:[15,0]
@@ -381,7 +381,7 @@ struct SecurityToolsDialogs_structdef
 		label l2 ""
 		label l3 "The following local file was created by the third party script" align:#left height:(14*2)
 		label l4 "We strongly recommend to delete the following file:" align:#left
-		edittext edtFileList height:m_filelist_height readOnly:true
+		edittext edtFileList height:m_filelist_height readOnly:true	offset:[-6, 0]
 		label l5 ""
 		button bShowLocalFile "Show up this local file" across:3 align:#right --offset:[160,0]
 		button bDeleteLocalFile "Delete this local file" align:#right offset:[10,0]
