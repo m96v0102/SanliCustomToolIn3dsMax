@@ -48,7 +48,9 @@ struct o_stFixCallBack
 					
 					--Delete custom attribute.
 					custAttributes.deleteDef aCustAttr[i]
-					exit
+					
+					--Sometimes there were 2 #TVProperty in the array, so I comment out the exit line.
+					--exit
 				)
 			)
 		)
@@ -479,6 +481,8 @@ struct o_stFixCallBack
 			fnReviseStartupScript sStartupScript "CRP_"
 			fnReviseStartupScript sStartupScript "ADSL_"
 		)
+
+		if fnCheckDangerLocalFileAndDetectMaxShouldOpening() == false do return 0
 		
 		SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog()
 	)
