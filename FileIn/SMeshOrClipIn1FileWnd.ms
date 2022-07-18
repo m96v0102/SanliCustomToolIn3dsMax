@@ -884,12 +884,10 @@ struct st1ClipInFileWnd
 					local varDirtyGlobalVar = g_stFixCallBack.fnCheckDirtyGlobalVariables()
 					if varDirtyGlobalVar != undefined then
 						append aDangerousFile maxfilename
-					else --Check PhysPlug
-					(
-						local nPhysPlugProblem = g_stFixCallBack.fnCheckPhysPlug()
-						if nPhysPlugProblem != 0 then
+					--Check PhysPlug
+					local nPhysPlugProblem = g_stFixCallBack.fnCheckPhysPlug()
+					if nPhysPlugProblem != 0 and (findItem aDangerousFile maxfilename == 0) then
 							append aDangerousFile maxfilename
-					)
 
 					--if I remove the callback function after the for loop, the last one will missed, so I have to remove it again
 					if i == aCheckMaxCallbackFile.count and enBatchCheckMode == #CheckAndRemove then
@@ -934,7 +932,8 @@ struct st1ClipInFileWnd
 					)
 				)
 
-				stMsgWnd.fnMainMsgDialog "sMsgFinishVirusCheck" "Max File Callback virus checking complete" _sMessage:sMessageForShowWnd
+				stMsgWnd.fnMainMsgDialog "sMsgFinishVirusCheckWthMoveROPosY" "Max File Callback virus checking complete" _sMessage:sMessageForShowWnd
+				g_stFixCallBack.fnCheckDangerLocalFileAndDetectMaxShouldOpening()
 			)
 
 		)

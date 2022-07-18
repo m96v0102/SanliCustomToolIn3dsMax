@@ -29,6 +29,24 @@ struct o_stMsgWnd
 				roMsgInMainWnd.edtInfoData.text = _sMessage
 			)
 
+			"sMsgFinishVirusCheckWthMoveROPosY":
+			(
+				rollout roMsgInMainWnd _sMessageInfo width:530
+				(
+					edittext edtInfoData "" width: 500	height:120
+					button btnFinish 	"Close"
+					on btnFinish pressed do
+						try(DestroyDialog roMsgInMainWnd) catch()
+				)
+
+				CreateDialog roMsgInMainWnd
+				roMsgInMainWnd.edtInfoData.text = _sMessage
+
+				v2OldPos = GetDialogPos roMsgInMainWnd
+				v2NewPos = [v2OldPos[1], v2OldPos[2] - 150]
+				SetDialogPos roMsgInMainWnd v2NewPos
+			)
+
 			"sMsgProcessCompleted":
 			(
 				try(DestroyDialog roMsgInMainWnd) catch()

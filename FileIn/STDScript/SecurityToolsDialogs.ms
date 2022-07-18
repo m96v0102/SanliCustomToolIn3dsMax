@@ -446,7 +446,13 @@ struct SecurityToolsDialogs_structdef
 	fn display_DangerLocalFile_dialog aFileList =
 	(
 		m_filelist = aFileList
+
+		-- In some cases, we will show this dialog after batch check, so we should see 2 dialogs, but we will got some issues below:
+		-- If I set the modal argument to true, I can't change the position for this dialog, 
+		-- If I set the modal argument to false, I can't access the content in m_filelist, 
+		-- To solve this problem, I decided to move the MsgWnd position.
 		createdialog m_DangerLocalFile bgcolor:m_dialog_background_color modal:true escapeEnable:true
+		
 		return bMaxOpening
 	),
 

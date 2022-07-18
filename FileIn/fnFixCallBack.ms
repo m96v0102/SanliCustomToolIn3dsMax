@@ -33,6 +33,7 @@ struct o_stFixCallBack
 	--Remove callbacks and relevant properties which associated with MSCPROP
 	fn fnRemoveMscpropCbkNProp =
 	(
+		--if globalVars.isglobal #ThePropParameterNodes == true or _RemoveWOCheck == true do
 		if globalVars.isglobal #ThePropParameterNodes == true do
 		(
 			callbacks.removeScripts id:#PropertyParameters
