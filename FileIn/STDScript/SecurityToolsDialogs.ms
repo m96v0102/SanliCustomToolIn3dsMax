@@ -143,25 +143,24 @@ struct SecurityToolsDialogs_structdef
 		(
 			set_imgtag_bitmap icon m_warning_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
-			g_stFixCallBack.bFinishProcess = true
 		)
 		on bCleanAndSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			if g_stFixCallBack.bFinishProcess == true do display_CleanAndSave_dialog()
+			display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
-			if g_stFixCallBack.bFinishProcess == true do display_CleanWithoutSave_dialog()
+			display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(
-			if g_stFixCallBack.bFinishProcess == true do destroyDialog m_DangerDataFound_ro
+			destroyDialog m_DangerDataFound_ro
 		)
 	),
 
@@ -190,24 +189,23 @@ struct SecurityToolsDialogs_structdef
 		(
 			set_imgtag_bitmap icon m_error_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
-			g_stFixCallBack.bFinishProcess = true
 		)
 		on bCleanAndSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			if g_stFixCallBack.bFinishProcess == true do display_CleanAndSave_dialog()
+			display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
-			if g_stFixCallBack.bFinishProcess == true do display_CleanWithoutSave_dialog()
+			display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(
-			if g_stFixCallBack.bFinishProcess == true do destroyDialog m_VirusFound_ro
+			destroyDialog m_VirusFound_ro
 		)
 	),
 
@@ -261,8 +259,6 @@ struct SecurityToolsDialogs_structdef
 				try(windows.processpostedmessages())
 				catch()
 			)
-			
-			g_stFixCallBack.bFinishProcess = false
 		)
 		on m_PleaseDelByAdmin close do
 		(
@@ -325,8 +321,6 @@ struct SecurityToolsDialogs_structdef
 				try(windows.processpostedmessages())
 				catch()
 			)
-			
-			g_stFixCallBack.bFinishProcess = false
 		)
 		on m_DeleteFileIssue close do
 		(
@@ -414,8 +408,6 @@ struct SecurityToolsDialogs_structdef
 				try(windows.processpostedmessages())
 				catch()
 			)
-			
-			g_stFixCallBack.bFinishProcess = false
 		)
 		on m_DangerLocalFile close do
 		(

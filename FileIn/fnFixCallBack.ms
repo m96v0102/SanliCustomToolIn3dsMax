@@ -11,7 +11,6 @@
 
 struct o_stFixCallBack
 (
-	bFinishProcess = false,	--Let the tools know the local_temp.ms can't be deleted, so they won't show the cleaning complete dialog.
 	sStartupScript = "",
 	aDirtyGlobalVars = #(#ThePropParameterNodes, #CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript, #PhysXPluginMfx, #PhysXPluginGup),
 	sLocalTempFile = sysInfo.tempdir +"Local_temp.ms",
