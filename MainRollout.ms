@@ -155,7 +155,7 @@ fileIn "FileIn\\SMeshOrClipIn1FileWnd.ms"		--1 clip in 1 file Window
 fileIn "FileIn\\OthersWnd.ms"					--Others Window
 fileIn "FileIn\\fnFixCallBack.ms"				--check and fix callbacks virus
 
-global g_stFixCallBack = o_stFixCallBack()		--fileIn fnFixCallBack時會用到的結構
+global g_stFixCallBack = o_stFixCallBack()		--fileIn fnFixCallBack related functions and variables.
 
 global g_stLoadMaxByList
 
@@ -273,7 +273,7 @@ struct stSanliCustomTool
 	(
 		--If you change the height or width, remember to change another width height in "subRollout theSubRollout".
 		createDialog roMainRollout 370 roMainRollout.ro1Clip1File.roHeight 560 300
-		roMainRollout.title = "SanliCustomTool(v1.020)"
+		roMainRollout.title = "SanliCustomTool(v1.021)"
 		
 		--copy Unity Editor files to C:\SanliCustomTool
 		sCurrentScriptFile = getThisScriptFilename()
