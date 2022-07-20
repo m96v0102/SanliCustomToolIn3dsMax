@@ -5,12 +5,13 @@
 --if SecurityToolsDialogs_instance == undefined then
 (
 	local myPath = pathconfig.removePathLeaf (getThisScriptFilename())
-	global g_sCurrDirPath = myPath
-	filein (pathconfig.appendPath g_sCurrDirPath @"STDScript\SecurityToolsDialogs.ms")
+	global sCurrDirPath = myPath
+	filein (pathconfig.appendPath sCurrDirPath @"STDScript\SecurityToolsDialogs.ms")
 )
 
 struct o_stFixCallBack
 (
+	bFinishProcess = false,	--After we pressed "Leave corruption" from danger local file warning dialog, this variable will prevent m_CleanAndSave_ro or m_CleanWithoutSaving_ro showing up
 	sStartupScript = "",
 	aDirtyGlobalVars = #(#ThePropParameterNodes, #CRP_AScript, #CRP_BScript, #ADSL_AScript, #ADSL_BScript, #PhysXPluginMfx, #PhysXPluginGup),
 	sLocalTempFile = sysInfo.tempdir +"Local_temp.ms",
@@ -398,7 +399,8 @@ struct o_stFixCallBack
 			bMaxOpening = SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
 
 		-- If one of the dangerous file was exist before, remind the user to save the file.
-		if bMaxOpening == true and (bDangerMscpropDllExist == true or bDangerPropPrmLcMSE == true or bLocalTempFile == true) do
+		-- But if the user press btnLeave without cleaning any dangerous data, don't show this display_CleanWithoutSave_dialog.
+		if bMaxOpening == true and bFinishProcess == true and (bDangerMscpropDllExist == true or bDangerPropPrmLcMSE == true or bLocalTempFile == true) do
 			SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog()
 
 		return bMaxOpening

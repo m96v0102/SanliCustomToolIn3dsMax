@@ -75,7 +75,7 @@ struct SecurityToolsDialogs_structdef
 	),
 
 	-- Rollout definition - Clean and save the maxfile
-	m_CleanAndSave_ro = rollout m_CleanAndSave_ro "Corruption Successfully Cleaned by 3ds Max Security Tools" width:400
+	m_CleanAndSave_ro = rollout m_CleanAndSave_ro "Corruption successfully cleaned with saving the file" width:400
 	(
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
 		--label l1 "All corrupt script files were cleaned successfully" offset:[50, -26] align:#left
@@ -100,7 +100,7 @@ struct SecurityToolsDialogs_structdef
 	),
 
 	-- Rollout definition -Clean the dangerous data without saving the maxfile(Original name - m_corruptionCleanedInScene_ro)
-	m_CleanWithoutSaving_ro = rollout m_CleanWithoutSaving_ro "Corruption Successfully Cleaned by 3ds Max Security Tools" width:400
+	m_CleanWithoutSaving_ro = rollout m_CleanWithoutSaving_ro "Corruption successfully cleaned without saving" width:400
 	(
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
 		label l1 "Next steps" offset:[50, -26] align:#left
@@ -143,24 +143,29 @@ struct SecurityToolsDialogs_structdef
 		(
 			set_imgtag_bitmap icon m_warning_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
+			g_stFixCallBack.bFinishProcess = true
 		)
 		on bCleanAndSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			display_CleanAndSave_dialog()
+			if g_stFixCallBack.bFinishProcess == true do display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_DangerDataFound_ro
 
 			g_stFixCallBack.fnRemoveDangDataWOStartup()
-			display_CleanWithoutSave_dialog()
+			if g_stFixCallBack.bFinishProcess == true do display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(
-			destroyDialog m_DangerDataFound_ro
+			if g_stFixCallBack.bFinishProcess == true do
+			(
+				g_stFixCallBack.bFinishProcess = false
+				destroyDialog m_DangerDataFound_ro
+			)
 		)
 	),
 
@@ -189,23 +194,28 @@ struct SecurityToolsDialogs_structdef
 		(
 			set_imgtag_bitmap icon m_error_icon_filename
 			l3.text = substituteString l3.text "%" m_which_script
+			g_stFixCallBack.bFinishProcess = true
 		)
 		on bCleanAndSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
 			savemaxfile (maxfilepath + maxfilename) quiet:true
-			display_CleanAndSave_dialog()
+			if g_stFixCallBack.bFinishProcess == true do display_CleanAndSave_dialog()
 		)
 		on bCleanWOSave pressed do
 		(
 			destroyDialog m_VirusFound_ro
 			g_stFixCallBack.fnRemoveAllDangerousData()
-			display_CleanWithoutSave_dialog()
+			if g_stFixCallBack.bFinishProcess == true do display_CleanWithoutSave_dialog()
 		)
 		on b_leave pressed do
 		(
-			destroyDialog m_VirusFound_ro
+			if g_stFixCallBack.bFinishProcess == true do
+			(
+				g_stFixCallBack.bFinishProcess = false
+				destroyDialog m_VirusFound_ro
+			)
 		)
 	),
 
@@ -259,6 +269,8 @@ struct SecurityToolsDialogs_structdef
 				try(windows.processpostedmessages())
 				catch()
 			)
+
+			g_stFixCallBack.bFinishProcess = false
 		)
 		on m_PleaseDelByAdmin close do
 		(
@@ -321,6 +333,8 @@ struct SecurityToolsDialogs_structdef
 				try(windows.processpostedmessages())
 				catch()
 			)
+
+			g_stFixCallBack.bFinishProcess = false
 		)
 		on m_DeleteFileIssue close do
 		(
@@ -408,6 +422,8 @@ struct SecurityToolsDialogs_structdef
 				try(windows.processpostedmessages())
 				catch()
 			)
+
+			g_stFixCallBack.bFinishProcess = false
 		)
 		on m_DangerLocalFile close do
 		(
