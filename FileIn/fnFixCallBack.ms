@@ -388,12 +388,19 @@ struct o_stFixCallBack
 	fn fnCheckDangerLocalFileAndDetectMaxShouldOpening =
 	(
 		bMaxOpening = true
-		if doesFileExist sDangerMscpropDll == true then
+		bDangerMscpropDllExist = doesFileExist sDangerMscpropDll
+		bDangerPropPrmLcMSE = doesFileExist sDangerPropPrmLcMSE
+		bLocalTempFile = doesFileExist sLocalTempFile
+		if bDangerMscpropDllExist == true then
 			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sDangerMscpropDll)
-		if doesFileExist sDangerPropPrmLcMSE == true then
+		if bDangerPropPrmLcMSE == true then
 			SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sDangerPropPrmLcMSE)
-		if doesFileExist sLocalTempFile == true then
+		if bLocalTempFile == true then
 			bMaxOpening = SecurityToolsDialogs_instance.display_DangerLocalFile_dialog #(sLocalTempFile)
+
+		-- If one of the dangerous file was exist before, remind the user to save the file.
+		if bMaxOpening == true and (bDangerMscpropDllExist == true or bDangerPropPrmLcMSE == true or bLocalTempFile == true) do
+			SecurityToolsDialogs_instance.display_CleanWithoutSave_dialog()
 
 		return bMaxOpening
 	),
