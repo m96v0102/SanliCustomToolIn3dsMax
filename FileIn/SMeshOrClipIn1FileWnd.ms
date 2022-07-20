@@ -830,7 +830,7 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roCheckUndoCallBack "Check or cleanup some dangerous data_v1.008"
+		rollout roCheckUndoCallBack "Check or cleanup some dangerous data_v1.009"
 		(
 			button	btnRemoveCallBackCF				"Remove dangerous data from current file"	  width:330 --align:#left
 													-- height:18 pos:[btnExportHint.pos.x + 105,btnExportHint.pos.y ] 
