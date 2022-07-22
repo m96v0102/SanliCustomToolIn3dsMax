@@ -234,9 +234,9 @@ struct SecurityToolsDialogs_structdef
 		local m_orig_height -- restore initial rollout height in close handler
 			
 		imgtag icon width:32 height:32 align:#left style:#bmp_center applyUIScaling:false
-		label l1 "The file cannot be delete in current mode," offset:[50, -26] align:#left
+		label l1 "The file cannot be delete(Or modified) in current mode," offset:[50, -26] align:#left
 		label l2 ""
-		label l3 "Please delete the following file by administrator." align:#left height:(18)
+		label l3 "Please delete(Or modified) the following file by administrator." align:#left height:(18)
 		--label l4 "We strongly recommend to delete the following file:" align:#left
 		edittext edtFileList height:m_filelist_height readOnly:true offset:[-6, 0]
 		label l5 ""

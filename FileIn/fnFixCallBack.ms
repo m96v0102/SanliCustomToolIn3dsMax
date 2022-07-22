@@ -204,6 +204,12 @@ struct o_stFixCallBack
 		--The last line will get eof(end of file)
 		--http://forums.cgsociety.org/archive/index.php?t-69988.html
 		posFile = openFile _sStartupScript
+		if posFile == undefined do
+		(
+			SecurityToolsDialogs_instance.display_PleaseDelByAdmin_dialog #(_sStartupScript)
+			return 0
+		)
+
 		sContent = ""
 		while not eof posFile do
 		(
