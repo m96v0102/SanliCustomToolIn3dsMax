@@ -19,7 +19,6 @@ struct o_stFixCallBack
 	sDangerMscpropDll = sMaxRoot + "mscprop.dll",
 	sDangerPropPrmLcMSE = sMaxRoot + "stdplugs\\PropertyParametersLocal.mse",
 
-	-- TODO: Finish the BuiltInSecurityTool detection.
 	fn fnCheckBuiltInSecurityToolEnable =
 	(
 		sMaxINIFile = getMAXIniFile()
