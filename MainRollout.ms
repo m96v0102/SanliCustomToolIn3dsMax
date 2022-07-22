@@ -242,6 +242,8 @@ struct stSanliCustomTool
 				addSubRollout theSubRollout ro1Clip1File.roExportSettings rolledUp:true
 				addSubRollout theSubRollout ro1Clip1File.roCheckUndoCallBack rolledUp:false
 				addSubRollout theSubRollout ro1Clip1File.roRecordExportPath rolledUp:true
+
+				g_stFixCallBack.fnCheckBuiltInSecurityToolEnable()
 				
 				--open and check the Startup file, if there has a callback virus in it, then try to fix it.
 				g_stFixCallBack.fnCheckAndFixStartupFile()

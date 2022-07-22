@@ -24,10 +24,12 @@ struct o_stFixCallBack
 	(
 		sMaxINIFile = getMAXIniFile()
 		sBuiltInSecurityEnable = getINISetting sMaxINIFile "SecurityTools" "LoadSecurityTools"
-		if sBuiltInSecurityEnable == 1 then
-		(
-			
-		)
+		format "SanliTestLog_sBuiltInSecurityEnable: % \n" sBuiltInSecurityEnable
+		--bBuiltInSecurityEnable as BooleanClass
+		--f sBuiltInSecurityEnable == 1 then
+		--
+		--	
+		--
 	),
 
 	--Remove callbacks and relevant properties which associated with MSCPROP
