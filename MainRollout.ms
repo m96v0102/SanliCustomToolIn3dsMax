@@ -243,7 +243,15 @@ struct stSanliCustomTool
 				addSubRollout theSubRollout ro1Clip1File.roCheckUndoCallBack rolledUp:false
 				addSubRollout theSubRollout ro1Clip1File.roRecordExportPath rolledUp:true
 
-				g_stFixCallBack.fnCheckBuiltInSecurityToolEnable()
+				if g_stFixCallBack.fnCheckBuiltInSecurityToolEnable() == true do
+				(
+					sSecurityToolDetected = "Security tool detected, this rollout will deactivated"
+					ro1Clip1File.roCheckUndoCallBack.btnRemoveCallBackCF.text = sSecurityToolDetected
+					ro1Clip1File.roCheckUndoCallBack.btnBatchCheckNRemoveCallBack.text = sSecurityToolDetected
+					ro1Clip1File.roCheckUndoCallBack.btnRemoveCallBackCF.enabled = false
+					ro1Clip1File.roCheckUndoCallBack.rdoBatchCheckMode.enabled = false
+					ro1Clip1File.roCheckUndoCallBack.btnBatchCheckNRemoveCallBack.enabled = false
+				)	
 				
 				--open and check the Startup file, if there has a callback virus in it, then try to fix it.
 				g_stFixCallBack.fnCheckAndFixStartupFile()
@@ -275,7 +283,7 @@ struct stSanliCustomTool
 	(
 		--If you change the height or width, remember to change another width height in "subRollout theSubRollout".
 		createDialog roMainRollout 370 roMainRollout.ro1Clip1File.roHeight 560 300
-		roMainRollout.title = "SanliCustomTool(v1.022)"
+		roMainRollout.title = "SanliCustomTool(v1.023)"
 		
 		--copy Unity Editor files to C:\SanliCustomTool
 		sCurrentScriptFile = getThisScriptFilename()

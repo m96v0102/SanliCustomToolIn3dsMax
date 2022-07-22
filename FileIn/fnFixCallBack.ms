@@ -24,12 +24,12 @@ struct o_stFixCallBack
 	(
 		sMaxINIFile = getMAXIniFile()
 		sBuiltInSecurityEnable = getINISetting sMaxINIFile "SecurityTools" "LoadSecurityTools"
-		format "SanliTestLog_sBuiltInSecurityEnable: % \n" sBuiltInSecurityEnable
-		--bBuiltInSecurityEnable as BooleanClass
-		--f sBuiltInSecurityEnable == 1 then
-		--
-		--	
-		--
+		if sBuiltInSecurityEnable == "1" then
+		(
+			return true
+		)
+
+		else return false
 	),
 
 	--Remove callbacks and relevant properties which associated with MSCPROP
@@ -340,6 +340,7 @@ struct o_stFixCallBack
 		)
 	),
 
+	--This function was used in old version, we don't need it for now, but I keep it just in case. 
 	--EX: local result = fnCheckMaxCallbackScript()
 	fn fnCheckMaxCallbackScript=
 	(
@@ -412,6 +413,7 @@ struct o_stFixCallBack
 	--At the beginning, this function doesn't support scene saving until I do some test and ensure there's no issue while we save the reset scene.
 	fn fnCheckAndFixStartupFile =
 	(
+		if fnCheckBuiltInSecurityToolEnable() == true do return 0
 		if fnCheckDangerLocalFileAndDetectMaxShouldOpening() == false do return 0
 
 		local result = fnOpenStartupFile()
@@ -443,6 +445,7 @@ struct o_stFixCallBack
 	--This function will be called when we load the file by tools.
 	fn fnCheckFixStartupFileAndScene = 
 	(
+		if fnCheckBuiltInSecurityToolEnable() == true do return 0
 		if fnCheckDangerLocalFileAndDetectMaxShouldOpening() == false do return 0
 
 		local result = fnOpenStartupFile()
@@ -474,6 +477,7 @@ struct o_stFixCallBack
 	--Clean all of the dangerous data.
 	fn fnRevertFileAndCallBack =
 	(
+		if fnCheckBuiltInSecurityToolEnable() == true do return 0
 		fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
