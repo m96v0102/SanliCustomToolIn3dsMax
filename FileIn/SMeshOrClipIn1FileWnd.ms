@@ -830,7 +830,7 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roCheckUndoCallBack "Check or cleanup some dangerous data_v1.011"
+		rollout roCheckUndoCallBack "Check or cleanup some dangerous data_v1.012"
 		(
 			button	btnRemoveCallBackCF				"Remove dangerous data from current file"	  width:330 --align:#left
 													-- height:18 pos:[btnExportHint.pos.x + 105,btnExportHint.pos.y ] 
@@ -846,6 +846,24 @@ struct st1ClipInFileWnd
 
 				button 		btnBatchCheckNRemoveCallBack	"Batch check" width:320
 															pos:[lbBatchCheckMode.pos.x, lbBatchCheckMode.pos.y + 24]
+			)
+
+			fn fnCheckBuiltInSecurityToolEnable =
+			(
+				if g_stFixCallBack.fnCheckBuiltInSecurityToolEnable() == true do
+				(
+					sSecurityToolDetected = "Security tool detected, this rollout will deactivated"
+					btnRemoveCallBackCF.text = sSecurityToolDetected
+					btnBatchCheckNRemoveCallBack.text = sSecurityToolDetected
+					btnRemoveCallBackCF.enabled = false
+					rdoBatchCheckMode.enabled = false
+					btnBatchCheckNRemoveCallBack.enabled = false
+				)
+			)
+
+			on roCheckUndoCallBack open do
+			(
+				fnCheckBuiltInSecurityToolEnable()
 			)
 
 			on btnRemoveCallBackCF pressed do
