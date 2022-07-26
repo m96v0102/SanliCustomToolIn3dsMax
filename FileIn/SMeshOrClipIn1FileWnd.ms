@@ -39,6 +39,13 @@ struct stLoadMaxByList
 		xmlDoc = undefined
 		ndRoot = undefined
 	),
+	
+	fn fnGetScriptPath=
+	(
+		sCurrScriptFile = getThisScriptFilename()
+		sCurrScriptPath = pathConfig.removePathLeaf sCurrScriptFile
+		return (sCurrScriptPath + "\\")
+	),
 
 	fn fnSetMATEmbedType _state=
 	(
@@ -98,7 +105,7 @@ struct stLoadMaxByList
 				aFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.max" )
 				if g_SanliCustomTool != undefined do
 				(
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnLoadMergeImportFile.enabled = true
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnExportFile.enabled = true
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnSelExport.enabled = true
 				)
@@ -108,7 +115,7 @@ struct stLoadMaxByList
 				aFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.max" )
 				if g_SanliCustomTool != undefined do
 				(
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnLoadMergeImportFile.enabled = true
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnExportFile.enabled = false
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnSelExport.enabled = false
 				)
@@ -119,7 +126,7 @@ struct stLoadMaxByList
 				aFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.fbx" )
 				if g_SanliCustomTool != undefined do
 				(
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnLoadMergeImportFile.enabled = true
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnExportFile.enabled = false
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnSelExport.enabled = false
 				)
@@ -129,7 +136,7 @@ struct stLoadMaxByList
 				aFile =sort( fnGetFilesRecursiveByLoadingPath _sLoadFileFromPath "*.obj" )
 				if g_SanliCustomTool != undefined do
 				(
-					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnMergeOrImportFile.enabled = true
+					g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.btnLoadMergeImportFile.enabled = true
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnExportFile.enabled = false
 					g_SanliCustomTool.roMainRollout.ro1Clip1File.roExportFn.btnSelExport.enabled = false
 				)
@@ -763,10 +770,20 @@ struct st1ClipInFileWnd
 
 			--show merge or import options													
 			checkbox ckShowMIOptions				"Show Options" checked:g_stLoadMaxByList.bShowMIOptions tooltip:"Show merge Or import options"
-													across:2 offset:[20, 6] align:#left
-													--pos:[lbLoadType.pos.x + 48, lbLoadType.pos.y + 40]
-			button btnMergeOrImportFile				"Load, merge or import multiple files" offset:[-35, 2] --enabled:false 
-													--pos:[ckShowMIOptions.pos.x + 90, ckShowMIOptions.pos.y - 3]
+													across:3 align:#left offset:[12, 6]
+			checkbox ckPrintLog						"Ptint log" offset:[-2, 6]													
+			button btnLoadMergeImportFile			"Load, merge or import files" offset:[-23, 4] --enabled:false 
+
+			fn fnCheckTypeNLoadMergeImport &_aSelection=
+			(
+				nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
+				for i = 1 to _aSelection.count do
+				(
+					format "Sanlilog_SelectionFile: % \n" g_stLoadMaxByList.aFile[_aSelection[i]]
+					g_stLoadMaxByList.fnLoadMergeOrImport enLoadType _aSelection[i]
+				)
+			)
 
 			on rdoLoadType changed state do
 			(
@@ -781,18 +798,27 @@ struct st1ClipInFileWnd
 				g_stLoadMaxByList.bShowMIOptions = bChecked
 			)
 
-			on btnMergeOrImportFile pressed do
+			on btnLoadMergeImportFile pressed do
 			(
 				aSelection = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile.selection as array
 				if aSelection.count > 0 do
 				(
-					nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
-					enLoadType =  g_stLoadMaxByList.aLoadType[nState]
-					for i = 1 to aSelection.count do
+					--Create a log here, so we can check the process when the files are too many for loading.
+					if ckPrintLog.checked == true then
 					(
-						format "Sanlilog_SelectionFile: % \n" g_stLoadMaxByList.aFile[aSelection[i]]
-						g_stLoadMaxByList.fnLoadMergeOrImport enLoadType aSelection[i]
+						sCurrScriptPath = g_stLoadMaxByList.fnGetScriptPath()
+						sLoadMergeImportLogFile = sCurrScriptPath + "\\LoadMergeImport.log"
+						nOutPutLog = openLog sLoadMergeImportLogFile mode:"w" outputOnly:true
+
+						fnCheckTypeNLoadMergeImport &aSelection
+
+						closeLog()
 					)
+					else
+					(
+						fnCheckTypeNLoadMergeImport &aSelection
+					)
+					
 				)
 			)
 
