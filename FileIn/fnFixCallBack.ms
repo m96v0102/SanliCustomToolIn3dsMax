@@ -34,8 +34,10 @@ struct o_stFixCallBack
 	--Remove callbacks and relevant properties which associated with MSCPROP
 	fn fnRemoveMscpropCbkNProp =
 	(
-		--if globalVars.isglobal #ThePropParameterNodes == true or _RemoveWOCheck == true do
-		if globalVars.isglobal #ThePropParameterNodes == true do
+		local ndGetDangerData = undefined
+		try(ndGetDangerData = TrackViewNodes.TVProperty)catch()
+
+		if globalVars.isglobal #ThePropParameterNodes == true or ndGetDangerData != undefined do
 		(
 			callbacks.removeScripts id:#PropertyParameters
 
@@ -49,7 +51,7 @@ struct o_stFixCallBack
 					custAttributes.delete TrackViewNodes aCustAttr[i]
 					
 					--Delete custom attribute.
-					custAttributes.deleteDef aCustAttr[i]
+					try(custAttributes.deleteDef aCustAttr[i])catch()
 					
 					--Sometimes there were 2 #TVProperty in the array, so I comment out the exit line.
 					--exit
@@ -438,6 +440,15 @@ struct o_stFixCallBack
 			SecurityToolsDialogs_instance.display_DangerDataFound_dialog sDirtyGlobalVar
 		)
 
+		--Check MSCPROP was hide in the TrackViewNodes
+		local ndGetDangerData = undefined
+		try(ndGetDangerData = TrackViewNodes.TVProperty)catch()
+		if ndGetDangerData != undefined do
+		(
+			sDirtyGlobalVar = "Dirty datas_" + (ndGetDangerData as string)
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog sDirtyGlobalVar
+		)
+
 		--Check the dagerous data 'PhysXPluginMfx2' was exist
 		local nPhysPlugProblem = fnCheckPhysPlug()
 		if nPhysPlugProblem != 0 then
@@ -467,6 +478,15 @@ struct o_stFixCallBack
 		if varDirtyGlobalVar != undefined do
 		(
 			sDirtyGlobalVar = "Dirty variables_" + (varDirtyGlobalVar as string)
+			SecurityToolsDialogs_instance.display_DangerDataFound_dialog sDirtyGlobalVar
+		)
+
+		--Check MSCPROP was hide in the TrackViewNodes
+		local ndGetDangerData = undefined
+		try(ndGetDangerData = TrackViewNodes.TVProperty)catch()
+		if ndGetDangerData != undefined do
+		(
+			sDirtyGlobalVar = "Dirty datas_" + (ndGetDangerData as string)
 			SecurityToolsDialogs_instance.display_DangerDataFound_dialog sDirtyGlobalVar
 		)
 

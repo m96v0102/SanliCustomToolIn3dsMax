@@ -6,6 +6,8 @@ struct stLoadMaxByList
 	aFile_Backup = #(),
 	aFileName_Backup = #(),
 
+	sLoadMergeImportLogFileNameWthExt = "LoadMergeImport.log",
+
 	--grpTNWidth = 150,		--thumbnail group width
 	--grpEtWidth = 150,		--Export group width
 	TNWidth = 118,			--ThumbnailWidth
@@ -762,6 +764,7 @@ struct st1ClipInFileWnd
 
 		rollout roImportOrMergeSettings "Load, merge or import_v1.002"
 		(
+			local l_btnWth1 = 150
 
 			label lbLoadType "Load or import : " 	pos:[15, 6]
 			radioButtons rdoLoadType "" 	 		pos:[lbLoadType.pos.x + 90, lbLoadType.pos.y] columns:2
@@ -770,9 +773,11 @@ struct st1ClipInFileWnd
 
 			--show merge or import options													
 			checkbox ckShowMIOptions				"Show Options" checked:g_stLoadMaxByList.bShowMIOptions tooltip:"Show merge Or import options"
-													across:3 align:#left offset:[12, 6]
-			checkbox ckPrintLog						"Ptint log" offset:[-2, 6]													
-			button btnLoadMergeImportFile			"Load, merge or import files" offset:[-23, 4] --enabled:false 
+													across:2 align:#right offset:[-27,2]
+			button btnLoadMergeImportFile			"Load, merge or import" width:l_btnWth1 align:#left offset:[-22,0]
+
+			checkbox ckPrintLog						"Ptint log" across:2 align:#right offset:[-32, 2]
+			button btnShowLogLocation				"Show log file location" width:l_btnWth1 align:#left offset:[-22,0]
 
 			fn fnCheckTypeNLoadMergeImport &_aSelection=
 			(
@@ -806,8 +811,7 @@ struct st1ClipInFileWnd
 					--Create a log here, so we can check the process when the files are too many for loading.
 					if ckPrintLog.checked == true then
 					(
-						sCurrScriptPath = g_stLoadMaxByList.fnGetScriptPath()
-						sLoadMergeImportLogFile = sCurrScriptPath + "\\LoadMergeImport.log"
+						sLoadMergeImportLogFile = g_stLoadMaxByList.fnGetScriptPath() + g_stLoadMaxByList.sLoadMergeImportLogFileNameWthExt
 						nOutPutLog = openLog sLoadMergeImportLogFile mode:"w" outputOnly:true
 
 						fnCheckTypeNLoadMergeImport &aSelection
@@ -818,8 +822,15 @@ struct st1ClipInFileWnd
 					(
 						fnCheckTypeNLoadMergeImport &aSelection
 					)
-					
 				)
+			)
+
+			on btnShowLogLocation pressed do
+			(
+				sLoadMergeImportLogFile = g_stLoadMaxByList.fnGetScriptPath() + g_stLoadMaxByList.sLoadMergeImportLogFileNameWthExt
+				print sLoadMergeImportLogFile
+				sExpression = "explorer /select, " + sLoadMergeImportLogFile
+				DOSCommand sExpression
 			)
 
 		)
@@ -909,8 +920,7 @@ struct st1ClipInFileWnd
 				bPrintLog = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.ckPrintLog.checked
 				if bPrintLog == true do
 				(
-					sCurrScriptPath = g_stLoadMaxByList.fnGetScriptPath()
-					sLoadMergeImportLogFile = sCurrScriptPath + "\\LoadMergeImport.log"
+					sLoadMergeImportLogFile = g_stLoadMaxByList.fnGetScriptPath() + g_stLoadMaxByList.sLoadMergeImportLogFileNameWthExt
 					nOutPutLog = openLog sLoadMergeImportLogFile mode:"w" outputOnly:true
 				)
 
