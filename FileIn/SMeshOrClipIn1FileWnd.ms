@@ -762,7 +762,7 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roImportOrMergeSettings "Load, merge or import_v1.002"
+		rollout roImportOrMergeSettings "Load, merge or import_v1.003"
 		(
 			local l_btnWth1 = 150
 
