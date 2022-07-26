@@ -19,7 +19,7 @@ struct stLoadMaxByList
 	--the elements in this array have to be same with the rdoLoadType labels.
 	aLoadType = #(#Load, #Merge, #ImportFbx, #ImportObj),
 	nDefaultLoadType = 1,
-	bShowMIOptions = true,	--Show merge or import options
+	bShowMIOptions = false,	--Show merge or import options
 	
 	--the elements in this array have to be same with the ddlExportMode items.
 	aExportType = #(#StaticMesh, #SkinMesh, #Animation),
@@ -763,9 +763,10 @@ struct st1ClipInFileWnd
 
 			--show merge or import options													
 			checkbox ckShowMIOptions				"Show Options" checked:g_stLoadMaxByList.bShowMIOptions tooltip:"Show merge Or import options"
-													pos:[lbLoadType.pos.x + 48, lbLoadType.pos.y + 40]
-			button btnMergeOrImportFile				"Merge or import multiple files" --enabled:false 
-													pos:[ckShowMIOptions.pos.x + 90, ckShowMIOptions.pos.y - 3]
+													across:2 offset:[20, 6] align:#left
+													--pos:[lbLoadType.pos.x + 48, lbLoadType.pos.y + 40]
+			button btnMergeOrImportFile				"Load, merge or import multiple files" offset:[-35, 2] --enabled:false 
+													--pos:[ckShowMIOptions.pos.x + 90, ckShowMIOptions.pos.y - 3]
 
 			on rdoLoadType changed state do
 			(
@@ -785,16 +786,11 @@ struct st1ClipInFileWnd
 				aSelection = g_SanliCustomTool.roMainRollout.ro1Clip1File.roll.lboxMaxFile.selection as array
 				if aSelection.count > 0 do
 				(
-					--nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
-					--enLoadType =  g_stLoadMaxByList.aLoadType[nState]
-					
-					--this function don't need to work on LoadMaxMode
-					--if enLoadType == #Load do
-					--( return 0)
-
-					enLoadType = #Merge
+					nState = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.rdoLoadType.state
+					enLoadType =  g_stLoadMaxByList.aLoadType[nState]
 					for i = 1 to aSelection.count do
 					(
+						format "Sanlilog_SelectionFile: % \n" g_stLoadMaxByList.aFile[aSelection[i]]
 						g_stLoadMaxByList.fnLoadMergeOrImport enLoadType aSelection[i]
 					)
 				)
