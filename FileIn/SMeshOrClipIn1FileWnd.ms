@@ -905,6 +905,15 @@ struct st1ClipInFileWnd
 						append aCheckMaxCallbackFile g_stLoadMaxByList.aFile[iter]
 				)
 
+				--Create a log here, so we can check the process when the files are too many for loading.
+				bPrintLog = g_SanliCustomTool.roMainRollout.ro1Clip1File.roImportOrMergeSettings.ckPrintLog.checked
+				if bPrintLog == true do
+				(
+					sCurrScriptPath = g_stLoadMaxByList.fnGetScriptPath()
+					sLoadMergeImportLogFile = sCurrScriptPath + "\\LoadMergeImport.log"
+					nOutPutLog = openLog sLoadMergeImportLogFile mode:"w" outputOnly:true
+				)
+
 				--Check dirty data from the maxfile.
 				--If you got one dirty data from the file, no matter what it is, store the maxfilename into the array and continue to the next loop
 				aDangerousFile = #()
@@ -923,12 +932,20 @@ struct st1ClipInFileWnd
 					
 					local varDirtyGlobalVar = g_stFixCallBack.fnCheckDirtyGlobalVariables()
 					if varDirtyGlobalVar != undefined then
+					(
+						format "Sanlilog_Detect dangerous global variables in : % \n" maxfilename
 						append aDangerousFile maxfilename
+
+					)
 					--Check PhysPlug
 					local nPhysPlugProblem = g_stFixCallBack.fnCheckPhysPlug()
 					if nPhysPlugProblem != 0 and (findItem aDangerousFile maxfilename == 0) then
-							append aDangerousFile maxfilename
-
+					(
+						format "Sanlilog_Detect PhysPlugProblem in : % \n" maxfilename
+						append aDangerousFile maxfilename
+					)
+					
+					--I recheck this at 2022-07-26
 					--if I remove the callback function after the for loop, the last one will missed, so I have to remove it again
 					if i == aCheckMaxCallbackFile.count and enBatchCheckMode == #CheckAndRemove then
 					(
@@ -974,6 +991,8 @@ struct st1ClipInFileWnd
 
 				stMsgWnd.fnMainMsgDialog "sMsgFinishVirusCheckWthMoveROPosY" "Max File Callback virus checking complete" _sMessage:sMessageForShowWnd
 				g_stFixCallBack.fnCheckDangerLocalFileAndDetectMaxShouldOpening()
+
+				if bPrintLog == true do closeLog()
 			)
 
 		)
