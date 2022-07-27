@@ -863,7 +863,7 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roCheckUndoCallBack "Check or cleanup some dangerous data_v1.012"
+		rollout roCheckUndoCallBack "Check or cleanup some dangerous data_v1.013"
 		(
 			button	btnRemoveCallBackCF				"Remove dangerous data from current file"	  width:330 --align:#left
 													-- height:18 pos:[btnExportHint.pos.x + 105,btnExportHint.pos.y ] 
@@ -939,19 +939,30 @@ struct st1ClipInFileWnd
 					)					
 					
 					loadMaxFile aCheckMaxCallbackFile[i] quiet:on useFileUnits:on
+					sFile = maxfilepath + maxfilename
+					if bPrintLog == true do format "3lilog_We want to check % file(s), the % file is: % \n" aCheckMaxCallbackFile.count i sFile
 					
 					local varDirtyGlobalVar = g_stFixCallBack.fnCheckDirtyGlobalVariables()
 					if varDirtyGlobalVar != undefined then
 					(
-						format "Sanlilog_Detect dangerous global variables in : % \n" maxfilename
+						if bPrintLog == true do format "3lilog_Detect dangerous global variables in : % \n" maxfilename
 						append aDangerousFile maxfilename
-
 					)
+
+					--Check MSCPROP was hide in the TrackViewNodes
+					local ndGetDangerData = undefined
+					try(ndGetDangerData = TrackViewNodes.TVProperty)catch()
+					if ndGetDangerData != undefined do
+					(
+						if bPrintLog == true do format "3lilog_Detect dirty data - TVProperty in : % \n" maxfilename
+						append aDangerousFile maxfilename
+					)
+
 					--Check PhysPlug
 					local nPhysPlugProblem = g_stFixCallBack.fnCheckPhysPlug()
 					if nPhysPlugProblem != 0 and (findItem aDangerousFile maxfilename == 0) then
 					(
-						format "Sanlilog_Detect PhysPlugProblem in : % \n" maxfilename
+						if bPrintLog == true do format "3lilog_Detect PhysPlugProblem in : % \n" maxfilename
 						append aDangerousFile maxfilename
 					)
 					
@@ -987,7 +998,7 @@ struct st1ClipInFileWnd
 				(
 					sMessage1 = ""
 					if enBatchCheckMode == #CheckAndRemove then
-						sMessage1 = "The tools have removed " + (aDangerousFile.count as string)  + "maxfiles that contains the virus callback:\n"
+						sMessage1 = "The tools have removed " + (aDangerousFile.count as string)  + " maxfiles that contains the virus callback:\n"
 					else
 						sMessage1 = "There are " + (aDangerousFile.count as string)  + " maxfiles has contains some dangerous data:\n"
 

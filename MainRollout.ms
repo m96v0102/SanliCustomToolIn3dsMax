@@ -273,7 +273,7 @@ struct stSanliCustomTool
 	(
 		--If you change the height or width, remember to change another width height in "subRollout theSubRollout".
 		createDialog roMainRollout 370 roMainRollout.ro1Clip1File.roHeight 560 300
-		roMainRollout.title = "SanliCustomTool(v1.026)"
+		roMainRollout.title = "SanliCustomTool(v1.027)"
 		
 		--copy Unity Editor files to C:\SanliCustomTool
 		sCurrentScriptFile = getThisScriptFilename()
