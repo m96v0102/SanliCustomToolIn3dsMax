@@ -762,7 +762,7 @@ struct st1ClipInFileWnd
 
 		)
 
-		rollout roImportOrMergeSettings "Load, merge or import_v1.003"
+		rollout roImportOrMergeSettings "Load, merge or import_v1.004"
 		(
 			local l_btnWth1 = 150
 
@@ -785,7 +785,7 @@ struct st1ClipInFileWnd
 				enLoadType =  g_stLoadMaxByList.aLoadType[nState]
 				for i = 1 to _aSelection.count do
 				(
-					format "Sanlilog_SelectionFile: % \n" g_stLoadMaxByList.aFile[_aSelection[i]]
+					format "3lilog_We want to check % files, this % file is : % \n" _aSelection.count i g_stLoadMaxByList.aFile[_aSelection[i]]
 					g_stLoadMaxByList.fnLoadMergeOrImport enLoadType _aSelection[i]
 				)
 			)
