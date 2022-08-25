@@ -28,6 +28,7 @@ struct o_stFixCallBack
 			return true
 		)
 
+		--If sBuiltInSecurityEnable is "0" or empty string(Means there is no SecurityTools in this 3dsMax), then return false.
 		else return false
 	),
 
@@ -502,7 +503,11 @@ struct o_stFixCallBack
 	--Clean all of the dangerous data.
 	fn fnRevertFileAndCallBack =
 	(
-		if fnCheckBuiltInSecurityToolEnable() == true do return 0
+		if fnCheckBuiltInSecurityToolEnable() == true do
+		(
+			Messagebox "Detect the 3dsMax Security tool was enabled, so this function won't be activated!!"
+			return 0
+		)
 		fnRemoveMscpropCbkNProp()
 		fnRemoveCRPCallBacks()
 		fnRemoveADSLCallBacks()
